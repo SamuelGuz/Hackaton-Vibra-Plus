@@ -46,7 +46,7 @@ export function FotoInstantanea({ animal, ancho = 150 }: { animal: AnimalFoto; a
       ) : (
         <Silueta animal={animal} />
       )}
-      <figcaption className={styles.nombre}>{animal.nombre}</figcaption>
+      <figcaption className={`${styles.nombre} ${ancho < 120 ? styles.chica : ''}`}>{animal.nombre}</figcaption>
     </figure>
   )
 }

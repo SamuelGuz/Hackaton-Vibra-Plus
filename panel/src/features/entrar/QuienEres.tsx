@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { inicioDe } from '../../app/pestanas'
 import { useSesion } from '../../app/sesion'
 import { useDatos } from '../../data/DatosProvider'
 import { Inicial } from '../../components/Inicial'
@@ -37,7 +38,7 @@ export function QuienEres() {
               className={styles.persona}
               onClick={() => {
                 entrar(p.id)
-                navegar('/hoy')
+                navegar(inicioDe(p.rol))
               }}
             >
               <Inicial id={p.id} nombre={p.nombre} color={p.color} foto={p.foto} tamano={76} />

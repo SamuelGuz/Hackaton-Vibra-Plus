@@ -7,6 +7,7 @@ import type {
   DosisDada,
   Especie,
   EstadoAnimal,
+  PorConfirmar,
   Tratamiento,
 } from '../data/tipos'
 import { fechaLocal } from './formato'
@@ -76,6 +77,8 @@ export interface DosisDelDia {
   hora: string
   estado: EstadoDosis
   dada: DosisDada | null
+  /** Alguien ya la reportó por audio y falta confirmarla: el panel no deja darla dos veces */
+  reporte: PorConfirmar | null
 }
 
 /** Una dosis se considera atrasada si pasó más de 1 hora de su hora programada. */
@@ -91,9 +94,17 @@ export function dosisDeHoy(datos: DatosAlbergue, ahora: Date = new Date()): Dosi
         datos.dosisDadas.find(
           (d) => d.tratamientoId === t.id && d.hora === hora && d.fechaHora.startsWith(hoy),
         ) ?? null
+      const reporte = dada
+        ? null
+        : (datos.porConfirmar.find(
+            (p) =>
+              p.estado === 'pendiente' &&
+              p.fechaHora.startsWith(hoy) &&
+              p.propuestas.some((x) => x.tipo === 'dosis' && x.tratamientoId === t.id && x.hora === hora),
+          ) ?? null)
       const [h, m] = hora.split(':').map(Number)
       const atrasada = minutosAhora > h * 60 + m + 60
-      lista.push({ tratamiento: t, hora, dada, estado: dada ? 'dada' : atrasada ? 'atrasada' : 'pendiente' })
+      lista.push({ tratamiento: t, hora, dada, reporte, estado: dada ? 'dada' : atrasada ? 'atrasada' : 'pendiente' })
     }
   }
   return lista.sort((a, b) => a.hora.localeCompare(b.hora))

@@ -26,3 +26,9 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* En fotos chicas el nombre baja de tamaño para que no se corte */
+.chica {
+  font-size: var(--t-texto);
+  padding-bottom: var(--e-2);
+}

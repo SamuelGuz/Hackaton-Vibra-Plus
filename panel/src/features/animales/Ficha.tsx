@@ -9,7 +9,7 @@ import { FotoInstantanea } from '../../components/FotoInstantanea'
 import { Icono } from '../../components/Icono'
 import { useDatos } from '../../data/DatosProvider'
 import type { EstadoAnimal } from '../../data/tipos'
-import { cambiarEstado } from '../../lib/acciones'
+import { useAcciones } from '../../data/useAcciones'
 import { NOMBRE_ESTADO } from '../../lib/calculos'
 import { cuandoFue, fechaLocal, horaBonita } from '../../lib/formato'
 import styles from './Ficha.module.css'
@@ -24,7 +24,8 @@ function tiempoConNosotros(fechaIngreso: string): string {
 
 export function Ficha() {
   const { id } = useParams()
-  const { datos, cambiar } = useDatos()
+  const { datos } = useDatos()
+  const acciones = useAcciones()
   const { persona } = useSesion()
   const [eligiendo, setEligiendo] = useState(false)
   const [aviso, setAviso] = useState<{ antes: EstadoAnimal; mensaje: string } | null>(null)
@@ -47,7 +48,7 @@ export function Ficha() {
 
   const elegir = (estado: EstadoAnimal) => {
     const antes = animal.estado
-    cambiar((d) => cambiarEstado(d, animal.id, estado))
+    acciones.cambiarEstado(animal.id, estado)
     setEligiendo(false)
     setAviso({ antes, mensaje: `${animal.nombre} quedó en "${NOMBRE_ESTADO[estado]}"` })
   }
@@ -139,7 +140,7 @@ export function Ficha() {
         <AvisoDeshacer
           mensaje={aviso.mensaje}
           alDeshacer={() => {
-            cambiar((d) => cambiarEstado(d, animal.id, aviso.antes))
+            acciones.cambiarEstado(animal.id, aviso.antes)
             setAviso(null)
           }}
           alCerrar={() => setAviso(null)}

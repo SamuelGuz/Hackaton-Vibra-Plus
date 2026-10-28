@@ -1,14 +1,13 @@
 // Anotar plata en pasos de una sola pregunta: (1) entró/salió → (2) cuánto →
 // (3) para qué → (4) revisar, foto opcional y guardar. El paso 1 son los dos botones de Plata.
 import { useState } from 'react'
-import { useSesion } from '../../app/sesion'
 import { Boton } from '../../components/Boton'
 import { Icono } from '../../components/Icono'
 import { PasoAPaso } from '../../components/PasoAPaso'
 import { TecladoMonto } from '../../components/TecladoMonto'
 import { useDatos } from '../../data/DatosProvider'
 import type { Movimiento } from '../../data/tipos'
-import { registrarMovimiento } from '../../lib/acciones'
+import { useAcciones } from '../../data/useAcciones'
 import { comprimirFoto } from '../../lib/foto'
 import { pesos } from '../../lib/formato'
 import { CATEGORIAS, nombreCategoria } from './categorias'
@@ -20,8 +19,8 @@ interface Props {
 }
 
 export function RegistrarMovimiento({ tipo, alTerminar }: Props) {
-  const { datos, cambiar } = useDatos()
-  const { persona } = useSesion()
+  const { datos } = useDatos()
+  const acciones = useAcciones()
   const [paso, setPaso] = useState(2)
   const [monto, setMonto] = useState(0)
   const [categoria, setCategoria] = useState<Movimiento['categoria'] | null>(null)
@@ -44,14 +43,8 @@ export function RegistrarMovimiento({ tipo, alTerminar }: Props) {
   }
 
   const guardar = () => {
-    if (!persona || !categoria) return
-    cambiar((d) =>
-      registrarMovimiento(
-        d,
-        { tipo, monto, categoria, clinicaId, abonoDeuda: clinicaId !== null, foto, nota: '' },
-        persona.id,
-      ),
-    )
+    if (!categoria) return
+    acciones.registrarMovimiento({ tipo, monto, categoria, clinicaId, abonoDeuda: clinicaId !== null, foto, nota: '' })
     alTerminar(true)
   }
 

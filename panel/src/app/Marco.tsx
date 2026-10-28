@@ -10,7 +10,7 @@ import styles from './Marco.module.css'
 
 export function Marco() {
   const { persona, salir } = useSesion()
-  const { datos } = useDatos()
+  const { datos, modo, pendientes: sinEnviar, problema } = useDatos()
   const enLinea = useEnLinea()
   if (!persona) return null
 
@@ -21,12 +21,20 @@ export function Marco() {
     <div className={styles.marco}>
       <header className={styles.cabecera}>
         <Huella tamano={30} />
-        {/* Sin servidor todavía: todo queda en el celular, no hay nada esperando envío */}
-        <EstadoConexion enLinea={enLinea} pendientes={0} />
-        <Link to="/" className={styles.persona} onClick={salir}>
-          {persona.nombre} · Cambiar
-        </Link>
+        <EstadoConexion enLinea={enLinea} pendientes={sinEnviar} />
+        {modo === 'demo' ? (
+          <Link to="/" className={styles.persona} onClick={salir}>
+            {persona.nombre} · Cambiar
+          </Link>
+        ) : (
+          <span className={styles.persona}>{persona.nombre}</span>
+        )}
       </header>
+      {problema && (
+        <p className={styles.problema} role="alert">
+          {problema}
+        </p>
+      )}
 
       <main className={styles.contenido}>
         <Outlet />

@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import { DatosProvider } from '../data/DatosProvider'
+import { DatosProvider, useDatos } from '../data/DatosProvider'
+import { inicioDe } from './pestanas'
 import { SesionProvider, useSesion } from './sesion'
 import { QuienEres } from '../features/entrar/QuienEres'
 import { Kit } from '../features/kit/Kit'
@@ -10,6 +11,13 @@ import { Animales } from '../features/animales/Animales'
 import { Ficha } from '../features/animales/Ficha'
 import { Confirmar } from '../features/confirmar/Confirmar'
 import { Marco } from './Marco'
+
+/** Con el enlace del bot no se pregunta quién es: se entra directo a la primera pestaña */
+function Inicio() {
+  const { persona } = useSesion()
+  const { modo } = useDatos()
+  return modo === 'servidor' && persona ? <Navigate to={inicioDe(persona.rol)} replace /> : <QuienEres />
+}
 
 function RutaConSesion({ children }: { children: React.ReactNode }) {
   const { persona } = useSesion()
@@ -22,7 +30,7 @@ export function App() {
       <SesionProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<QuienEres />} />
+            <Route path="/" element={<Inicio />} />
             <Route path="/kit" element={<Kit />} />
             <Route
               element={

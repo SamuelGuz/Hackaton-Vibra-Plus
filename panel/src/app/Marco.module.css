@@ -79,3 +79,13 @@
   color: var(--borde-foto);
   font-size: 0.875rem;
 }
+
+.problema {
+  max-width: 640px;
+  margin: var(--e-3) auto 0;
+  padding: var(--e-3) var(--e-4);
+  border-radius: var(--radio-papel);
+  background: var(--urgente-suave);
+  color: var(--urgente);
+  font-weight: 700;
+}

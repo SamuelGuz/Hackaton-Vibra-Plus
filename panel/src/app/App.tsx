@@ -10,6 +10,7 @@ import { Comida } from '../features/comida/Comida'
 import { Animales } from '../features/animales/Animales'
 import { Ficha } from '../features/animales/Ficha'
 import { Confirmar } from '../features/confirmar/Confirmar'
+import { Adopciones } from '../features/adopciones/Adopciones'
 import { Marco } from './Marco'
 
 /** Con el enlace del bot no se pregunta quién es: se entra directo a la primera pestaña */
@@ -45,6 +46,7 @@ export function App() {
               <Route path="/confirmar" element={<Confirmar />} />
               <Route path="/plata" element={<Plata />} />
               <Route path="/comida" element={<Comida />} />
+              <Route path="/adopciones/*" element={<Adopciones />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

@@ -13,14 +13,14 @@ const ANIMALES: Pestana = { ruta: '/animales', texto: 'Animales', icono: 'huella
 const CONFIRMAR: Pestana = { ruta: '/confirmar', texto: 'Por confirmar', icono: 'check' }
 const PLATA: Pestana = { ruta: '/plata', texto: 'Plata', icono: 'plata' }
 const COMIDA: Pestana = { ruta: '/comida', texto: 'Comida', icono: 'comida' }
+const SOLICITUDES: Pestana = { ruta: '/adopciones', texto: 'Solicitudes', icono: 'corazon' }
 
 export const PESTANAS: Record<Rol, Pestana[]> = {
   cuidador: [HOY, ANIMALES],
   voluntario: [HOY, ANIMALES],
   bienestar: [HOY, ANIMALES, CONFIRMAR],
   admin: [PLATA, COMIDA, CONFIRMAR, ANIMALES],
-  // El panel de adopción (Daniel) agrega aquí su pestaña de solicitudes
-  adopciones: [ANIMALES],
+  adopciones: [SOLICITUDES, ANIMALES],
   comunicacion: [ANIMALES],
 }
 

@@ -2,6 +2,7 @@
 import { Hono, type Context } from 'hono'
 import { cors } from 'hono/cors'
 import { armarEventos, type FilasEventos, type Rango } from './api/hoy.js'
+import { validarMiembro } from './api/equipo.js'
 import { validarCambioEstado, validarEvento } from './api/eventos.js'
 import { atender } from './conversacion/atender.js'
 import { fechaLocal } from './formato.js'
@@ -36,6 +37,7 @@ export function crearApp(cfg: ConfigApp) {
     if (!(await deps.repo.marcarMensaje(m.id))) return
     const usuario = await deps.repo.usuarioPorTelefono(m.de)
     if (!usuario) {
+      await deps.repo.anotarSolicitud(m.de, m.nombre ?? null)
       const ultimo = avisadosDesconocidos.get(m.de) ?? 0
       if (Date.now() - ultimo > HORAS_AVISO_DESCONOCIDO * 3_600_000) {
         avisadosDesconocidos.set(m.de, Date.now())
@@ -101,7 +103,52 @@ export function crearApp(cfg: ConfigApp) {
 
   app.get('/api/hoy', async (c) => {
     const datos = await deps.repo.hoy(deps.ahora())
-    return c.json({ ...datos, yo: String(c.get('usuario').id) })
+    const usuario = c.get('usuario')
+    const solicitudesEquipo = usuario.rol === 'admin' ? await deps.repo.contarSolicitudes() : 0
+    return c.json({ ...datos, yo: String(usuario.id), solicitudesEquipo })
+  })
+
+  // ---------- Equipo (solo la administradora) ----------
+
+  async function soloAdmin(c: Context, next: () => Promise<void>) {
+    if (c.get('usuario').rol !== 'admin') return c.json({ error: 'Solo la administración maneja el equipo' }, 403)
+    await next()
+  }
+  app.use('/api/equipo', soloAdmin)
+  app.use('/api/equipo/*', soloAdmin)
+
+  app.get('/api/equipo', async (c) => c.json(await deps.repo.equipo()))
+
+  app.post('/api/equipo', async (c) => {
+    const v = validarMiembro(await c.req.json().catch(() => null))
+    if ('error' in v) return c.json({ error: v.error }, 400)
+    const persona = await deps.repo.agregarAlEquipo(v.ok)
+    avisadosDesconocidos.delete(persona.telefono)
+    // Fuera de la ventana de 24 h de WhatsApp el aviso no sale: la persona igual ya puede escribir
+    const avisado = await deps.wa
+      .enviar(persona.telefono, { tipo: 'texto', texto: textos.agregadoAlEquipo(persona.nombre) })
+      .then(() => true)
+      .catch((e) => {
+        console.error('No se pudo avisar a la persona nueva:', e)
+        return false
+      })
+    return c.json({ persona, avisado })
+  })
+
+  app.post('/api/equipo/:id/activo', async (c) => {
+    const id = Number(c.req.param('id'))
+    const activo = (await c.req.json().catch(() => null))?.activo
+    if (!Number.isInteger(id) || typeof activo !== 'boolean') return c.json({ error: 'Se espera { activo: true | false }' }, 400)
+    if (!activo && id === c.get('usuario').id) return c.json({ error: 'No te puedes quitar a ti misma del equipo' }, 400)
+    if (!(await deps.repo.cambiarActivo(id, activo))) return c.json({ error: 'Esa persona no existe' }, 404)
+    return c.json({ ok: true })
+  })
+
+  app.post('/api/equipo/solicitudes/descartar', async (c) => {
+    const telefono = (await c.req.json().catch(() => null))?.telefono
+    if (typeof telefono !== 'string') return c.json({ error: 'Se espera { telefono }' }, 400)
+    await deps.repo.descartarSolicitud(telefono)
+    return c.json({ ok: true })
   })
 
   app.get('/api/eventos', async (c) => {

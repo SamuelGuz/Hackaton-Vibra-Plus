@@ -21,6 +21,10 @@ interface ContextoDatos {
   pendientes: number
   /** Algo que el servidor no aceptó */
   problema: string | null
+  /** Token del enlace, para las pantallas que hablan directo con el servidor (Equipo) */
+  token: string | null
+  /** Gente que le escribió al bot sin estar en el equipo (solo para la administradora) */
+  solicitudesEquipo: number
 }
 
 const Contexto = createContext<ContextoDatos | null>(null)
@@ -29,7 +33,17 @@ const CLAVE_COPIA = 'huellitas.ultimoHoy'
 
 function ProveedorDemo({ children }: { children: React.ReactNode }) {
   const [datos, setDatos] = useState<DatosAlbergue>(() => crearDatosDemo())
-  const valor: ContextoDatos = { datos, cambiar: setDatos, enviar: () => {}, modo: 'demo', yo: null, pendientes: 0, problema: null }
+  const valor: ContextoDatos = {
+    datos,
+    cambiar: setDatos,
+    enviar: () => {},
+    modo: 'demo',
+    yo: null,
+    pendientes: 0,
+    problema: null,
+    token: null,
+    solicitudesEquipo: 0,
+  }
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>
 }
 
@@ -143,6 +157,8 @@ function ProveedorServidor({ token, children }: { token: string; children: React
     yo: datos.yo,
     pendientes,
     problema,
+    token,
+    solicitudesEquipo: datos.solicitudesEquipo ?? 0,
   }
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>
 }

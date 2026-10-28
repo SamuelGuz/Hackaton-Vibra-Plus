@@ -118,8 +118,37 @@ export interface Registro {
   mediaUrl: string | null
 }
 
+export interface MiembroEquipo extends Usuario {
+  activo: boolean
+}
+
+/** Alguien que le escribió al bot sin estar en el equipo */
+export interface SolicitudEquipo {
+  telefono: string
+  /** Nombre del perfil de WhatsApp, si lo tiene */
+  nombre: string | null
+  mensajes: number
+  ultimoMensajeEn: string
+}
+
+export interface NuevoMiembro {
+  nombre: string
+  rol: Rol
+  /** Solo dígitos, con el indicativo del país */
+  telefono: string
+}
+
 export interface Repo {
   usuarioPorTelefono(telefono: string): Promise<Usuario | null>
+  /** Anota (o suma un mensaje) a alguien que escribió sin estar en el equipo */
+  anotarSolicitud(telefono: string, nombrePerfil: string | null): Promise<void>
+  equipo(): Promise<{ personas: MiembroEquipo[]; solicitudes: SolicitudEquipo[] }>
+  /** Crea a la persona, o la reactiva con el nuevo nombre y rol si el número ya existía. Borra su solicitud. */
+  agregarAlEquipo(m: NuevoMiembro): Promise<Usuario>
+  /** false si no existe */
+  cambiarActivo(usuarioId: number, activo: boolean): Promise<boolean>
+  descartarSolicitud(telefono: string): Promise<void>
+  contarSolicitudes(): Promise<number>
   usuarioPorId(id: number): Promise<Usuario | null>
   /** true si el mensaje es nuevo; false si Meta lo está reenviando */
   marcarMensaje(waMessageId: string): Promise<boolean>

@@ -1,6 +1,6 @@
 // Conexión con el servidor (bot/). Rutas de PLAN_INTEGRADO §3.1.
 // Se entra con el enlace personal que manda el bot: PANEL_URL/?t=<token>.
-import type { DatosAlbergue, Propuesta } from './tipos'
+import type { DatosAlbergue, Propuesta, Rol } from './tipos'
 
 const CLAVE_TOKEN = 'huellitas.token'
 
@@ -56,7 +56,11 @@ export type Envio =
   | { tipo: 'eventos'; eventos: Evento[] }
   | { tipo: 'estado'; ids: string[]; estado: 'confirmado' | 'corregido' | 'anulado' }
 
-export type DatosServidor = DatosAlbergue & { yo: string }
+export type DatosServidor = DatosAlbergue & {
+  yo: string
+  /** Cuántos le escribieron al bot sin estar en el equipo (solo le llega a la administradora) */
+  solicitudesEquipo?: number
+}
 
 async function pedir<T>(token: string, ruta: string, cuerpo?: unknown): Promise<T> {
   const r = await fetch(`${urlApi()}${ruta}`, {
@@ -83,4 +87,43 @@ export async function mandar(token: string, envio: Envio): Promise<void> {
   }
   const r = await pedir<{ errores?: { error: string }[] }>(token, '/api/eventos', { eventos: envio.eventos })
   if (r.errores?.length) throw new ErrorApi(400, r.errores.map((e) => e.error).join('; '))
+}
+
+// ---------- Equipo (solo la administradora, sin cola: necesita señal) ----------
+
+export interface MiembroEquipo {
+  id: number
+  nombre: string
+  rol: Rol
+  telefono: string
+  activo: boolean
+}
+
+export interface SolicitudEquipo {
+  telefono: string
+  /** Nombre del perfil de WhatsApp */
+  nombre: string | null
+  mensajes: number
+  ultimoMensajeEn: string
+}
+
+export interface Equipo {
+  personas: MiembroEquipo[]
+  solicitudes: SolicitudEquipo[]
+}
+
+export function pedirEquipo(token: string): Promise<Equipo> {
+  return pedir<Equipo>(token, '/api/equipo')
+}
+
+export function agregarAlEquipo(token: string, m: { nombre: string; rol: Rol; telefono: string }) {
+  return pedir<{ persona: MiembroEquipo; avisado: boolean }>(token, '/api/equipo', m)
+}
+
+export function cambiarActivo(token: string, id: number, activo: boolean) {
+  return pedir<{ ok: true }>(token, `/api/equipo/${id}/activo`, { activo })
+}
+
+export function descartarSolicitud(token: string, telefono: string) {
+  return pedir<{ ok: true }>(token, '/api/equipo/solicitudes/descartar', { telefono })
 }

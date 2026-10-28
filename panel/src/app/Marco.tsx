@@ -10,7 +10,7 @@ import styles from './Marco.module.css'
 
 export function Marco() {
   const { persona, salir } = useSesion()
-  const { datos, modo, pendientes: sinEnviar, problema } = useDatos()
+  const { datos, modo, pendientes: sinEnviar, problema, solicitudesEquipo } = useDatos()
   const enLinea = useEnLinea()
   if (!persona) return null
 
@@ -22,6 +22,18 @@ export function Marco() {
       <header className={styles.cabecera}>
         <Huella tamano={30} />
         <EstadoConexion enLinea={enLinea} pendientes={sinEnviar} />
+        {/* Las pestañas de la administradora ya están llenas (máximo 4): Equipo va aquí arriba */}
+        {persona.rol === 'admin' && (
+          <NavLink to="/equipo" className={styles.equipo}>
+            <Icono nombre="mas" tamano={22} />
+            <span>Equipo</span>
+            {solicitudesEquipo > 0 && (
+              <span className={styles.cuenta} aria-label={`${solicitudesEquipo} quieren entrar`}>
+                {solicitudesEquipo}
+              </span>
+            )}
+          </NavLink>
+        )}
         {modo === 'demo' ? (
           <Link to="/" className={styles.persona} onClick={salir}>
             {persona.nombre} · Cambiar

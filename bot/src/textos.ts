@@ -23,7 +23,10 @@ export const textos = {
 
   desconocido:
     'Hola 👋 Todavía no te tengo en la lista del equipo de Huellitas.\n\n' +
-    'Pídele a la administradora que te agregue y me vuelves a escribir.',
+    'Ya le avisé a la administradora: cuando te agregue en el panel, te escribo por aquí.',
+
+  agregadoAlEquipo: (nombre: string) =>
+    `¡Hola, ${nombre}! 👋 Ya estás en el equipo de Huellitas.\n\nEscríbeme *hola* para empezar.`,
 
   noEntendi: 'No te entendí bien 🙈 ¿Qué hiciste? Elige en la lista o cuéntamelo otra vez.',
   soloAudiosFotosTexto: 'Por ahora entiendo audios, fotos y mensajes escritos 🙂',

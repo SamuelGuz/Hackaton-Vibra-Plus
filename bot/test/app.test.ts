@@ -1,7 +1,7 @@
 import { createHmac } from 'node:crypto'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { crearApp } from '../src/app.js'
-import { crearDeps, LUIS } from './fakes.js'
+import { CAROLINA, crearDeps, LUIS } from './fakes.js'
 
 const SECRETO = 'secreto-de-prueba'
 const UUID = '0b9f5d3e-4c1a-4e2b-9a7f-1d2c3b4a5e6f'
@@ -70,6 +70,7 @@ describe('webhook de WhatsApp', () => {
     expect(t.repo.registros).toHaveLength(0)
     expect(t.repo.estados.size).toBe(0)
     expect(t.ia.llamadas).toHaveLength(0)
+    expect(t.repo.solicitudes).toMatchObject([{ telefono: '573119999999', nombre: 'X', mensajes: 2 }])
   })
 
   it('los mensajes de una persona se atienden en orden', async () => {
@@ -159,11 +160,92 @@ describe('API del panel', () => {
     expect(r.headers.get('access-control-allow-origin')).toBe('https://panel.huellitas.test')
   })
 
+  it('GET /api/hoy le cuenta a la administradora cuántos quieren entrar al equipo', async () => {
+    await webhook('573119999999', 'w1', 'hola')
+    await app.ociosa()
+    const admin = { Authorization: `Bearer ${await t.repo.crearSesion(CAROLINA.id)}` }
+    expect((await (await app.request('/api/hoy', { headers: admin })).json()).solicitudesEquipo).toBe(1)
+    expect((await (await app.request('/api/hoy', { headers: await conToken() })).json()).solicitudesEquipo).toBe(0)
+  })
+
   it('los archivos piden sesión (también por ?t= para las etiquetas <img> y <audio>)', async () => {
     expect((await app.request('/archivos/a.ogg')).status).toBe(401)
     const token = await t.repo.crearSesion(LUIS.id)
     const r = await app.request(`/archivos/a.ogg?t=${token}`)
     expect(r.status).toBe(200)
     expect(r.headers.get('content-type')).toBe('audio/ogg')
+  })
+})
+
+describe('Equipo', () => {
+  const comoAdmin = async () => ({
+    Authorization: `Bearer ${await t.repo.crearSesion(CAROLINA.id)}`,
+    'content-type': 'application/json',
+  })
+  const post = async (ruta: string, cuerpo: unknown, headers?: Record<string, string>) =>
+    app.request(ruta, { method: 'POST', body: JSON.stringify(cuerpo), headers: headers ?? (await comoAdmin()) })
+
+  it('solo la administradora lo ve y lo cambia', async () => {
+    const luis = { Authorization: `Bearer ${await t.repo.crearSesion(LUIS.id)}`, 'content-type': 'application/json' }
+    expect((await app.request('/api/equipo', { headers: luis })).status).toBe(403)
+    expect((await post('/api/equipo', { nombre: 'Samuel', rol: 'admin', telefono: '573001112233' }, luis)).status).toBe(403)
+    expect((await post(`/api/equipo/${LUIS.id}/activo`, { activo: false }, luis)).status).toBe(403)
+    expect(t.repo.usuarios).toHaveLength(3)
+  })
+
+  it('quien escribió sin estar aparece en la lista; al agregarlo el bot le avisa y ya lo atiende', async () => {
+    await webhook('573001112233', 'w1', 'Hola')
+    await app.ociosa()
+    const lista = await (await app.request('/api/equipo', { headers: await comoAdmin() })).json()
+    expect(lista.solicitudes).toMatchObject([{ telefono: '573001112233', nombre: 'X' }])
+    expect(lista.personas).toHaveLength(3)
+
+    const r = await post('/api/equipo', { nombre: '  Samuel ', rol: 'voluntario', telefono: '573001112233' })
+    expect(await r.json()).toMatchObject({ persona: { nombre: 'Samuel', rol: 'voluntario', telefono: '573001112233' }, avisado: true })
+    expect(t.repo.solicitudes).toHaveLength(0)
+    expect(t.wa.ultimoTexto()).toContain('Ya estás en el equipo')
+
+    await webhook('573001112233', 'w2', 'hola')
+    await app.ociosa()
+    expect(t.wa.ultimo().tipo).toBe('lista')
+  })
+
+  it('acepta el número sin el 57 y no duplica a alguien que ya existía', async () => {
+    await post('/api/equipo', { nombre: 'Don Luis Pérez', rol: 'cuidador', telefono: '300 000 0001' })
+    expect(t.repo.usuarios).toHaveLength(3)
+    expect(t.repo.usuarios[0].nombre).toBe('Don Luis Pérez')
+  })
+
+  it('si el aviso por WhatsApp no sale, la persona igual queda agregada', async () => {
+    t.wa.enviar = async () => {
+      throw new Error('fuera de la ventana de 24 h')
+    }
+    const r = await post('/api/equipo', { nombre: 'Samuel', rol: 'voluntario', telefono: '573001112233' })
+    expect(await r.json()).toMatchObject({ avisado: false })
+    expect(await t.repo.usuarioPorTelefono('573001112233')).toMatchObject({ nombre: 'Samuel' })
+  })
+
+  it('rechaza datos incompletos', async () => {
+    expect((await post('/api/equipo', { nombre: '', rol: 'voluntario', telefono: '573001112233' })).status).toBe(400)
+    expect((await post('/api/equipo', { nombre: 'Samuel', rol: 'jefe', telefono: '573001112233' })).status).toBe(400)
+    expect((await post('/api/equipo', { nombre: 'Samuel', rol: 'voluntario', telefono: '123' })).status).toBe(400)
+    expect(t.repo.usuarios).toHaveLength(3)
+  })
+
+  it('quitar a alguien hace que el bot deje de atenderlo; no se puede quitar a sí misma', async () => {
+    expect((await post(`/api/equipo/${LUIS.id}/activo`, { activo: false })).status).toBe(200)
+    await webhook(LUIS.telefono, 'w1', 'hola')
+    await app.ociosa()
+    expect(t.wa.ultimoTexto()).toContain('no te tengo en la lista')
+
+    expect((await post(`/api/equipo/${CAROLINA.id}/activo`, { activo: false })).status).toBe(400)
+    expect((await post('/api/equipo/99/activo', { activo: true })).status).toBe(404)
+  })
+
+  it('descartar una solicitud la saca de la lista', async () => {
+    await webhook('573119999999', 'w1', 'hola')
+    await app.ociosa()
+    await post('/api/equipo/solicitudes/descartar', { telefono: '573119999999' })
+    expect(t.repo.solicitudes).toHaveLength(0)
   })
 })

@@ -17,8 +17,9 @@ if (!DATABASE_URL || !SHEET_ID) {
 const PAUSA_MIN_MS = 2000
 const PAUSA_REINTENTO_MS = 5000
 
-// Tablas internas del bot (db/sql/003_bot.sql). sesiones_panel guarda tokens de entrada.
-const NO_COPIAR = new Set(['conversaciones', 'mensajes_wa', 'sesiones_panel'])
+// Tablas internas del bot (db/sql/003_bot.sql y 004_equipo.sql). sesiones_panel guarda tokens de entrada
+// y solicitudes_equipo, números de gente que no es del equipo.
+const NO_COPIAR = new Set(['conversaciones', 'mensajes_wa', 'sesiones_panel', 'solicitudes_equipo'])
 
 // Fechas, horas y números llegan como texto para escribirlos tal cual (hora de Bogotá).
 pg.types.setTypeParser(1082, (v) => v)                       // date

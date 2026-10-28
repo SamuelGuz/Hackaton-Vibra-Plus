@@ -1,6 +1,19 @@
 // WhatsApp, Gemini, archivos y base de datos falsos para probar la conversación sin red.
 import type { DatosAlbergue, PorConfirmar } from '../src/panel-tipos.js'
-import type { Accion, Deps, Entendido, EntradaIa, Estado, EstadoRegistro, NuevoRegistro, Repo, Salida, Usuario } from '../src/tipos.js'
+import type {
+  Accion,
+  Deps,
+  Entendido,
+  EntradaIa,
+  Estado,
+  EstadoRegistro,
+  NuevoMiembro,
+  NuevoRegistro,
+  Repo,
+  Salida,
+  SolicitudEquipo,
+  Usuario,
+} from '../src/tipos.js'
 
 /** Martes 27 de octubre de 2026, 3:00 p. m. en Bogotá */
 export const AHORA = new Date('2026-10-27T15:00:00-05:00')
@@ -51,11 +64,47 @@ export class RepoFalso implements Repo {
   sesiones = new Map<string, number>()
   ahora = AHORA
 
+  inactivos = new Set<number>()
+  solicitudes: SolicitudEquipo[] = []
+
   async usuarioPorTelefono(t: string) {
-    return this.usuarios.find((u) => u.telefono === t.replace(/\D/g, '')) ?? null
+    return this.usuarios.find((u) => u.telefono === t.replace(/\D/g, '') && !this.inactivos.has(u.id)) ?? null
   }
   async usuarioPorId(id: number) {
-    return this.usuarios.find((u) => u.id === id) ?? null
+    return this.usuarios.find((u) => u.id === id && !this.inactivos.has(u.id)) ?? null
+  }
+  async anotarSolicitud(telefono: string, nombre: string | null) {
+    const ya = this.solicitudes.find((s) => s.telefono === telefono)
+    if (ya) {
+      ya.mensajes++
+      ya.nombre = nombre ?? ya.nombre
+    } else this.solicitudes.push({ telefono, nombre, mensajes: 1, ultimoMensajeEn: this.ahora.toISOString() })
+  }
+  async equipo() {
+    return {
+      personas: this.usuarios.map((u) => ({ ...u, activo: !this.inactivos.has(u.id) })),
+      solicitudes: [...this.solicitudes],
+    }
+  }
+  async agregarAlEquipo(m: NuevoMiembro) {
+    let u = this.usuarios.find((x) => x.telefono === m.telefono)
+    if (u) Object.assign(u, { nombre: m.nombre, rol: m.rol })
+    else this.usuarios.push((u = { id: this.usuarios.length + 1, ...m }))
+    this.inactivos.delete(u.id)
+    this.solicitudes = this.solicitudes.filter((s) => s.telefono !== m.telefono)
+    return { ...u }
+  }
+  async cambiarActivo(id: number, activo: boolean) {
+    if (!this.usuarios.some((u) => u.id === id)) return false
+    if (activo) this.inactivos.delete(id)
+    else this.inactivos.add(id)
+    return true
+  }
+  async descartarSolicitud(telefono: string) {
+    this.solicitudes = this.solicitudes.filter((s) => s.telefono !== telefono)
+  }
+  async contarSolicitudes() {
+    return this.solicitudes.length
   }
   async marcarMensaje(id: string) {
     if (this.mensajes.has(id)) return false

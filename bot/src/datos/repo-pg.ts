@@ -33,6 +33,71 @@ export function crearRepoPg(pool: Pool): RepoPg {
       return r.rows[0] ? usuarioDe(r.rows[0]) : null
     },
 
+    async anotarSolicitud(telefono, nombrePerfil) {
+      await pool.query(
+        `INSERT INTO solicitudes_equipo (telefono, nombre_perfil) VALUES ($1, $2)
+         ON CONFLICT (telefono) DO UPDATE SET
+           nombre_perfil = coalesce(EXCLUDED.nombre_perfil, solicitudes_equipo.nombre_perfil),
+           mensajes = solicitudes_equipo.mensajes + 1,
+           ultimo_mensaje_en = now()`,
+        [normalizarTelefono(telefono), nombrePerfil?.trim() || null],
+      )
+    },
+
+    async equipo() {
+      const [personas, solicitudes] = await Promise.all([
+        pool.query(`SELECT id, nombre, rol, telefono, activo FROM usuarios ORDER BY activo DESC, nombre`),
+        pool.query(
+          `SELECT telefono, nombre_perfil, mensajes, ultimo_mensaje_en FROM solicitudes_equipo ORDER BY ultimo_mensaje_en DESC`,
+        ),
+      ])
+      return {
+        personas: personas.rows.map((r) => ({ ...usuarioDe(r), id: Number(r.id), activo: r.activo })),
+        solicitudes: solicitudes.rows.map((r) => ({
+          telefono: r.telefono,
+          nombre: r.nombre_perfil,
+          mensajes: r.mensajes,
+          ultimoMensajeEn: new Date(r.ultimo_mensaje_en).toISOString(),
+        })),
+      }
+    },
+
+    async agregarAlEquipo(m) {
+      const telefono = normalizarTelefono(m.telefono)
+      return enTransaccion(pool, async (c) => {
+        const ya = await c.query(
+          `UPDATE usuarios SET nombre = $2, rol = $3, activo = true
+           WHERE regexp_replace(telefono, '\\D', '', 'g') = $1 RETURNING id, nombre, rol, telefono`,
+          [telefono, m.nombre, m.rol],
+        )
+        const fila =
+          ya.rows[0] ??
+          (
+            await c.query(`INSERT INTO usuarios (telefono, nombre, rol) VALUES ($1, $2, $3) RETURNING id, nombre, rol, telefono`, [
+              telefono,
+              m.nombre,
+              m.rol,
+            ])
+          ).rows[0]
+        await c.query(`DELETE FROM solicitudes_equipo WHERE telefono = $1`, [telefono])
+        return { ...usuarioDe(fila), id: Number(fila.id) }
+      })
+    },
+
+    async cambiarActivo(usuarioId, activo) {
+      const r = await pool.query(`UPDATE usuarios SET activo = $2 WHERE id = $1`, [usuarioId, activo])
+      return r.rowCount === 1
+    },
+
+    async descartarSolicitud(telefono) {
+      await pool.query(`DELETE FROM solicitudes_equipo WHERE telefono = $1`, [normalizarTelefono(telefono)])
+    },
+
+    async contarSolicitudes() {
+      const r = await pool.query(`SELECT count(*)::int AS n FROM solicitudes_equipo`)
+      return r.rows[0].n
+    },
+
     async usuarioPorId(id) {
       const r = await pool.query(`SELECT id, nombre, rol, telefono FROM usuarios WHERE activo AND id = $1`, [id])
       return r.rows[0] ? usuarioDe(r.rows[0]) : null

@@ -93,6 +93,37 @@ describe('panel conectado al servidor', () => {
     expect(posts('/api/eventos/estado')[0].cuerpo).toEqual({ ids: ['c-1'], estado: 'confirmado' })
   })
 
+  it('la administradora ve quién quiere entrar al equipo y lo agrega con su rol', async () => {
+    respuestaHoy.cuerpo = { ...(respuestaHoy.cuerpo as object), yo: 'p-carolina', solicitudesEquipo: 1 }
+    const equipo = {
+      personas: [{ id: 3, nombre: 'Carolina', rol: 'admin', telefono: '573000000003', activo: true }],
+      solicitudes: [{ telefono: '573001112233', nombre: 'Samuel', mensajes: 1, ultimoMensajeEn: '2026-10-28T17:36:00Z' }],
+    }
+    const fetchBase = vi.mocked(fetch).getMockImplementation()!
+    vi.mocked(fetch).mockImplementation(async (url, init) => {
+      if (String(url).endsWith('/api/equipo') && init?.method === 'GET') return new Response(JSON.stringify(equipo))
+      if (String(url).endsWith('/api/equipo')) {
+        await fetchBase(url, init)
+        return new Response(JSON.stringify({ persona: { id: 4, nombre: 'Samuel', rol: 'voluntario' }, avisado: true }))
+      }
+      return fetchBase(url, init)
+    })
+    window.history.pushState({}, '', '/equipo?t=token-de-carolina')
+    render(<App />)
+
+    fireEvent.click(await screen.findByRole('link', { name: /Equipo/ }))
+    const samuel = await screen.findByRole('listitem', { name: 'Samuel' })
+    expect(within(samuel).getByText('+57 300 111 2233')).toBeTruthy()
+    const agregar = within(samuel).getByRole('button', { name: 'Agregar al equipo' }) as HTMLButtonElement
+    expect(agregar.disabled).toBe(true)
+    fireEvent.click(within(samuel).getByRole('button', { name: 'Voluntario' }))
+    fireEvent.click(agregar)
+
+    await waitFor(() => expect(posts('/api/equipo').length).toBe(1))
+    expect(posts('/api/equipo')[0].cuerpo).toEqual({ nombre: 'Samuel', rol: 'voluntario', telefono: '573001112233' })
+    expect(await screen.findByText(/Samuel ya está en el equipo/)).toBeTruthy()
+  })
+
   it('con el enlace vencido pide uno nuevo al bot', async () => {
     respuestaHoy = { estado: 401, cuerpo: { error: 'Falta iniciar sesión' } }
     render(<App />)

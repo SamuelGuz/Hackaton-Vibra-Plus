@@ -1,0 +1,126 @@
+.equipo {
+  display: grid;
+  gap: var(--e-6);
+}
+
+.seccion {
+  display: grid;
+  gap: var(--e-4);
+}
+
+.seccion h2 {
+  font-size: var(--t-subtitulo);
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--e-4);
+}
+
+.tarjeta {
+  display: grid;
+  gap: var(--e-3);
+  padding: var(--e-5) var(--e-4);
+  background: var(--papel-claro);
+  border-radius: var(--radio-papel);
+  box-shadow: var(--sombra-papel);
+}
+
+.persona {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-3);
+  padding: var(--e-3) 0;
+  border-bottom: 2px dashed var(--papel-hondo);
+}
+
+.inactivo {
+  opacity: 0.7;
+}
+
+.quien {
+  display: grid;
+}
+
+.nota {
+  color: var(--lapiz);
+  font-size: var(--t-chico);
+}
+
+.listo {
+  padding: var(--e-3) var(--e-4);
+  border-radius: var(--radio-papel);
+  background: var(--bien-suave);
+  color: var(--bien);
+  font-weight: 700;
+}
+
+.error {
+  padding: var(--e-3) var(--e-4);
+  border-radius: var(--radio-papel);
+  background: var(--urgente-suave);
+  color: var(--urgente);
+  font-weight: 700;
+}
+
+.formulario {
+  display: grid;
+  gap: var(--e-4);
+}
+
+.campo {
+  display: grid;
+  gap: var(--e-1);
+  font-weight: 700;
+}
+
+.campo input {
+  min-height: var(--toque-min);
+  padding: 0 var(--e-3);
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-boton);
+  background: var(--borde-foto);
+  color: var(--tinta);
+  font: inherit;
+  font-size: var(--t-boton);
+}
+
+.roles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--e-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.roles legend {
+  margin-bottom: var(--e-2);
+  font-weight: 700;
+}
+
+.rol {
+  min-height: var(--toque-min);
+  padding: var(--e-2);
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-boton);
+  background: var(--papel-claro);
+  box-shadow: var(--sombra-boton);
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.rol[aria-pressed='true'] {
+  background: var(--tinta);
+  color: var(--papel);
+}
+
+.acciones {
+  display: grid;
+  gap: var(--e-2);
+}

@@ -24,6 +24,35 @@
   font-weight: 700;
 }
 
+.equipo {
+  position: relative;
+  margin-left: auto;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-1);
+  padding: 0 var(--e-3);
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-pildora);
+  color: var(--tinta);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.equipo[aria-current='page'] {
+  background: var(--tinta);
+  color: var(--papel);
+}
+
+.equipo .cuenta {
+  top: -10px;
+  right: -10px;
+}
+
+.equipo + .persona {
+  margin-left: 0;
+}
+
 .contenido {
   max-width: 640px;
   margin: 0 auto;

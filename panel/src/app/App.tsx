@@ -4,6 +4,8 @@ import { SesionProvider, useSesion } from './sesion'
 import { QuienEres } from '../features/entrar/QuienEres'
 import { Kit } from '../features/kit/Kit'
 import { Hoy } from '../features/hoy/Hoy'
+import { Plata } from '../features/plata/Plata'
+import { Comida } from '../features/comida/Comida'
 import { Marco } from './Marco'
 
 function RutaConSesion({ children }: { children: React.ReactNode }) {
@@ -33,8 +35,8 @@ export function App() {
               <Route path="/hoy" element={<Hoy />} />
               <Route path="/animales" element={<Pendiente />} />
               <Route path="/confirmar" element={<Pendiente />} />
-              <Route path="/plata" element={<Pendiente />} />
-              <Route path="/comida" element={<Pendiente />} />
+              <Route path="/plata" element={<Plata />} />
+              <Route path="/comida" element={<Comida />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

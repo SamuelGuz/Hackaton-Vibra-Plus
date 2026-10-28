@@ -2,7 +2,7 @@
 // y devuelven los datos nuevos más el id del registro (para poder deshacerlo).
 // Lo que toca una persona nace confirmado (PLAN_INTEGRADO §3.3).
 
-import type { DatosAlbergue, Especie } from '../data/tipos'
+import type { DatosAlbergue, Especie, Movimiento } from '../data/tipos'
 import { momentoLocal } from './formato'
 
 export interface Resultado {
@@ -35,13 +35,33 @@ export function darDosis(
   return { id, datos: { ...datos, dosisDadas: [...datos.dosisDadas, registro] } }
 }
 
-/** Quita un registro hecho desde el panel (el botón "Deshacer"). */
+/** Quita un registro de comida o de dosis hecho desde el panel (el botón "Deshacer"). */
 export function deshacer(datos: DatosAlbergue, id: string): DatosAlbergue {
   return {
     ...datos,
     inventario: datos.inventario.filter((m) => m.id !== id),
     dosisDadas: datos.dosisDadas.filter((d) => d.id !== id),
-    movimientos: datos.movimientos.filter((m) => m.id !== id),
+  }
+}
+
+/**
+ * Entrada o salida de plata. No tiene "Deshacer": con la plata se revisa antes de guardar.
+ * Un abono a una clínica sale de la caja y además baja la deuda con ella.
+ */
+export function registrarMovimiento(
+  datos: DatosAlbergue,
+  movimiento: Omit<Movimiento, 'id' | 'fechaHora' | 'quien'>,
+  quien: string,
+  ahora: Date = new Date(),
+): DatosAlbergue {
+  const registro: Movimiento = { ...movimiento, id: crypto.randomUUID(), fechaHora: momentoLocal(ahora), quien }
+  const { abonoDeuda, clinicaId, monto } = movimiento
+  return {
+    ...datos,
+    movimientos: [...datos.movimientos, registro],
+    clinicas: datos.clinicas.map((c) =>
+      abonoDeuda && c.id === clinicaId ? { ...c, deuda: Math.max(0, c.deuda - monto) } : c,
+    ),
   }
 }
 

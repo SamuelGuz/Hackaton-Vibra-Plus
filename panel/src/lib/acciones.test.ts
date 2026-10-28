@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { crearDatosDemo } from '../data/demo'
-import { confirmarDosisReportada, darDosis, deshacer, moverBultos } from './acciones'
-import { bultosEnBodega, dosisDeHoy } from './calculos'
+import { confirmarDosisReportada, darDosis, deshacer, moverBultos, registrarMovimiento } from './acciones'
+import { bultosEnBodega, dosisDeHoy, plataEnCaja } from './calculos'
 
 const AHORA = new Date(2026, 9, 27, 9, 30)
 
@@ -56,5 +56,32 @@ describe('dosis reportadas por el bot', () => {
     const item = datos.porConfirmar.find((p) => p.id === 'c-1')!
     expect(item.estado).toBe('pendiente')
     expect(item.propuestas.map((p) => p.tipo)).toEqual(['nota', 'inventario'])
+  })
+})
+
+describe('registrarMovimiento', () => {
+  it('un gasto sale de la caja', () => {
+    const antes = crearDatosDemo(AHORA)
+    const datos = registrarMovimiento(
+      antes,
+      { tipo: 'gasto', monto: 150_000, categoria: 'limpieza', clinicaId: null, abonoDeuda: false, foto: null, nota: '' },
+      'p-carolina',
+      AHORA,
+    )
+    expect(plataEnCaja(datos)).toBe(plataEnCaja(antes) - 150_000)
+    expect(datos.movimientos.at(-1)).toMatchObject({ quien: 'p-carolina', fechaHora: '2026-10-27T09:30' })
+  })
+
+  it('un abono a la clínica sale de la caja y baja la deuda con esa clínica', () => {
+    const antes = crearDatosDemo(AHORA)
+    const datos = registrarMovimiento(
+      antes,
+      { tipo: 'gasto', monto: 600_000, categoria: 'veterinaria', clinicaId: 'cl-24h', abonoDeuda: true, foto: null, nota: '' },
+      'p-carolina',
+      AHORA,
+    )
+    expect(plataEnCaja(datos)).toBe(plataEnCaja(antes) - 600_000)
+    expect(datos.clinicas.find((c) => c.id === 'cl-24h')!.deuda).toBe(2_000_000)
+    expect(datos.clinicas.find((c) => c.id === 'cl-general')!.deuda).toBe(1_550_000)
   })
 })

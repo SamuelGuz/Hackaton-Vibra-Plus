@@ -120,6 +120,15 @@ export type Propuesta =
   /** Factura a crédito: no sale de caja, sube la deuda con la clínica */
   | { tipo: 'deuda'; clinicaId: string; monto: number; nota: string }
 
+/** Algo que se dijo de un animal ("Ya camina solito"). Se ve en su ficha. */
+export interface Nota {
+  id: string
+  animalId: string
+  texto: string
+  fechaHora: string
+  quien: string
+}
+
 export interface ConfigComida {
   kgPorBulto: Record<Especie, number>
   consumoDiarioKg: Record<Especie, number>
@@ -142,6 +151,7 @@ export interface DatosAlbergue {
   cajaInicial: { fecha: string; monto: number }
   clinicas: Clinica[]
   porConfirmar: PorConfirmar[]
+  notas: Nota[]
   configComida: ConfigComida
   /** Total histórico de adopciones (para el contador de vidas) */
   vidasCambiadas: number

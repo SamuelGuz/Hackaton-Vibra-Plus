@@ -2,7 +2,7 @@
 // y devuelven los datos nuevos más el id del registro (para poder deshacerlo).
 // Lo que toca una persona nace confirmado (PLAN_INTEGRADO §3.3).
 
-import type { DatosAlbergue, Especie, Movimiento } from '../data/tipos'
+import type { DatosAlbergue, Especie, EstadoAnimal, Movimiento, Propuesta } from '../data/tipos'
 import { momentoLocal } from './formato'
 
 export interface Resultado {
@@ -97,4 +97,53 @@ export function confirmarDosisReportada(
         : p,
     ),
   }
+}
+
+/**
+ * Guarda lo que la IA entendió de un audio o una foto, tal como quedó después de revisarlo.
+ * Si la persona quitó o cambió algo, queda marcado como "corregido".
+ */
+export function confirmarPorConfirmar(datos: DatosAlbergue, id: string, propuestas: Propuesta[]): DatosAlbergue {
+  const item = datos.porConfirmar.find((p) => p.id === id)
+  if (!item) return datos
+  const { fechaHora, quien } = item
+  let d = datos
+  for (const p of propuestas) {
+    const nuevoId = crypto.randomUUID()
+    if (p.tipo === 'dosis') {
+      const registro = { id: nuevoId, tratamientoId: p.tratamientoId, hora: p.hora, fechaHora, quien, origen: 'bot' as const }
+      d = { ...d, dosisDadas: [...d.dosisDadas, registro] }
+    } else if (p.tipo === 'inventario') {
+      const registro = { id: nuevoId, fechaHora, tipo: p.especie, cambio: p.cambio, quien, origen: 'bot' as const }
+      d = { ...d, inventario: [...d.inventario, registro] }
+    } else if (p.tipo === 'nota') {
+      d = { ...d, notas: [...d.notas, { id: nuevoId, animalId: p.animalId, texto: p.texto, fechaHora, quien }] }
+    } else if (p.tipo === 'movimiento') {
+      const registro: Movimiento = { ...p.movimiento, id: nuevoId, fechaHora, quien }
+      d = {
+        ...d,
+        movimientos: [...d.movimientos, registro],
+        clinicas: d.clinicas.map((c) =>
+          registro.abonoDeuda && c.id === registro.clinicaId ? { ...c, deuda: Math.max(0, c.deuda - registro.monto) } : c,
+        ),
+      }
+    } else {
+      // Factura a crédito: no sale de caja, sube la deuda
+      d = { ...d, clinicas: d.clinicas.map((c) => (c.id === p.clinicaId ? { ...c, deuda: c.deuda + p.monto } : c)) }
+    }
+  }
+  const igual = JSON.stringify(propuestas) === JSON.stringify(item.propuestas)
+  const estado = igual ? ('confirmado' as const) : ('corregido' as const)
+  return { ...d, porConfirmar: d.porConfirmar.map((p) => (p.id === id ? { ...p, estado } : p)) }
+}
+
+export function descartarPorConfirmar(datos: DatosAlbergue, id: string): DatosAlbergue {
+  return {
+    ...datos,
+    porConfirmar: datos.porConfirmar.map((p) => (p.id === id ? { ...p, estado: 'descartado' as const } : p)),
+  }
+}
+
+export function cambiarEstado(datos: DatosAlbergue, animalId: string, estado: EstadoAnimal): DatosAlbergue {
+  return { ...datos, animales: datos.animales.map((a) => (a.id === animalId ? { ...a, estado } : a)) }
 }

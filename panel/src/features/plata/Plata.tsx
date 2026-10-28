@@ -6,16 +6,10 @@ import { Termometro } from '../../components/Termometro'
 import { useDatos } from '../../data/DatosProvider'
 import type { Movimiento } from '../../data/tipos'
 import { deudaTotal, plataEnCaja } from '../../lib/calculos'
-import { horaBonita, pesos } from '../../lib/formato'
+import { cuandoFue, pesos } from '../../lib/formato'
 import { nombreCategoria } from './categorias'
 import { RegistrarMovimiento } from './RegistrarMovimiento'
 import styles from './Plata.module.css'
-
-function cuando(fechaHora: string): string {
-  const [fecha, hora] = fechaHora.split('T')
-  const dia = new Date(`${fecha}T00:00`).toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric' })
-  return `${dia} · ${horaBonita(hora)}`
-}
 
 export function Plata() {
   const { datos } = useDatos()
@@ -80,7 +74,7 @@ export function Plata() {
                 {m.tipo === 'gasto' ? '−' : '+'}
                 {pesos(m.monto)}
               </span>
-              <span className={styles.cuando}>{cuando(m.fechaHora)}</span>
+              <span className={styles.cuando}>{cuandoFue(m.fechaHora)}</span>
             </li>
           ))}
         </ul>

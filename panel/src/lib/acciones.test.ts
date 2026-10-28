@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { crearDatosDemo } from '../data/demo'
-import { confirmarDosisReportada, darDosis, deshacer, moverBultos, registrarMovimiento } from './acciones'
+import {
+  cambiarEstado,
+  confirmarDosisReportada,
+  confirmarPorConfirmar,
+  darDosis,
+  descartarPorConfirmar,
+  deshacer,
+  moverBultos,
+  registrarMovimiento,
+} from './acciones'
 import { bultosEnBodega, dosisDeHoy, plataEnCaja } from './calculos'
 
 const AHORA = new Date(2026, 9, 27, 9, 30)
@@ -83,5 +92,54 @@ describe('registrarMovimiento', () => {
     expect(plataEnCaja(datos)).toBe(plataEnCaja(antes) - 600_000)
     expect(datos.clinicas.find((c) => c.id === 'cl-24h')!.deuda).toBe(2_000_000)
     expect(datos.clinicas.find((c) => c.id === 'cl-general')!.deuda).toBe(1_550_000)
+  })
+})
+
+describe('bandeja Por confirmar', () => {
+  it('confirmar el audio de Don Luis guarda la dosis, la nota y el bulto', () => {
+    const antes = crearDatosDemo(AHORA)
+    const item = antes.porConfirmar.find((p) => p.id === 'c-1')!
+    const datos = confirmarPorConfirmar(antes, 'c-1', item.propuestas)
+    expect(datos.porConfirmar.find((p) => p.id === 'c-1')!.estado).toBe('confirmado')
+    expect(dosisDeHoy(datos, AHORA).find((d) => d.tratamiento.id === 't-1' && d.hora === '08:00')!.estado).toBe('dada')
+    expect(bultosEnBodega(datos, 'perro')).toBe(bultosEnBodega(antes, 'perro') - 1)
+    expect(datos.notas.at(-1)).toMatchObject({ animalId: 'perro-1', texto: 'Ya camina solito.', quien: 'p-luis' })
+  })
+
+  it('confirmar una captura de Nequi suma a la caja', () => {
+    const antes = crearDatosDemo(AHORA)
+    const item = antes.porConfirmar.find((p) => p.id === 'c-2')!
+    expect(plataEnCaja(confirmarPorConfirmar(antes, 'c-2', item.propuestas))).toBe(plataEnCaja(antes) + 150_000)
+  })
+
+  it('confirmar una factura a crédito sube la deuda con la clínica, no toca la caja', () => {
+    const antes = crearDatosDemo(AHORA)
+    const item = antes.porConfirmar.find((p) => p.id === 'c-3')!
+    const datos = confirmarPorConfirmar(antes, 'c-3', item.propuestas)
+    expect(datos.clinicas.find((c) => c.id === 'cl-24h')!.deuda).toBe(2_920_000)
+    expect(plataEnCaja(datos)).toBe(plataEnCaja(antes))
+  })
+
+  it('si se corrige, se guarda lo corregido y queda marcado como corregido', () => {
+    const antes = crearDatosDemo(AHORA)
+    const item = antes.porConfirmar.find((p) => p.id === 'c-1')!
+    const soloBulto = item.propuestas.filter((p) => p.tipo === 'inventario')
+    const datos = confirmarPorConfirmar(antes, 'c-1', soloBulto)
+    expect(datos.porConfirmar.find((p) => p.id === 'c-1')!.estado).toBe('corregido')
+    expect(dosisDeHoy(datos, AHORA).find((d) => d.tratamiento.id === 't-1' && d.hora === '08:00')!.estado).not.toBe('dada')
+  })
+
+  it('descartar no guarda nada', () => {
+    const antes = crearDatosDemo(AHORA)
+    const datos = descartarPorConfirmar(antes, 'c-2')
+    expect(datos.porConfirmar.find((p) => p.id === 'c-2')!.estado).toBe('descartado')
+    expect(plataEnCaja(datos)).toBe(plataEnCaja(antes))
+  })
+})
+
+describe('cambiarEstado', () => {
+  it('cambia el estado del animal', () => {
+    const datos = cambiarEstado(crearDatosDemo(AHORA), 'perro-9', 'adoptable')
+    expect(datos.animales.find((a) => a.id === 'perro-9')!.estado).toBe('adoptable')
   })
 })

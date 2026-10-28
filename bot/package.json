@@ -10,6 +10,7 @@
     "build": "tsc -p tsconfig.build.json",
     "start": "node --env-file=.env dist/src/index.js",
     "semilla": "tsx --env-file=.env scripts/semilla.ts",
+    "medicinas:excel": "tsx scripts/medicinas-excel.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "enlace": "tsx --env-file=.env scripts/enlace.ts"
@@ -19,12 +20,15 @@
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",
     "@google/genai": "^2.31.0",
     "@hono/node-server": "^2.1.5",
+    "exceljs": "^4.4.0",
     "hono": "^4.13.14",
+    "nodemailer": "^7.0.13",
     "pg": "^8.23.1",
     "puppeteer-core": "^25.16.0"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
+    "@types/nodemailer": "^7.0.12",
     "@types/pg": "^8.23.1",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",

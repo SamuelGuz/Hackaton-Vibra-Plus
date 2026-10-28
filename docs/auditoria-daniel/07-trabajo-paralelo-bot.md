@@ -1,0 +1,75 @@
+# Propuesta para trabajar en paralelo en `bot/`
+
+**Propósito:** permitir que Samuel y Daniel avancen al mismo tiempo en el backend, con una propuesta de checkpoint/push revisable y una ruta de integración con conflictos acotados. Es un diagnóstico estático del checkout `huellitas-monoga-master`; no se hizo checkout, branch, stash, reset, commit, fetch, merge, push ni cambio de código.
+
+## Diagnóstico de este checkout
+
+- La rama activa es `monoga-master`, en `0e02721`; las referencias locales `master`, `origin/master` y `origin/monoga-master` también señalan ese commit. La rama activa muestra upstream `origin/monoga-master`. Estas son referencias guardadas localmente: **no se actualizaron ni se comprobó si el servidor remoto tiene commits nuevos**, porque no se hizo `fetch`.
+- El árbol está muy sucio: hay archivos ya staged, cambios solo en working tree, archivos `AM` con una versión staged y otra posterior sin stage, y carpetas/archivos untracked. En particular, `bot/src/app.ts` tiene cambios no staged; varias piezas de RAG tienen estado `AM`; las carpetas del agente y campañas tienen adiciones staged; existen adiciones untracked bajo RAG, medicinas y pruebas. El `git status --short` completo es la fuente local para decidir qué pertenece al checkpoint.
+- `bot/src/index.ts` permanece sin integración del contexto externo: llama `crearApp({...})` sin `externo` (`bot/src/index.ts:47-68`). En cambio, `app.ts` ya declara `ConfigExterno` opcional e instala rutas RAG/agente/campañas cuando lo recibe (`bot/src/app.ts:17-28,145-151`). Los mensajes desconocidos solo se envían al agente si ese contexto existe (`bot/src/app.ts:43-58`). Es un hotspot de integración, no una razón para dividir el servicio en dos servidores.
+- Los módulos ya tienen fronteras útiles: RAG expone `ServicioRag`, `Llm` y `ContextoExterno` en `bot/src/rag/tipos.ts:66-115`; agente expone `atenderInteresadoExterno` y `montarRutasAgente` (`bot/src/adopciones-agente/index.ts`); campañas expone `montarRutasCampanas` y sus tipos (`bot/src/campanas/index.ts`). Cada módulo tiene tests y fakes en `bot/test/rag/`, `bot/test/adopciones-agente/` y `bot/test/campanas/`.
+- El contrato común `ContextoExterno` ya incluye `rag`, `llm`, `whatsappPublico` y un proveedor opcional de respuestas (`bot/src/rag/tipos.ts:98-115`). Mantenerlo estable reduce los bloqueos. El agente recibe dicho contexto y dependencias por parámetro; sus pruebas montan las rutas en Hono con fakes (`bot/test/adopciones-agente/rutas.test.ts:1-20`).
+- En el repo raíz, `.gitignore` solo contiene `credentials.txt`; `bot/.gitignore` excluye `node_modules/`, `dist/`, `.env`, `archivos/` y `/datos/`. El checkout muestra `node_modules/` raíz untracked, además de scripts exploratorios `bot/test/rag/_dbg.ts` y `_explorar.ts`, datos auxiliares y módulos nuevos. Revisar cada ruta antes de incluirla; no usar `git add .`.
+- Hay una dependencia despareja entre index y working tree: la versión **staged** de `bot/src/campanas/enviar.ts` importa `nodemailer`, pero `git diff --cached -- bot/package.json` no contiene esa dependencia. La versión **unstaged** de `bot/package.json` añade `nodemailer` y `@types/nodemailer` (también `exceljs` y el script de medicinas); `bot/package-lock.json` tiene cambios solo unstaged. Un commit solo del código staged de campañas podría no instalar en un clon limpio el paquete que importa. No significa que el código deba descartarse: antes del checkpoint, decidir qué módulos entran y stagear juntos código, manifiesto y lockfile compatibles.
+
+## Reparto recomendado
+
+Las ramas y nombres siguientes son sugerencias; no se crearon ni se cambió de rama. Samuel toma `master` como base de trabajo; Daniel ya está en `monoga-master` y debe conservar esa rama para revisar/guardar el checkpoint actual. La rama de integración propuesta para PRs es `master`, sujeto a que el equipo confirme la política del repo.
+
+| Responsable | Rama personal sugerida | Puede avanzar sin esperar en | Evitar editar sin coordinar |
+|---|---|---|---|
+| Daniel | Mantener `monoga-master` para el checkpoint actual. Después, una rama de tarea desde la base acordada es opcional. | Todo el frente externo: `bot/src/rag/**`, `bot/src/adopciones-agente/**`, `bot/src/campanas/**`, `bot/src/medicinas/**` si corresponde a su trabajo actual y los tests de esos módulos; además `panel/src/features/adoptar/**` y `panel/src/features/adopciones/**`. | `bot/src/app.ts`, `bot/src/index.ts`, tipos/contratos compartidos, `bot/package.json` y lockfile: coordinarlos como puntos de integración, sin cambiar automáticamente de rama. |
+| Samuel | `samuel/<tarea>` sugerida desde `master` para cambios aislados, si el equipo quiere PR por tarea. Puede seguir trabajando desde su copia/base actual `master`; no crear rama en este checkout sucio. | Bot interno: `bot/src/conversacion/**`, `bot/src/wa/**`, `bot/src/api/**`, `bot/src/datos/**`, sus tests, y panel operativo. | `bot/src/app.ts`, `bot/src/index.ts`, auth/permisos y cron/scheduler compartidos; coordinar integración y contratos con Daniel. No mezclar cambios remotos en un checkout sucio. |
+| Integración compartida | Dueño temporal a acordar entre Samuel y Daniel; no se necesita tercer servicio ni tercera persona. | `bot/src/app.ts`/`bot/src/index.ts`, interfaces de montaje, autenticación/permisos y scheduler/cron, según los módulos que se integren. | Evitar que ambos editen simultáneamente estos hotspots o lockfiles; acordar interfaz/propietario por PR o entrega pequeña. |
+
+Samuel puede avanzar desde su copia existente basada en `master` mientras Daniel continúa en `monoga-master`; **no hace falta esperar a guardar este checkpoint para trabajar en copias separadas**. El checkpoint sí debe revisarse antes de integrar/publicar el estado actual. Una rama nueva en el mismo checkout conserva los cambios staged/unstaged del working tree cuando Git puede cambiar de rama, pero esos cambios siguen compartidos en esa carpeta y no quedan guardados ni aislados por rama. Un worktree nuevo se crea desde un commit y no copia los cambios sucios de este checkout. No compartir la misma carpeta `bot/` en dos sesiones escritoras al mismo tiempo.
+
+### Aislamiento al ejecutar el mismo bot
+
+- Cada clon/checkout necesita su propio `.env` local, no versionado, con configuración de desarrollo; no copiar secretos a commits, logs o fixtures. Revisar que el `.env` esté excluido por `bot/.gitignore` antes de stagear.
+- En la misma máquina, usar puertos distintos (por ejemplo `8787` y `8788`) para dos instancias. Cada persona debe usar una base de desarrollo/test separada; no ejecutar seeds de prueba contra la base de la otra persona ni contra producción.
+- WhatsApp comparte la configuración del número y webhook. Solo una instancia debe recibir el webhook real de ese número a la vez; coordinar quién prueba Meta o usar fakes/locales sin red para que las pruebas de una persona no compitan con el servidor de la otra.
+- Mantener un solo servicio modular `bot/`. No crear un segundo servidor/microservicio para separar módulos: aislamiento de trabajo se logra con checkout, ramas, contratos y configuraciones locales.
+
+## Punto mínimo de integración
+
+1. Mantener una sola aplicación Hono y una sola composición en `bot/src/index.ts`. Cuando se habilite el frente externo, el punto mínimo es construir RAG/correo/contexto allí y pasar `externo` a `crearApp`; `app.ts` ya monta las rutas públicas y deriva allí mensajes entrantes de números desconocidos cuando `cfg.externo` está definido (`bot/src/index.ts:47-68`; `bot/src/app.ts:43-58,145-151`).
+2. Acordar las interfaces que cruzan los módulos: `ContextoExterno` para el frente de Daniel (`rag`, `llm`, `whatsappPublico`, `respuestas?`), contratos internos para `conversacion`/WhatsApp/API/Repo de Samuel, y el montaje en Hono. Daniel trabaja el frente externo y Samuel el operativo sin cambiarse el dominio del otro.
+3. Asignar temporalmente una sola persona a `bot/src/app.ts` y `bot/src/index.ts` para enlazar los módulos de ambos: incorporar rutas/agente externo manteniendo flujos internos/WhatsApp e iniciar en un solo servidor. Reservar auth/permisos y scheduler como trabajo compartido con dueño por PR. Evitar dos servidores o refactor masivo de `app.ts` antes de integrar.
+4. Tratar `bot/src/rag/tipos.ts`, tipos/repositorios compartidos y `package*.json` como archivos de coordinación. Si un cambio de contrato es necesario, el PR debe describir campo/función, consumidores, valor predeterminado y compatibilidad; acordarlo primero y luego actualizar los módulos consumidores.
+5. Añadir una prueba de composición pequeña con fakes que compruebe que `crearApp` recibe el contexto externo, monta sus rutas y deriva el WhatsApp desconocido al agente, sin romper rutas internas; los tests del Repo/API y panel pueden usar fakes o memoria. Los módulos ya prueban rutas aisladas; el riesgo abierto es la unión con el arranque real.
+
+## Checkpoint, stage y push seguros
+
+Este checkout tiene trabajo de más de un frente y no se puede decidir por nombre de carpeta que todo staged esté listo para publicar. Antes de crear commits, quien coordine debe revisar el estado y acordar exactamente qué cambios pertenecen al checkpoint. En especial, para cada `AM`, comparar la versión staged con la versión actual del archivo; un `git add <ruta>` reemplaza en el index la versión previamente staged por la del working tree.
+
+Comandos sugeridos para **revisión por la persona que vaya a hacer el push**, no ejecutados en esta auditoría:
+
+```powershell
+git status --short
+git branch -vv
+git remote
+git diff --cached --stat
+git diff --stat
+git diff --cached -- bot/src/app.ts bot/src/rag/tipos.ts bot/src/rag/index.ts bot/src/adopciones-agente/index.ts
+git diff -- bot/src/app.ts bot/src/rag/tipos.ts bot/src/rag/index.ts bot/src/adopciones-agente/index.ts
+```
+
+Antes de publicar, verificar localmente que `origin` sea el repositorio esperado y que la URL no contenga usuario, contraseña ni token embebido; no pegar la URL autenticada en chat, issue o log. Revisar que la rama tenga el upstream esperado (`git branch -vv`) y consultar la política del equipo sobre publicar en `monoga-master`. Si el checkpoint incluye `bot/src/campanas/enviar.ts`, revisar que el stage incluya la dependencia usada por ese código junto con `bot/package.json` y `bot/package-lock.json`; si incluye `bot/src/medicinas/**`, revisar de igual modo `exceljs` y el script asociado. Un `npm ci` limpio debe poder instalar exactamente las dependencias del commit. Stagear explícitamente los paths elegidos y revisar de nuevo `git diff --cached` antes del commit. No agregar `node_modules`, `.env`, `credentials.txt`, archivos de datos locales, `_dbg.ts`, `_explorar.ts` ni fixtures que incluyan información real. No usar `git add .`, `git add -A` a ciegas ni `push --force`.
+
+Para el checkout actual, hay cambios staged y unstaged simultáneos: hacer push no envía archivos sin commit. El protocolo seguro es revisar el contenido staged/unstaged, acordar el conjunto del checkpoint, stagear solo las rutas elegidas, revisar el diff exacto, hacer el commit acordado y luego un push normal de la rama/upstream confirmado. Los cambios no incluidos siguen locales. No hacer commit automático de todo el árbol para “despejar” la carpeta.
+
+Solo después del commit y de comprobar el upstream y destino, la persona responsable puede publicar la rama que ya existe con `git push origin monoga-master`. Es un push normal: si el remoto avanzó, debe detenerse ante el rechazo. Después del checkpoint y con autorización, comprobar el remoto con `git fetch origin` y revisar qué cambió antes de integrar; no usar `--force` ni reemplazar historial remoto.
+
+## Protocolo de integración de Samuel y Daniel
+
+1. **Acordar base y dueño de hotspots.** Propuesta de integración: `master`, que Samuel usa como base. Daniel conserva `monoga-master` para el checkpoint actual; después de publicarlo, el equipo puede revisarlo y llevarlo a `master` por PR si corresponde. Designar quién tendrá `app.ts`/`index.ts` durante la integración. No asumir que las refs remotas locales están al día; la persona autorizada hará `fetch` solo después del checkpoint y revisará el log/diff remoto antes de integrar. Con árbol limpio, puede comparar `master...origin/master`; no hacer `pull` hasta entender si hay commits remotos y acordar cómo integrarlos.
+2. **Checkpoint limpio y recuperable antes de integrar.** Samuel puede seguir avanzando ahora en su checkout actual de `master`; Daniel puede continuar en este checkout de `monoga-master`. No deben esperar el uno por el otro para desarrollar en copias separadas. Antes de integrar/publicar el estado de este checkout, revisar y guardar el conjunto acordado como commits acotados en `monoga-master`. Si se crea otra rama en este mismo checkout, los cambios sucios permanecen en el working tree cuando el cambio de rama es posible, pero no quedan guardados ni aislados por rama. Un worktree nuevo parte de un commit y no incluye estos cambios no confirmados.
+3. **PRs pequeños por responsable.** Daniel envía RAG, agente, campañas, medicinas asignadas y panel de adopción con sus pruebas. Samuel envía conversación, WhatsApp, API, Repo/datos y panel operativo. Los cambios de montaje, auth/permisos y cron se presentan aparte o con dueño compartido acordado. Describir qué funciona, configuración que requiere y límites de demo.
+4. **Merge normal en serie.** Revisar y unir primero el contrato compartido si cambió; luego los módulos por carpeta y finalmente el PR corto de integración `app.ts`/`index.ts`. Resolver conflicto con el dueño del archivo y preservar la intención de ambas ramas. Integrar hacia la base acordada con merge normal/PR; no reescribir la rama compartida con force-push.
+5. **Verificar la composición sin PostgreSQL destructivo.** Ejecutar typecheck y pruebas focalizadas del RAG/agente/campañas con fakes/repositorios en memoria; añadir o correr el smoke test de composición descrito arriba. No correr `test/postgres.test.ts` en la base de datos de trabajo; requiere un entorno de prueba desechable expresamente aislado si se decide probarlo. La suite citada previamente por el equipo tuvo 83 casos `expected fail`: ese conteo es el estado declarado como esperado por los tests, no evidencia de 83 bugs nuevos ni de que todo esté implementado; revisar cada caso/filtro por separado.
+6. **Sincronizar clones después de integrar.** Tras merge aprobado, cada persona actualiza su propia rama desde la base compartida siguiendo la política acordada y resuelve conflictos localmente. Evitar `pull` implícito en un working tree sucio; confirmar `git status` limpio, rama/upstream y avance antes de integrar cambios remotos.
+
+## Fuera de alcance de esta propuesta
+
+No se afirma que los commits actuales estén listos para publicar, que el remoto carezca de commits nuevos o que el front externo arranque en producción. No se revisaron secretos ni servicios conectados. La recomendación es organizativa y de integración; la seguridad del staging y la selección final del contenido del checkpoint quedan a cargo de quien vaya a publicarlo.

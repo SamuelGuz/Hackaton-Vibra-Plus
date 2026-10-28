@@ -4,14 +4,23 @@ import { cors } from 'hono/cors'
 import { armarEventos, type FilasEventos, type Rango } from './api/hoy.js'
 import { validarMiembro } from './api/equipo.js'
 import { validarCambioEstado, validarEvento } from './api/eventos.js'
+import { atenderInteresadoExterno, montarRutasAgente } from './adopciones-agente/index.js'
+import { montarRutasCampanas, type ConfigCorreo, type Correo } from './campanas/index.js'
 import { atender } from './conversacion/atender.js'
 import { fechaLocal } from './formato.js'
+import { montarRutasRag } from './rag/index.js'
+import type { ContextoExterno } from './rag/tipos.js'
 import { textos } from './textos.js'
 import type { Accion, Deps, Usuario } from './tipos.js'
 import { firmaValida, leerMensajes, type MensajeWa } from './wa/webhook.js'
 
+/** Frente externo (interesados en adoptar o apadrinar): RAG, agente emocional y campañas de correo */
+export type ConfigExterno = ContextoExterno & { correo: { config: ConfigCorreo; enviador: Correo | null } }
+
 export interface ConfigApp {
   deps: Deps
+  /** Sin esto, los números desconocidos reciben el aviso de siempre y no hay rutas públicas */
+  externo?: ConfigExterno
   usuarioPorSesion(token: string): Promise<Usuario | null>
   eventos(r: Rango): Promise<FilasEventos>
   leerArchivo(nombre: string): Promise<{ datos: Buffer; mime: string } | null>
@@ -42,6 +51,8 @@ export function crearApp(cfg: ConfigApp) {
     const usuario = await deps.repo.usuarioPorTelefono(m.de)
     if (!usuario) {
       await deps.repo.anotarSolicitud(m.de, m.nombre ?? null)
+      // Alguien de afuera (posible adoptante o padrino): lo atiende el agente emocional en vez del aviso de siempre
+      if (cfg.externo) return atenderInteresadoExterno(deps, m.de, m.entrada, cfg.externo)
       const ultimo = avisadosDesconocidos.get(m.de) ?? 0
       if (Date.now() - ultimo > HORAS_AVISO_DESCONOCIDO * 3_600_000) {
         avisadosDesconocidos.set(m.de, Date.now())
@@ -129,6 +140,14 @@ export function crearApp(cfg: ConfigApp) {
     if (!usuario) return c.json({ error: 'Falta iniciar sesión: pídele al bot el enlace del panel' }, 401)
     c.set('usuario', usuario)
     await next()
+  }
+
+  // ---------- API pública (sin sesión): va antes de exigirSesion y del CORS del panel ----------
+
+  if (cfg.externo) {
+    montarRutasRag(app, cfg.externo)
+    montarRutasAgente(app, deps, cfg.externo)
+    montarRutasCampanas(app, cfg.externo, cfg.externo.correo.config, cfg.externo.correo.enviador)
   }
 
   app.use(

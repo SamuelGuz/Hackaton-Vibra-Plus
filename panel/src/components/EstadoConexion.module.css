@@ -1,0 +1,17 @@
+.estado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  min-height: 40px;
+  padding: var(--e-1) var(--e-4) var(--e-1) var(--e-3);
+  border-radius: var(--radio-pildora);
+  background: var(--papel-hondo);
+  color: var(--lapiz);
+  font-size: var(--t-chico);
+  font-weight: 700;
+}
+
+.sinSenal {
+  background: var(--cinta);
+  color: var(--tinta);
+}

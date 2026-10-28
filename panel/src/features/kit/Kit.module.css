@@ -176,3 +176,14 @@
   font-size: var(--t-chico);
   text-align: center;
 }
+
+.termometros {
+  display: grid;
+  gap: var(--e-6);
+}
+
+.senales {
+  display: grid;
+  justify-items: start;
+  gap: var(--e-3);
+}

@@ -1,16 +1,21 @@
 // Página interna del equipo para revisar el sistema visual (no la ve el albergue).
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { AvisoDeshacer } from '../../components/AvisoDeshacer'
 import { Boton } from '../../components/Boton'
 import { BotonSol } from '../../components/BotonSol'
 import { Cinta } from '../../components/Cinta'
 import { Costal } from '../../components/Costal'
+import { EstadoConexion } from '../../components/EstadoConexion'
 import { FotoInstantanea } from '../../components/FotoInstantanea'
 import { Huella } from '../../components/Huella'
 import { Icono, NOMBRES_ICONOS } from '../../components/Icono'
 import { Inicial } from '../../components/Inicial'
 import { Nivel } from '../../components/Nivel'
+import { PasoAPaso } from '../../components/PasoAPaso'
 import { Sello } from '../../components/Sello'
+import { TecladoMonto } from '../../components/TecladoMonto'
+import { Termometro } from '../../components/Termometro'
 import { useDatos } from '../../data/DatosProvider'
 import { diasDeComida, NOMBRE_ESTADO, nivelComida } from '../../lib/calculos'
 import { pesos } from '../../lib/formato'
@@ -30,6 +35,8 @@ const COLORES = [
 export function Kit() {
   const { datos } = useDatos()
   const [sellos, setSellos] = useState(0)
+  const [monto, setMonto] = useState(0)
+  const [aviso, setAviso] = useState(false)
   const muestraAnimales = ['Mateo', 'Bruno', 'Luna'].map((n) => datos.animales.find((a) => a.nombre === n)!)
 
   return (
@@ -150,6 +157,37 @@ export function Kit() {
             return <Costal key={e} especie={e} dias={dias} nivel={nivelComida(datos, dias)} />
           })}
         </div>
+      </section>
+
+      <section className={styles.bloque}>
+        <h2>Termómetros de deuda</h2>
+        <div className={styles.termometros}>
+          {datos.clinicas.map((c) => (
+            <Termometro key={c.id} nombre={c.nombre} deuda={c.deuda} limite={c.limite} />
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.bloque}>
+        <h2>Paso a paso + teclado de montos</h2>
+        <PasoAPaso paso={2} total={4} pregunta="¿Cuánta plata salió?" alVolver={() => setMonto(0)}>
+          <TecladoMonto monto={monto} alCambiar={setMonto} />
+        </PasoAPaso>
+      </section>
+
+      <section className={styles.bloque}>
+        <h2>Señal y deshacer</h2>
+        <div className={styles.senales}>
+          <EstadoConexion enLinea pendientes={0} />
+          <EstadoConexion enLinea pendientes={3} />
+          <EstadoConexion enLinea={false} pendientes={1} />
+          <Boton icono="menos" variante="secundario" onClick={() => setAviso(true)}>
+            Probar el aviso de deshacer
+          </Boton>
+        </div>
+        {aviso && (
+          <AvisoDeshacer mensaje="Listo, quedó guardado" alDeshacer={() => setAviso(false)} alCerrar={() => setAviso(false)} />
+        )}
       </section>
 
       <section className={styles.bloque}>

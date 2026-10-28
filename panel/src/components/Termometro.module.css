@@ -1,0 +1,64 @@
+.termometro {
+  display: grid;
+  gap: var(--e-2);
+}
+
+.cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--e-3);
+}
+
+.nombre {
+  font-size: var(--t-texto);
+}
+
+.deuda :global(.numero) {
+  font-size: var(--t-subtitulo);
+}
+
+.barra {
+  position: relative;
+  height: 28px;
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-pildora);
+  background: var(--papel-claro);
+  overflow: visible;
+}
+
+.relleno {
+  height: 100%;
+  border-radius: var(--radio-pildora);
+  transition: width var(--normal) ease-out;
+}
+
+.bien {
+  background: var(--bien);
+}
+.ojo {
+  background: var(--ojo);
+}
+.urgente {
+  background: var(--urgente);
+}
+
+/* Raya roja del límite, como la que se pinta a mano en el termómetro de una campaña */
+.raya {
+  position: absolute;
+  top: -8px;
+  bottom: -8px;
+  width: 4px;
+  margin-left: -2px;
+  border-radius: 2px;
+  background: var(--urgente);
+}
+
+.mensaje {
+  font-weight: 700;
+}
+
+.limite {
+  font-size: var(--t-chico);
+  color: var(--lapiz);
+}

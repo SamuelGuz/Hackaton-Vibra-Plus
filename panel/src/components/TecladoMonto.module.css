@@ -1,0 +1,65 @@
+.teclado {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.pantalla {
+  display: block;
+  font-size: var(--t-numero);
+  line-height: 1;
+  text-align: right;
+  padding: var(--e-3) var(--e-2);
+  border-bottom: 3px solid var(--tinta);
+  overflow-wrap: anywhere;
+}
+
+.atajos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--e-2);
+}
+
+.atajo {
+  min-height: var(--toque-min);
+  border: 2px dashed var(--tinta);
+  border-radius: var(--radio-boton);
+  background: var(--cinta);
+  font-weight: 700;
+  font-size: var(--t-texto);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.teclas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--e-2);
+}
+
+.tecla {
+  min-height: var(--toque-grande);
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-boton);
+  background: var(--papel-claro);
+  box-shadow: var(--sombra-boton);
+  font-family: var(--letra-titulo);
+  font-size: var(--t-titulo);
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.tecla:active,
+.atajo:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.borrar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e-1);
+  font-family: var(--letra-texto);
+  font-size: var(--t-chico);
+}

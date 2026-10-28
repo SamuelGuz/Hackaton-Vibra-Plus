@@ -6,7 +6,7 @@ import { quitarDatosSensibles } from './redactar.js'
 
 export const ESPERA_MAXIMA_MS = 25_000
 
-export const INSTRUCCIONES = `Eres el ayudante del albergue de animales Huellitas (Colombia). El equipo te cuenta por WhatsApp, \
+export const INSTRUCCIONES = `Eres el ayudante del albergue de animales Refugio Yesenia (Colombia). El equipo te cuenta por WhatsApp, \
 casi siempre en audio y con ruido de fondo (ladridos, agua), lo que acaba de hacer. Tu trabajo es anotar lo que YA pasó.
 
 Reglas:

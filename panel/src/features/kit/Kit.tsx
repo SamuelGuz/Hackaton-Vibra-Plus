@@ -49,7 +49,7 @@ export function Kit() {
       </header>
 
       <h1 className={styles.titulo}>
-        <Huella tamano={44} /> Kit de Huellitas
+        <Huella tamano={44} /> Kit del Refugio Yesenia
       </h1>
       <p className={styles.bajada}>La libreta que no se moja. Revisar con la lista anti-IA (plan, sección 9).</p>
 

@@ -90,7 +90,7 @@ describe('OpenRouter', () => {
     expect(pedidos[0].url).toBe('https://openrouter.ai/api/v1/chat/completions')
     expect(new Headers(pedidos[0].init.headers).get('Authorization')).toBe('Bearer llave')
     expect(cuerpo.model).toBe('google/gemini-2.5-flash')
-    expect(cuerpo.messages[0]).toMatchObject({ role: 'system', content: expect.stringContaining('Huellitas') })
+    expect(cuerpo.messages[0]).toMatchObject({ role: 'system', content: expect.stringContaining('Refugio Yesenia') })
     expect(cuerpo.messages[1].content.at(-1)).toEqual({
       type: 'input_audio',
       input_audio: { data: Buffer.from('audio').toString('base64'), format: 'ogg' },

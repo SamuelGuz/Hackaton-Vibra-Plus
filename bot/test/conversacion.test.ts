@@ -22,7 +22,7 @@ describe('primer contacto y menú', () => {
   it('la primera vez da la bienvenida y muestra el menú', async () => {
     t.repo.estados.clear()
     await decir(texto('hola'))
-    expect(t.wa.enviados[0].salida.texto).toContain('Soy el ayudante de Huellitas')
+    expect(t.wa.enviados[0].salida.texto).toContain('Soy el ayudante del Refugio Yesenia')
     expect(t.wa.ultimo().tipo).toBe('lista')
     expect(t.wa.opciones()).toContain('m:med')
   })

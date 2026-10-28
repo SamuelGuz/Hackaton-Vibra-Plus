@@ -81,7 +81,7 @@ function FormularioMiembro({ telefono, nombreInicial = '', ocupado, alAgregar, c
         </label>
       )}
       <fieldset className={styles.roles}>
-        <legend>¿Qué hace en Huellitas?</legend>
+        <legend>¿Qué hace en el refugio?</legend>
         {ROLES.map((r) => (
           <button key={r.id} type="button" className={styles.rol} aria-pressed={rol === r.id} onClick={() => setRol(r.id)}>
             {r.texto}

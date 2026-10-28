@@ -19,7 +19,7 @@ export function QuienEres() {
       <header className={styles.cabecera}>
         <div className={styles.marca}>
           <Huella tamano={34} />
-          <span>Huellitas</span>
+          <span>Refugio Yesenia</span>
         </div>
         <BotonSol />
       </header>

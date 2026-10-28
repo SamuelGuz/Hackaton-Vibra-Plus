@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon-180x180.png'],
       manifest: {
-        name: 'Huellitas',
-        short_name: 'Huellitas',
-        description: 'La libreta del albergue que no se moja',
+        name: 'Refugio Yesenia',
+        short_name: 'Yesenia',
+        description: 'La libreta del Refugio Yesenia que no se moja',
         lang: 'es-CO',
         display: 'standalone',
         orientation: 'portrait',

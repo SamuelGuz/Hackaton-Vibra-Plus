@@ -7,7 +7,7 @@ export const AUDIO = 'O mándame un audio 🎤 contándome, como si le hablaras 
 
 export const textos = {
   bienvenida: (nombre: string) =>
-    `Hola, ${nombre} 👋 Soy el ayudante de Huellitas.\n\n` +
+    `Hola, ${nombre} 👋 Soy el ayudante del Refugio Yesenia.\n\n` +
     'Aquí me cuentas lo que haces con los animalitos y yo lo paso al panel. ' +
     'Casi todo es tocar botones. Si te pierdes, escribe *menú*.',
 
@@ -22,11 +22,11 @@ export const textos = {
     'Escribe *menú* cuando quieras volver al inicio.',
 
   desconocido:
-    'Hola 👋 Todavía no te tengo en la lista del equipo de Huellitas.\n\n' +
+    'Hola 👋 Todavía no te tengo en la lista del equipo del Refugio Yesenia.\n\n' +
     'Ya le avisé a la administradora: cuando te agregue en el panel, te escribo por aquí.',
 
   agregadoAlEquipo: (nombre: string) =>
-    `¡Hola, ${nombre}! 👋 Ya estás en el equipo de Huellitas.\n\nEscríbeme *hola* para empezar.`,
+    `¡Hola, ${nombre}! 👋 Ya estás en el equipo del Refugio Yesenia.\n\nEscríbeme *hola* para empezar.`,
 
   noEntendi: 'No te entendí bien 🙈 ¿Qué hiciste? Elige en la lista o cuéntamelo otra vez.',
   soloAudiosFotosTexto: 'Por ahora entiendo audios, fotos y mensajes escritos 🙂',

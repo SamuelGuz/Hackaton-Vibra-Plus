@@ -62,4 +62,4 @@ const app = crearApp({
 })
 
 const puerto = Number(process.env.PUERTO || 8787)
-serve({ fetch: app.fetch, port: puerto }, () => console.log(`Bot de Huellitas escuchando en http://localhost:${puerto}`))
+serve({ fetch: app.fetch, port: puerto }, () => console.log(`Bot del Refugio Yesenia escuchando en http://localhost:${puerto}`))

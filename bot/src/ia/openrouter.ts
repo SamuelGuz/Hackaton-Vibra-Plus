@@ -59,7 +59,7 @@ export function crearIaOpenRouter(c: { apiKey: string; modelo: string; fetch?: t
     async entender(e: EntradaIa) {
       const r = await pedir(URL, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${c.apiKey}`, 'Content-Type': 'application/json', 'X-Title': 'Huellitas' },
+        headers: { Authorization: `Bearer ${c.apiKey}`, 'Content-Type': 'application/json', 'X-Title': 'Refugio Yesenia' },
         body: JSON.stringify({
           model: c.modelo,
           messages: [

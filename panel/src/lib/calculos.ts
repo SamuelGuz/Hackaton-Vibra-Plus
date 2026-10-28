@@ -112,7 +112,7 @@ export function dosisDeHoy(datos: DatosAlbergue, ahora: Date = new Date()): Dosi
 
 // ---------- Animales ----------
 
-/** Estados que cuentan como "está en el albergue o a cargo de Huellitas" */
+/** Estados que cuentan como "está en el albergue o a cargo del Refugio Yesenia" */
 export const ESTADOS_A_CARGO: EstadoAnimal[] = ['cuarentena', 'tratamiento', 'adoptable', 'hogar_temporal']
 
 export function conteoPorEstado(datos: DatosAlbergue): Record<EstadoAnimal, number> {

@@ -1,7 +1,6 @@
 // Interfaz mínima de SQL (D5): PgRepo y PgKv hablan solo con ella. Dos adaptadores:
 // pg (producción, DATABASE_URL) y PGlite (pruebas y desarrollo local sin Postgres).
 import type { PGlite } from '@electric-sql/pglite'
-import type { Pool } from 'pg'
 
 /** Una fila tal como la entrega el driver: sin tipos todavía. Se estrecha con los lectores de más abajo. */
 export type Fila = Record<string, unknown>
@@ -9,6 +8,8 @@ export type Fila = Record<string, unknown>
 export interface Sql {
   /** Corre una sentencia con parámetros `$1, $2…`. Las filas ya son objetos; los valores se validan con los lectores. */
   query<T = Fila>(texto: string, params?: unknown[]): Promise<{ rows: T[] }>
+  /** Varias sentencias que se confirman juntas, o se deshacen todas si una falla. */
+  transaccion<T>(fn: (tx: Sql) => Promise<T>): Promise<T>
   cerrar(): Promise<void>
 }
 
@@ -23,26 +24,72 @@ function filasValidas<T>(rows: unknown[]): T[] {
   })
 }
 
+type ConsultaPg = {
+  query(texto: string, params?: unknown[]): Promise<{ rows: unknown[] }>
+  release?(): void
+}
+
 /** Adaptador para `pg` (producción). Acepta un `Pool` real o cualquier cosa con `query` y `end`. */
-export function sqlDesdePg(pool: Pick<Pool, 'end'> & { query(texto: string, params?: unknown[]): Promise<{ rows: unknown[] }> }): Sql {
-  return {
+export function sqlDesdePg(pool: ConsultaPg & { end(): Promise<void>; connect?(): Promise<ConsultaPg> }): Sql {
+  const envolver = (q: ConsultaPg, cerrar: () => Promise<void>, transaccion: Sql['transaccion']): Sql => ({
     async query<T = Fila>(texto: string, params?: unknown[]) {
-      const res = await pool.query(texto, params)
+      const res = await q.query(texto, params)
       return { rows: filasValidas<T>(res.rows) }
     },
-    cerrar: () => pool.end(),
-  }
+    transaccion,
+    cerrar,
+  })
+
+  const sql: Sql = envolver(pool, () => pool.end(), async (fn) => {
+    if (!pool.connect) {
+      await pool.query('BEGIN')
+      try {
+        const resultado = await fn(sql)
+        await pool.query('COMMIT')
+        return resultado
+      } catch (error) {
+        await pool.query('ROLLBACK')
+        throw error
+      }
+    }
+    const cliente = await pool.connect()
+    const tx = envolver(cliente, async () => {}, (interior) => interior(tx))
+    try {
+      await cliente.query('BEGIN')
+      const resultado = await fn(tx)
+      await cliente.query('COMMIT')
+      return resultado
+    } catch (error) {
+      await cliente.query('ROLLBACK')
+      throw error
+    } finally {
+      cliente.release?.()
+    }
+  })
+  return sql
 }
 
 /** Adaptador para PGlite (pruebas y desarrollo local). */
 export function sqlDesdePglite(db: PGlite): Sql {
-  return {
+  const sql: Sql = {
     async query<T = Fila>(texto: string, params?: unknown[]) {
       const res = await db.query(texto, params)
       return { rows: filasValidas<T>(res.rows) }
     },
+    async transaccion(fn) {
+      await db.query('BEGIN')
+      try {
+        const resultado = await fn(sql)
+        await db.query('COMMIT')
+        return resultado
+      } catch (error) {
+        await db.query('ROLLBACK')
+        throw error
+      }
+    },
     cerrar: () => db.close(),
   }
+  return sql
 }
 
 // ── Lectores: estrechan los valores de una fila en vez de castearlos. Si la base trae otra cosa, lanzan. ──

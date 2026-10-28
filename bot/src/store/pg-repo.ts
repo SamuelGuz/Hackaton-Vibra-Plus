@@ -366,7 +366,7 @@ SELECT id FROM nuevo`
 const SQL_REGISTRO_SIN_COLA = `INSERT INTO registros (${COLUMNAS_REGISTRO}) VALUES (${VALORES_REGISTRO}) ON CONFLICT (id) DO NOTHING RETURNING id`
 
 /** Inserta un registro. Devuelve true si era nuevo; un id repetido se ignora. */
-async function insertarRegistro(sql: Sql, r: Registro, encolar: boolean): Promise<boolean> {
+export async function insertarRegistro(sql: Sql, r: Registro, encolar: boolean): Promise<boolean> {
   const params: unknown[] = [
     r.id,
     r.fechaHora,
@@ -387,6 +387,12 @@ async function insertarRegistro(sql: Sql, r: Registro, encolar: boolean): Promis
   if (encolar) params.push(json(r))
   const { rows } = await sql.query(encolar ? SQL_REGISTRO_CON_COLA : SQL_REGISTRO_SIN_COLA, params)
   return rows.length > 0
+}
+
+/** Todos los registros, en el orden en que llegaron. */
+export async function leerRegistros(sql: Sql): Promise<Registro[]> {
+  const { rows } = await sql.query(`${SELECT_REGISTRO} ORDER BY llegada`)
+  return rows.map(registroDe)
 }
 
 /** El tipo se comprobó al leer; el contenido lo escribió insertarRegistro a partir de un Registro ya tipado. */

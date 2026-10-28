@@ -174,6 +174,35 @@ CREATE TABLE IF NOT EXISTS kv (
 );
 CREATE INDEX IF NOT EXISTS kv_expira_en ON kv (expira_en);
 
+-- Mensajes de WhatsApp que llegan de golpe al volver la señal. El webhook solo inserta y responde.
+-- El trabajador los cierra cuando el registro ya está en la bitácora. Un id (wamid) repetido no crea otra fila.
+CREATE TABLE IF NOT EXISTS wa_entrantes (
+  id text PRIMARY KEY,
+  telefono text NOT NULL,
+  timestamp_wa bigint NOT NULL,
+  payload jsonb NOT NULL,
+  estado text NOT NULL CHECK (estado IN ('recibido', 'en_proceso', 'guardado', 'sin_ia')),
+  intentos integer NOT NULL DEFAULT 0,
+  proximo_en timestamptz NOT NULL DEFAULT now(),
+  bloqueo_hasta timestamptz,
+  error text,
+  recibido_en timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS wa_entrantes_telefono ON wa_entrantes (telefono, timestamp_wa);
+
+-- Respuestas que todavía no se pudieron enviar. Un 429 las deja aquí. El mensaje entrante ya está guardado.
+CREATE TABLE IF NOT EXISTS wa_salientes (
+  id text PRIMARY KEY,
+  telefono text NOT NULL,
+  cuerpo text NOT NULL,
+  botones jsonb,
+  estado text NOT NULL CHECK (estado IN ('pendiente', 'enviado')),
+  intentos integer NOT NULL DEFAULT 0,
+  proximo_en timestamptz NOT NULL DEFAULT now(),
+  entrante_id text
+);
+CREATE INDEX IF NOT EXISTS wa_salientes_pendientes ON wa_salientes (estado, proximo_en);
+
 -- Cola de copia a Google Sheets (outbox). Cada cambio de la bitácora deja una fila aquí en la misma sentencia
 -- que lo guarda. El cron de reintentos (bot/src/cron) la lee, escribe en Sheets y borra lo enviado.
 CREATE TABLE IF NOT EXISTS sheets_pendientes (

@@ -114,7 +114,11 @@ export function parsearEntrantes(json: unknown): InboundMessage[] {
   return salida
 }
 
-/** Marca el message.id y dice si ya estaba marcado (Meta reenvía el mismo webhook). TTL 2 días. */
+/**
+ * Marca el message.id y dice si ya estaba marcado (Meta reenvía el mismo webhook). TTL 2 días.
+ * El camino real no usa esto como “ya está hecho”: el buzón guarda el mensaje y solo lo cierra
+ * cuando el registro quedó en la base (`buzon.ts`).
+ */
 export async function yaProcesado(kv: Kv, messageId: string): Promise<boolean> {
   const esNuevo = await kv.ponerSiNoExiste(`wa:visto:${messageId}`, '1', TTL_PROCESADO_SEGUNDOS)
   return !esNuevo

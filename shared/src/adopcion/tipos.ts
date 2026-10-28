@@ -28,6 +28,8 @@ export interface Solicitud {
   /** "Toda la familia está de acuerdo" */
   familiaDeAcuerdo: boolean
   paraQuien: ParaQuien
+  /** Para quién dijo que es, con sus palabras ("su mamá"). Opcional: la razón del regalo lo cita si existe. */
+  destinatario?: string
   vivienda: Vivienda
   /** Tiene mallas o cerramientos en ventanas, balcones y patio */
   viviendaConMallas: boolean
@@ -82,5 +84,7 @@ export interface Seguimiento {
   fecha: string
   /** Cómo salió la llamada; null = pendiente. Amarillo y rojo exigen llamada humana. */
   resultado: Monton | null
+  /** true cuando el resultado fue amarillo o rojo: una persona tiene que llamar (regla del cliente). Opcional para no romper filas guardadas antes; ausente = false. */
+  llamadaHumana?: boolean
   nota: string
 }

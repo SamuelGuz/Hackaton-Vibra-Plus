@@ -17,6 +17,7 @@
     "@hono/node-server": "^2.1.5",
     "hono": "^4.13.14",
     "jsqr": "^1.4.0",
+    "nodemailer": "^7.0.13",
     "pg": "^8.23.1",
     "pngjs": "^7.0.0",
     "qrcode": "^1.5.4",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
+    "@types/nodemailer": "^7.0.12",
     "@types/pg": "^8.23.1",
     "@types/pngjs": "^6.0.5",
     "@types/qrcode": "^1.5.6",

@@ -143,3 +143,19 @@ describe('cambiarEstado', () => {
     expect(datos.animales.find((a) => a.id === 'perro-9')!.estado).toBe('adoptable')
   })
 })
+
+describe('ids sin conexión segura', () => {
+  it('funciona en el celular por http en la red local, donde no existe crypto.randomUUID', () => {
+    const original = crypto.randomUUID
+    Object.defineProperty(crypto, 'randomUUID', { value: undefined, configurable: true })
+    try {
+      const antes = crearDatosDemo(AHORA)
+      const a = moverBultos(antes, 'perro', -1, 'p-luis', AHORA)
+      const b = moverBultos(a.datos, 'perro', -1, 'p-luis', AHORA)
+      expect(a.id).toBeTruthy()
+      expect(b.id).not.toBe(a.id)
+    } finally {
+      Object.defineProperty(crypto, 'randomUUID', { value: original, configurable: true })
+    }
+  })
+})

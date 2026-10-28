@@ -5,6 +5,19 @@
 import type { DatosAlbergue, Especie, EstadoAnimal, Movimiento, Propuesta } from '../data/tipos'
 import { momentoLocal } from './formato'
 
+/**
+ * Id único generado en el celular. crypto.randomUUID solo existe con HTTPS o localhost;
+ * al probar por http en la red local se arma el mismo formato con getRandomValues.
+ */
+export function nuevoId(): string {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
+  const b = crypto.getRandomValues(new Uint8Array(16))
+  b[6] = (b[6] & 0x0f) | 0x40
+  b[8] = (b[8] & 0x3f) | 0x80
+  const h = Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`
+}
+
 export interface Resultado {
   datos: DatosAlbergue
   id: string
@@ -18,7 +31,7 @@ export function moverBultos(
   quien: string,
   ahora: Date = new Date(),
 ): Resultado {
-  const id = crypto.randomUUID()
+  const id = nuevoId()
   const registro = { id, fechaHora: momentoLocal(ahora), tipo: especie, cambio, quien, origen: 'panel' as const }
   return { id, datos: { ...datos, inventario: [...datos.inventario, registro] } }
 }
@@ -30,7 +43,7 @@ export function darDosis(
   quien: string,
   ahora: Date = new Date(),
 ): Resultado {
-  const id = crypto.randomUUID()
+  const id = nuevoId()
   const registro = { id, tratamientoId, hora, fechaHora: momentoLocal(ahora), quien, origen: 'panel' as const }
   return { id, datos: { ...datos, dosisDadas: [...datos.dosisDadas, registro] } }
 }
@@ -54,7 +67,7 @@ export function registrarMovimiento(
   quien: string,
   ahora: Date = new Date(),
 ): DatosAlbergue {
-  const registro: Movimiento = { ...movimiento, id: crypto.randomUUID(), fechaHora: momentoLocal(ahora), quien }
+  const registro: Movimiento = { ...movimiento, id: nuevoId(), fechaHora: momentoLocal(ahora), quien }
   const { abonoDeuda, clinicaId, monto } = movimiento
   return {
     ...datos,
@@ -81,7 +94,7 @@ export function confirmarDosisReportada(
     p.tipo === 'dosis' && p.tratamientoId === tratamientoId && p.hora === hora
   const quedan = item.propuestas.filter((p) => !esEsta(p))
   const registro = {
-    id: crypto.randomUUID(),
+    id: nuevoId(),
     tratamientoId,
     hora,
     fechaHora: item.fechaHora,
@@ -109,17 +122,17 @@ export function confirmarPorConfirmar(datos: DatosAlbergue, id: string, propuest
   const { fechaHora, quien } = item
   let d = datos
   for (const p of propuestas) {
-    const nuevoId = crypto.randomUUID()
+    const idNuevo = nuevoId()
     if (p.tipo === 'dosis') {
-      const registro = { id: nuevoId, tratamientoId: p.tratamientoId, hora: p.hora, fechaHora, quien, origen: 'bot' as const }
+      const registro = { id: idNuevo, tratamientoId: p.tratamientoId, hora: p.hora, fechaHora, quien, origen: 'bot' as const }
       d = { ...d, dosisDadas: [...d.dosisDadas, registro] }
     } else if (p.tipo === 'inventario') {
-      const registro = { id: nuevoId, fechaHora, tipo: p.especie, cambio: p.cambio, quien, origen: 'bot' as const }
+      const registro = { id: idNuevo, fechaHora, tipo: p.especie, cambio: p.cambio, quien, origen: 'bot' as const }
       d = { ...d, inventario: [...d.inventario, registro] }
     } else if (p.tipo === 'nota') {
-      d = { ...d, notas: [...d.notas, { id: nuevoId, animalId: p.animalId, texto: p.texto, fechaHora, quien }] }
+      d = { ...d, notas: [...d.notas, { id: idNuevo, animalId: p.animalId, texto: p.texto, fechaHora, quien }] }
     } else if (p.tipo === 'movimiento') {
-      const registro: Movimiento = { ...p.movimiento, id: nuevoId, fechaHora, quien }
+      const registro: Movimiento = { ...p.movimiento, id: idNuevo, fechaHora, quien }
       d = {
         ...d,
         movimientos: [...d.movimientos, registro],

@@ -112,6 +112,8 @@ export function crearDatosDemo(ahora: Date = new Date()): DatosAlbergue {
     { id: 'p-luis', nombre: 'Don Luis', cargo: 'Cuidador', rol: 'cuidador', color: '#2f6b3b', foto: null },
     { id: 'p-andres', nombre: 'Andrés', cargo: 'Bienestar animal', rol: 'bienestar', color: '#a8432c', foto: null },
     { id: 'p-carolina', nombre: 'Carolina', cargo: 'Administración', rol: 'admin', color: '#1f2a44', foto: null },
+    // Rol del panel de adopción (Daniel)
+    { id: 'p-marcela', nombre: 'Marcela', cargo: 'Adopciones', rol: 'adopciones', color: '#595449', foto: null },
   ]
 
   const tratamientos: Tratamiento[] = [
@@ -192,11 +194,12 @@ export function crearDatosDemo(ahora: Date = new Date()): DatosAlbergue {
       { id: 'cl-24h', nombre: 'Clínica Veterinaria 24 Horas', deuda: 2_600_000, limite: 3_000_000 },
     ],
     porConfirmar,
+    // Catálogo de placa viva: perro 25 kg y 0,375 kg/animal/día; gato 10 kg y 0,065 kg/animal/día
     configComida: {
-      kgPorBulto: { perro: 25, gato: 8 },
-      consumoDiarioKg: { perro: 17, gato: 1.65 },
-      diasAviso: 5,
-      diasUrgente: 3,
+      kgPorBulto: { perro: 25, gato: 10 },
+      consumoDiarioKg: { perro: 45 * 0.375, gato: 25 * 0.065 },
+      diasAviso: 6,
+      diasUrgente: 4,
     },
     vidasCambiadas: 214,
   }

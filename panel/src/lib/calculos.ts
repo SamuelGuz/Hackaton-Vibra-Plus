@@ -34,8 +34,8 @@ export function diasDeComida(datos: DatosAlbergue, especie: Especie): number {
 
 export function nivelComida(datos: DatosAlbergue, dias: number): Nivel {
   const { diasAviso, diasUrgente } = datos.configComida
-  if (dias < diasUrgente) return 'urgente'
-  if (dias < diasAviso) return 'ojo'
+  if (dias <= diasUrgente) return 'urgente'
+  if (dias <= diasAviso) return 'ojo'
   return 'bien'
 }
 
@@ -59,11 +59,11 @@ export function deudaTotal(datos: DatosAlbergue): number {
   return datos.clinicas.reduce((suma, c) => suma + c.deuda, 0)
 }
 
-/** Ojo desde el 80 % del límite; urgente desde el 95 % (ya casi no atienden). */
+/** Semáforo de placa viva: bien < 60 % del límite, ojo hasta 85 %, urgente > 85 %. */
 export function nivelClinica(clinica: Clinica): Nivel {
   const uso = clinica.deuda / clinica.limite
-  if (uso >= 0.95) return 'urgente'
-  if (uso >= 0.8) return 'ojo'
+  if (uso > 0.85) return 'urgente'
+  if (uso >= 0.6) return 'ojo'
   return 'bien'
 }
 

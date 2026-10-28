@@ -1,5 +1,6 @@
-// Modelo de datos del panel. Cada tipo corresponde a una pestaña de Google Sheets
-// (ver docs/PLAN_PANEL.md, sección 5). Los nombres de campo son los encabezados de la hoja.
+// Modelo de datos del panel (provisional).
+// El contrato final es src/domain/types.ts de placa viva (ver docs/PLAN_INTEGRADO.md, §3.2):
+// cuando exista, este archivo reexporta esos tipos y deja solo los tipos de vista del panel.
 
 export type Especie = 'perro' | 'gato'
 
@@ -12,7 +13,8 @@ export type EstadoAnimal =
   | 'fallecido'
   | 'devuelto'
 
-export type Rol = 'cuidador' | 'bienestar' | 'admin'
+/** Mismos roles que placa viva; el panel principal usa los 3 primeros y el de adopción, 'adopciones'. */
+export type Rol = 'cuidador' | 'bienestar' | 'admin' | 'adopciones' | 'comunicacion' | 'voluntario'
 
 export interface Persona {
   id: string
@@ -121,8 +123,9 @@ export type Propuesta =
 export interface ConfigComida {
   kgPorBulto: Record<Especie, number>
   consumoDiarioKg: Record<Especie, number>
-  /** Días mínimos antes de avisar. El pedido tarda 24–48 h en llegar. */
+  /** "Ojo" desde estos días o menos */
   diasAviso: number
+  /** "Urgente" desde estos días o menos. Igual a la alerta de WhatsApp de placa viva (≤ 4). */
   diasUrgente: number
 }
 

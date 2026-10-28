@@ -1,5 +1,12 @@
 # Plan de desarrollo — Panel Huellitas (React · PWA)
 
+> 🔗 **Este plan se unió con "Placa viva" en [PLAN_INTEGRADO.md](PLAN_INTEGRADO.md), que manda si algo se contradice.**
+> Cambios principales:
+> - El servidor ya no es Apps Script: es el Worker de placa viva, con rutas `/api/*`.
+> - Las alertas van por WhatsApp, no por Telegram.
+> - Cambian los umbrales de deuda y de comida.
+> - Samuel lleva el panel principal y Daniel el panel de adopción.
+
 > Documento de trabajo del equipo. Base: [Huellitas_Requerimientos_VibraPlus.md](Huellitas_Requerimientos_VibraPlus.md).
 > El panel **complementa** al bot de WhatsApp/Telegram: el bot captura (voz, foto), el panel **muestra, confirma y corrige**.
 

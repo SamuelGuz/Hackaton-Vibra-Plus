@@ -1,5 +1,9 @@
 # Huellitas — "Placa viva": diseño de la solución (reto Vibra+)
 
+> 🔗 **Unido con el panel React en [PLAN_INTEGRADO.md](../../PLAN_INTEGRADO.md).**
+> - Este documento sigue definiendo el servidor, WhatsApp, la IA y la ficha de la placa.
+> - El plan integrado agrega las rutas `/api/*` para los paneles: el principal (Samuel) y el de adopción (Daniel).
+
 Fecha: 2026-10-27 · Estado: borrador para aprobación del equipo
 Fuentes: doc "Huellitas Bot — Arquitectura y documento de solución", entrevista al cliente simulado (Gem Vibra_IA, 10 rondas), 4 investigaciones y un scrape de GitHub (ver Anexos).
 

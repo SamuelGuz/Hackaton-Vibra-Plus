@@ -59,12 +59,15 @@ describe('Hoy del cuidador', () => {
     expect(within(dosis).getByText('9:30 a. m. · Don Luis')).toBeTruthy()
   })
 
-  it('una dosis que ya llegó por audio no se puede dar dos veces: se confirma', () => {
+  it('una dosis que ya llegó por audio no se puede dar dos veces: se confirma el audio completo', () => {
     entrarComo(/Don Luis/)
     const dosis = screen.getByRole('article', { name: 'Mateo · Amoxicilina · 8:00 a. m.' })
     expect(within(dosis).queryByRole('button', { name: 'Ya se la di' })).toBeNull()
     expect(within(dosis).getByText('Reportada a las 8:12 a. m. por Don Luis')).toBeTruthy()
-    fireEvent.click(within(dosis).getByRole('button', { name: 'Confirmar' }))
+    // El audio también decía que se abrió un bulto: se ve antes de confirmar
+    expect(within(dosis).getByText(/−1 bulto/)).toBeTruthy()
+    fireEvent.click(within(dosis).getByRole('button', { name: 'Confirmar todo' }))
     expect(within(dosis).getByText('8:12 a. m. · Don Luis')).toBeTruthy()
+    expect(within(screen.getByRole('region', { name: 'Comida de perro' })).getByText('2')).toBeTruthy()
   })
 })

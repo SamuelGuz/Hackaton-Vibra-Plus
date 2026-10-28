@@ -7,11 +7,12 @@ import { Boton } from '../../components/Boton'
 import { FotoInstantanea } from '../../components/FotoInstantanea'
 import { Sello } from '../../components/Sello'
 import { useDatos } from '../../data/DatosProvider'
-import type { DatosAlbergue } from '../../data/tipos'
-import { confirmarDosisReportada, darDosis, deshacer } from '../../lib/acciones'
+import type { DatosAlbergue, PorConfirmar } from '../../data/tipos'
+import { useAcciones } from '../../data/useAcciones'
 import { dosisDeHoy, type DosisDelDia } from '../../lib/calculos'
 import { fechaLocal, horaBonita, saludo } from '../../lib/formato'
 import { TarjetaComida } from '../comida/TarjetaComida'
+import { describir } from '../confirmar/describir'
 import styles from './Hoy.module.css'
 
 function nombreDe(datos: DatosAlbergue, personaId: string): string {
@@ -21,9 +22,42 @@ function nombreDe(datos: DatosAlbergue, personaId: string): string {
 /** '2026-10-27T08:12' → '08:12' */
 const horaDe = (fechaHora: string) => fechaHora.slice(11, 16)
 
+/**
+ * Dosis que alguien ya reportó por audio: no se puede dar otra vez. Se confirma el audio
+ * completo, y por eso antes se muestra todo lo demás que dice.
+ */
+function Reportada({ d, reporte, alConfirmar }: { d: DosisDelDia; reporte: PorConfirmar; alConfirmar: () => void }) {
+  const { datos } = useDatos()
+  const otras = reporte.propuestas.filter(
+    (p) => !(p.tipo === 'dosis' && p.tratamientoId === d.tratamiento.id && p.hora === d.hora),
+  )
+  return (
+    <>
+      <p className={styles.reportada}>
+        {`Reportada a las ${horaBonita(horaDe(reporte.fechaHora))} por ${nombreDe(datos, reporte.quien)}`}
+      </p>
+      {otras.length > 0 && (
+        <div className={styles.tambien}>
+          <p>El audio también dice:</p>
+          <ul>
+            {otras.map((p, i) => {
+              const { grande, texto } = describir(datos, p)
+              return <li key={i}>{grande ? `${grande}: ${texto}` : texto}</li>
+            })}
+          </ul>
+        </div>
+      )}
+      <Boton icono="check" ancho onClick={alConfirmar}>
+        {otras.length > 0 ? 'Confirmar todo' : 'Confirmar'}
+      </Boton>
+    </>
+  )
+}
+
 export function Hoy() {
-  const { datos, cambiar } = useDatos()
+  const { datos } = useDatos()
   const { persona } = useSesion()
+  const acciones = useAcciones()
   const [recien, setRecien] = useState<string | null>(null)
   const [aviso, setAviso] = useState<{ id: string; mensaje: string } | null>(null)
 
@@ -34,11 +68,9 @@ export function Hoy() {
   const fecha = new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })
 
   const dar = (d: DosisDelDia) => {
-    if (!persona) return
-    const r = darDosis(datos, d.tratamiento.id, d.hora, persona.id)
-    cambiar(() => r.datos)
-    setRecien(r.id)
-    setAviso({ id: r.id, mensaje: `Listo: ${d.tratamiento.medicamento}` })
+    const id = acciones.darDosis(d.tratamiento, d.hora)
+    setRecien(id)
+    setAviso({ id, mensaje: `Listo: ${d.tratamiento.medicamento}` })
   }
 
   return (
@@ -88,18 +120,7 @@ export function Hoy() {
                         animar={d.dada.id === recien}
                       />
                     ) : d.reporte ? (
-                      <>
-                        <p className={styles.reportada}>
-                          {`Reportada a las ${horaBonita(horaDe(d.reporte.fechaHora))} por ${nombreDe(datos, d.reporte.quien)}`}
-                        </p>
-                        <Boton
-                          icono="check"
-                          ancho
-                          onClick={() => cambiar((x) => confirmarDosisReportada(x, d.reporte!.id, d.tratamiento.id, d.hora))}
-                        >
-                          Confirmar
-                        </Boton>
-                      </>
+                      <Reportada d={d} reporte={d.reporte} alConfirmar={() => acciones.confirmar(d.reporte!, d.reporte!.propuestas)} />
                     ) : (
                       <Boton icono="check" ancho onClick={() => dar(d)}>
                         Ya se la di
@@ -130,7 +151,7 @@ export function Hoy() {
         <AvisoDeshacer
           mensaje={aviso.mensaje}
           alDeshacer={() => {
-            cambiar((x) => deshacer(x, aviso.id))
+            acciones.deshacer(aviso.id)
             setAviso(null)
           }}
           alCerrar={() => setAviso(null)}

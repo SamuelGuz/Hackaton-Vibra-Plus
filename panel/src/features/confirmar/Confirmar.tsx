@@ -5,13 +5,14 @@ import { Boton } from '../../components/Boton'
 import { TecladoMonto } from '../../components/TecladoMonto'
 import { useDatos } from '../../data/DatosProvider'
 import type { PorConfirmar, Propuesta } from '../../data/tipos'
-import { confirmarPorConfirmar, descartarPorConfirmar } from '../../lib/acciones'
+import { useAcciones } from '../../data/useAcciones'
 import { cuandoFue, fechaLocal, horaBonita } from '../../lib/formato'
 import { conMonto, describir, montoDe } from './describir'
 import styles from './Confirmar.module.css'
 
 function Tarjeta({ item }: { item: PorConfirmar }) {
-  const { datos, cambiar } = useDatos()
+  const { datos } = useDatos()
+  const acciones = useAcciones()
   const [corrigiendo, setCorrigiendo] = useState(false)
   const [propuestas, setPropuestas] = useState<Propuesta[]>(item.propuestas)
   const [editando, setEditando] = useState<number | null>(null)
@@ -21,7 +22,7 @@ function Tarjeta({ item }: { item: PorConfirmar }) {
   const deHoy = item.fechaHora.startsWith(fechaLocal())
   const titulo = `${item.origen === 'audio' ? 'Audio' : 'Foto'} de ${quien} · ${hora}`
 
-  const guardar = (lista: Propuesta[]) => cambiar((d) => confirmarPorConfirmar(d, item.id, lista))
+  const guardar = (lista: Propuesta[]) => acciones.confirmar(item, lista)
   const cancelar = () => {
     setPropuestas(item.propuestas)
     setEditando(null)
@@ -89,7 +90,7 @@ function Tarjeta({ item }: { item: PorConfirmar }) {
           <Boton icono="check" tamano="grande" disabled={propuestas.length === 0} onClick={() => guardar(propuestas)}>
             Guardar corregido
           </Boton>
-          <Boton icono="menos" variante="peligro" onClick={() => cambiar((d) => descartarPorConfirmar(d, item.id))}>
+          <Boton icono="menos" variante="peligro" onClick={() => acciones.descartar(item)}>
             Descartar todo
           </Boton>
           <Boton icono="atras" variante="secundario" onClick={cancelar}>

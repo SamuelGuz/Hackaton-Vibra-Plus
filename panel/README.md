@@ -14,6 +14,16 @@ npm run preview   # sirve dist/ (aquí sí funciona el modo sin señal)
 
 Para probar en el celular: misma red wifi, abrir la dirección "Network" que imprime `npm run dev`.
 
+## Conectar al servidor
+
+Sin servidor, el panel abre en **modo demo** (datos en memoria y "¿Quién eres?").
+
+1. Copiar `.env.example` a `.env.local` (dice `VITE_API_URL=http://localhost:8787`) y reiniciar `npm run dev`.
+2. Entrar con el enlace personal que manda el bot: `http://localhost:5173/?t=<token>`. El panel guarda el token y entra directo a la primera pestaña del rol.
+3. Cada toque cambia la pantalla al instante y se guarda en una cola del celular (IndexedDB). La cola se manda en orden a `POST /api/eventos` y `POST /api/eventos/estado` cuando hay señal. Los datos se recargan de `GET /api/hoy` cada 20 s.
+
+Con `?demo=1` se fuerza el modo demo aunque haya servidor.
+
 ## Dónde está cada cosa
 
 | Carpeta | Qué hay |

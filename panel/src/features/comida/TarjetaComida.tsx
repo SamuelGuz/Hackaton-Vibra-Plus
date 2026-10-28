@@ -1,12 +1,11 @@
 // Tarjeta gigante de comida: un costal por especie, −1 al abrir un bulto y +N cuando llegan.
 import { useState } from 'react'
-import { useSesion } from '../../app/sesion'
 import { AvisoDeshacer } from '../../components/AvisoDeshacer'
 import { Boton } from '../../components/Boton'
 import { Costal } from '../../components/Costal'
 import { useDatos } from '../../data/DatosProvider'
 import type { Especie } from '../../data/tipos'
-import { deshacer, moverBultos } from '../../lib/acciones'
+import { useAcciones } from '../../data/useAcciones'
 import { bultosEnBodega, bultosParaPedir, diasDeComida, nivelComida } from '../../lib/calculos'
 import { diasHablados } from '../../lib/formato'
 import styles from './TarjetaComida.module.css'
@@ -14,20 +13,18 @@ import styles from './TarjetaComida.module.css'
 const ESPECIES: Especie[] = ['perro', 'gato']
 
 export function TarjetaComida() {
-  const { datos, cambiar } = useDatos()
-  const { persona } = useSesion()
+  const { datos } = useDatos()
+  const acciones = useAcciones()
   const [pidiendo, setPidiendo] = useState<Especie | null>(null)
   const [aviso, setAviso] = useState<{ id: string; mensaje: string } | null>(null)
 
   const mover = (especie: Especie, cambio: number) => {
-    if (!persona) return
-    const r = moverBultos(datos, especie, cambio, persona.id)
-    cambiar(() => r.datos)
+    const id = acciones.moverBultos(especie, cambio)
     setPidiendo(null)
     navigator.vibrate?.(40)
     const n = Math.abs(cambio)
     setAviso({
-      id: r.id,
+      id,
       mensaje: cambio < 0 ? `Listo: se abrió un bulto de ${especie}` : `Listo: llegaron ${n} ${n === 1 ? 'bulto' : 'bultos'} de ${especie}`,
     })
   }
@@ -95,7 +92,7 @@ export function TarjetaComida() {
         <AvisoDeshacer
           mensaje={aviso.mensaje}
           alDeshacer={() => {
-            cambiar((d) => deshacer(d, aviso.id))
+            acciones.deshacer(aviso.id)
             setAviso(null)
           }}
           alCerrar={() => setAviso(null)}

@@ -119,6 +119,8 @@ export type Propuesta =
   | { tipo: 'nota'; animalId: string; texto: string }
   /** Factura a crédito: no sale de caja, sube la deuda con la clínica */
   | { tipo: 'deuda'; clinicaId: string; monto: number; nota: string }
+  /** Cambio de estado hecho desde la ficha del animal */
+  | { tipo: 'estado_animal'; animalId: string; estado: EstadoAnimal }
 
 /** Algo que se dijo de un animal ("Ya camina solito"). Se ve en su ficha. */
 export interface Nota {

@@ -1,0 +1,4 @@
+Par de llaves RSA de 2048 bits SOLO PARA PRUEBAS (no es una credencial real de Google).
+Lo usan bot/test/store/google-auth.test.ts y sheets.test.ts para firmar y verificar el JWT de la cuenta de servicio.
+Se generó una sola vez con node:crypto (generateKeyPairSync('rsa', { modulusLength: 2048 }), privada en PKCS8 y pública en SPKI).
+No se generan llaves al correr las pruebas.

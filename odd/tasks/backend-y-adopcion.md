@@ -92,18 +92,18 @@ Formato: `ID | S# | ruta | estado | commit`. Ruta = quién la hace. Ola = puede 
 ### Ola 0 — base (en serie)
 - T0 | L1 Paso 0 | inline | hecha (skills en `~/.agents/skills`, fuera del repo) | —
 - T1 | S5 | inline | hecha: merge de `origin/samuel/conectar` | 80207ad
-- T2 | S1 S2 S3 S5 S11 + D1–D4 D7 D13 | worker + arreglos inline tras verify | hecha (shared 12, bot 27, panel 68 tests; 6 builds OK): `shared/` (tipos compartidos movidos desde `panel/src/data/tipos.ts` + `api.ts` + `registro.ts` + `domain/hora.ts`), scaffold `bot/` (deps, `Env`, `Repo`, `Kv`, `Deps`, `MemoryRepo`, `MemoryKv`, `semilla-mini`), `db/` mínimo, y `panel/src/data/tipos.ts` reexportando `shared` | —
+- T2 | S1 S2 S3 S5 S11 + D1–D4 D7 D13 | worker + arreglos inline tras verify | hecha (shared 12, bot 27, panel 68 tests; 6 builds OK): `shared/` (tipos compartidos movidos desde `panel/src/data/tipos.ts` + `api.ts` + `registro.ts` + `domain/hora.ts`), scaffold `bot/` (deps, `Env`, `Repo`, `Kv`, `Deps`, `MemoryRepo`, `MemoryKv`, `semilla-mini`), `db/` mínimo, y `panel/src/data/tipos.ts` reexportando `shared` | 66bb095, 8b8dadb
 
 ### Ola 1 — piezas puras (paralelo, consumen T2)
-- T3 | S12 S13 S14 S15 | worker | pendiente: `shared/src/domain/{dosis,reglas,ficha,cierre}` | —
-- T4 | S16 S17 | worker | pendiente: `shared/src/domain/{comida,deuda,padrino}` | —
-- T5 | S18 S19 S9(4) | worker | pendiente: `bot/src/wa/**` | —
-- T6 | S20 S29 S7 | worker | pendiente: `bot/src/store/{google-auth,sheets,mappers,hojas,semilla}`, `bot/scripts/{seed,crear-hojas}` (incluye T10: los mappers usan los headers `HOJAS` de la Task 17) | —
-- T7 | S22 S8 | worker | pendiente: `bot/src/ia/{gemini,schemas,redact}` | —
-- T8 | S26 S27 | worker | pendiente: `bot/src/web/{html,ficha-page,session}` | —
-- T9 | S21 S4 + D5 | worker | pendiente: `bot/src/store/{sql,pg-repo,pg-kv}`, `db/schema.sql`, `db/README.md` (Postgres probado con PGlite) | —
+- T3 | S12 S13 S14 S15 | worker | hecha: `shared/src/domain/{dosis,reglas,ficha,cierre}` | c1770c6
+- T4 | S16 S17 | worker | hecha: `shared/src/domain/{comida,deuda,padrino}` | e10d30d
+- T5 | S18 S19 S9(4) | worker | hecha: `bot/src/wa/**` | 5f4069e
+- T6 | S20 S29 S7 | worker | hecha: `bot/src/store/{google-auth,sheets,mappers,hojas,semilla}`, `bot/scripts/{seed,crear-hojas}` (incluye T10: los mappers usan los headers `HOJAS` de la Task 17) | 5f12445
+- T7 | S22 S8 | worker | hecha: `bot/src/ia/{gemini,schemas,redact}` | bcf442b
+- T8 | S26 S27 | worker | hecha: `bot/src/web/{html,ficha-page,session}` | fa3d97e
+- T9 | S21 S4 + D5 | worker | hecha: `bot/src/store/{sql,pg-repo,pg-kv}`, `db/schema.sql`, `db/README.md` (Postgres probado con PGlite) | 1aa5e81
 - T10 | S29 S7 | — | unida a T6 (dependencia de `HOJAS`) | —
-- T11 | S38 S39 S42 | worker | pendiente: `shared/src/adopcion/**` (clasificación pura, tipos `Solicitud`/`Seguimiento`) + `panel/src/features/adopciones/demo-solicitudes.ts` | —
+- T11 | S38 S39 S42 | worker | hecha: `shared/src/adopcion/**` (clasificación pura, tipos `Solicitud`/`Seguimiento`) + `panel/src/features/adopciones/demo-solicitudes.ts` | 4c44450
 
 ### Ola 2 — flujos (paralelo, consumen Ola 1)
 - T12 | S23 S8 | worker | pendiente: `bot/src/ia/{extractor,comprobante,redactor}` | —
@@ -193,3 +193,5 @@ Formato: `ID | S# | ruta | estado | commit`. Ruta = quién la hace. Ola = puede 
   - **D11** Se usa el modelo de Samuel para la semilla del servidor: los ids de personas (`p-luis`, `p-andres`, `p-carolina`, `p-marcela`…) y de clínicas de `panel/src/data/demo.ts`, más los animales de la semilla de placa viva (Tobías `TOB01`, Mateo `MAT01`, Bruno `BRU01`, Luna `LUN01`, Manchas). Así el panel conectado y la demo cuentan la misma historia (PLAN_INTEGRADO §2).
   - **D13** (tras el verify de la Ola 0) La bitácora guarda `PropuestaServidor` = `Propuesta` del panel + `comida`, `observacion` y `avance` (`{ tipo; animalId; texto }`), porque el bot los produce y el modelo del panel no los tiene. Agregarlos a `Propuesta` rompería `describir.ts` y `acciones.ts` de Samuel (switch exhaustivo). En `/api/hoy` se proyectan como `nota`. También: `Tratamiento.activo?` (false = 0 dosis, Task 2), `HechoDiario` pasa a `shared/src/vistas.ts`, `server.fs.allow` del panel queda en `['.', '../shared']` (con `--host` servía todo el repo a la red local) y `panel/src/data/contrato.test.ts` fija la igualdad de tipos panel ↔ shared. Las ids de `semilla-mini` (`p-andrea`, `p-carlos`, `p-admin`, `TOB`…) son solo de pruebas; la semilla completa (T10) usa las de D11. `db/` lo crea T9.
   - **D12** WhatsApp, Gemini y Sheets se construyen detrás de interfaces y se prueban con `fetch` falso. Sin credenciales el servidor arranca igual: el webhook responde 503 si falta `WA_APP_SECRET`, y la IA falsa solo existe en pruebas.
+- **L5** Ola 1 (2026-10-28): T3, T4, T5, T6 (+T10), T7, T8, T9 y T11 hechas por workers. T6 y T7 se colgaron en el primer intento sin dejar archivos y se relanzaron. Verify de la ola: 1 bloqueo (PgRepo perdía `Solicitud.destinatario` y `Seguimiento.llamadaHumana`) y 5 avisos (horas que no vienen en hora de Bogotá, `Infinity` en `diasDeComida`, montos no enteros, cast en `webhook.ts`, prueba inestable en `servidor.test.tsx`). Todo corregido con test primero. Resultado: shared 184, bot 281, panel 76 (dos corridas), 6 builds OK. Commits c1770c6…822943e.
+  - **D14** `diasDeComida` devuelve `null` (no `Infinity`) cuando no hay consumo. Los repos guardan `fechaHora` normalizada a Bogotá `-05:00`. El `monto` de la IA es entero; un monto ≤ 0 o con decimales va a `sinResolver` ('Monto inválido'). La deuda base de la semilla (4.150.000) vive en las clínicas, con los mismos valores de `panel/src/data/demo.ts`. En `servidor.test.tsx` (de Samuel) solo se agregó `{ timeout: 3000 }` a una consulta inestable con carga.

@@ -57,20 +57,24 @@ function ProveedorServidor({ token, children }: { token: string; children: React
   )
   const [pendientes, setPendientes] = useState(0)
   const [problema, setProblema] = useState<string | null>(null)
-  const cola = useRef<Cola | null>(null)
+  // Una sola cola mientras viva la pestaña. No se cierra al desmontar: en desarrollo React monta
+  // todo dos veces, y cerrar la base mientras se abre deja la libreta trabada en "Abriendo…".
+  const [cola] = useState<Cola>(() =>
+    crearCola({
+      enviar: (e) => mandar(token, e),
+      alRechazar: (m) => setProblema(`El servidor no aceptó un registro: ${m}`),
+    }),
+  )
   const nPendientes = useRef(0)
 
   const contar = useCallback(async () => {
-    if (!cola.current) return
-    nPendientes.current = await cola.current.pendientes()
+    nPendientes.current = await cola.pendientes()
     setPendientes(nPendientes.current)
-  }, [])
+  }, [cola])
 
   const recargar = useCallback(async () => {
-    if (cola.current) {
-      await cola.current.procesar()
-      await contar()
-    }
+    // La cola se manda por su lado: si el almacenamiento del celular se demora, igual se ven los datos
+    void cola.procesar().then(contar)
     try {
       const hoy = await pedirHoy(token)
       // Si hay toques sin enviar, se queda lo que se ve en pantalla hasta que lleguen
@@ -86,13 +90,9 @@ function ProveedorServidor({ token, children }: { token: string; children: React
         setFase((f) => (f === 'cargando' ? 'sin_datos' : f))
       }
     }
-  }, [token, contar])
+  }, [token, cola, contar])
 
   useEffect(() => {
-    cola.current = crearCola({
-      enviar: (e) => mandar(token, e),
-      alRechazar: (m) => setProblema(`El servidor no aceptó un registro: ${m}`),
-    })
     void recargar()
     const reloj = setInterval(() => void recargar(), RECARGAR_CADA_MS)
     const alVolver = () => void recargar()
@@ -102,20 +102,20 @@ function ProveedorServidor({ token, children }: { token: string; children: React
       clearInterval(reloj)
       window.removeEventListener('online', alVolver)
       window.removeEventListener('focus', alVolver)
-      void cola.current?.cerrar()
-      cola.current = null
     }
-  }, [token, recargar])
+  }, [recargar])
 
   const enviar = useCallback(
     (e: Envio) => {
       nPendientes.current += 1
       setPendientes(nPendientes.current)
-      const c = cola.current
-      if (!c) return
-      void c.encolar(e).then(() => recargar())
+      void cola
+        .encolar(e)
+        .then(() => cola.procesar())
+        .then(contar)
+        .then(() => recargar())
     },
-    [recargar],
+    [cola, recargar],
   )
 
   if (fase === 'sin_sesion') {

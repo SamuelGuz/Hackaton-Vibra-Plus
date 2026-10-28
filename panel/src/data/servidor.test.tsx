@@ -1,4 +1,5 @@
 // El panel conectado al servidor: entra con el enlace del bot y manda cada toque a /api/*.
+import { StrictMode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import Dexie from 'dexie'
@@ -46,6 +47,15 @@ describe('panel conectado al servidor', () => {
     expect(pedidos[0]).toMatchObject({ url: 'http://api.prueba/api/hoy', auth: 'Bearer token-de-luis' })
     expect(window.location.search).toBe('')
     expect(localStorage.getItem('huellitas.token')).toBe('token-de-luis')
+  })
+
+  it('carga también con el modo estricto de React (en desarrollo monta todo dos veces)', async () => {
+    render(
+      <StrictMode>
+        <App />
+      </StrictMode>,
+    )
+    expect(await screen.findByRole('heading', { level: 1, name: /Don Luis/ })).toBeTruthy()
   })
 
   it('abrir un bulto lo manda como evento, y Deshacer lo anula por su id', async () => {

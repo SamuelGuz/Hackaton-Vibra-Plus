@@ -1,0 +1,55 @@
+.paso {
+  display: grid;
+  gap: var(--e-5);
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-3);
+}
+
+.atras {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  min-height: var(--toque-min);
+  padding: 0 var(--e-4) 0 var(--e-2);
+  border: 0;
+  background: transparent;
+  font-weight: 700;
+  font-size: var(--t-boton);
+  cursor: pointer;
+}
+
+.avance {
+  display: grid;
+  justify-items: end;
+  gap: var(--e-1);
+}
+
+.puntos {
+  display: flex;
+  gap: var(--e-2);
+}
+
+.puntos span {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--tinta);
+  border-radius: 50%;
+}
+
+.puntos .hecho {
+  background: var(--tinta);
+}
+
+.texto {
+  font-size: var(--t-chico);
+  color: var(--lapiz);
+}
+
+.pregunta {
+  font-size: var(--t-titulo);
+}

@@ -1,0 +1,57 @@
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e-3);
+  min-height: var(--toque-min);
+  padding: var(--e-2) var(--e-5);
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-boton);
+  font-size: var(--t-boton);
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--sombra-boton);
+  touch-action: manipulation;
+  transition:
+    transform var(--rapido),
+    box-shadow var(--rapido);
+}
+
+/* Se hunde 2 px al tocarlo, como una tecla de verdad */
+.boton:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgb(31 42 68 / 0.28);
+}
+
+.boton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.grande {
+  min-height: var(--toque-grande);
+  font-size: var(--t-subtitulo);
+}
+
+.ancho {
+  width: 100%;
+}
+
+.principal {
+  background: var(--bien);
+  color: var(--borde-foto);
+}
+
+.secundario {
+  background: var(--papel-claro);
+  color: var(--tinta);
+}
+
+.peligro {
+  background: var(--papel-claro);
+  border-color: var(--urgente);
+  color: var(--urgente);
+}

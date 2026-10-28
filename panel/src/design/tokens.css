@@ -61,6 +61,12 @@
   --sombra-foto: 0 2px 3px rgb(31 42 68 / 0.12), 0 12px 24px -12px rgb(31 42 68 / 0.45);
   --sombra-boton: 0 3px 0 rgb(31 42 68 / 0.28);
 
+  /* Fondos de la tarjeta "sin foto" (uno fijo por animal) */
+  --foto-1: #e3d3b8;
+  --foto-2: #cfd9c4;
+  --foto-3: #ecc9b4;
+  --foto-4: #d5d0dc;
+
   /* Movimiento */
   --rapido: 120ms;
   --normal: 220ms;

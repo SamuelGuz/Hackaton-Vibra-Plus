@@ -194,6 +194,9 @@ export function crearDatosDemo(ahora: Date = new Date()): DatosAlbergue {
       { id: 'cl-24h', nombre: 'Clínica Veterinaria 24 Horas', deuda: 2_600_000, limite: 3_000_000 },
     ],
     porConfirmar,
+    notas: [
+      { id: 'n-1', animalId: id('Bruno'), texto: 'La piel ya casi no se ve roja.', fechaHora: momento(ahora, 2, '11:20'), quien: 'p-andres' },
+    ],
     // Catálogo de placa viva: perro 25 kg y 0,375 kg/animal/día; gato 10 kg y 0,065 kg/animal/día
     configComida: {
       kgPorBulto: { perro: 25, gato: 10 },

@@ -1,0 +1,66 @@
+.animales {
+  display: grid;
+  gap: var(--e-5);
+}
+
+.titulo {
+  font-size: var(--t-titulo);
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2);
+}
+
+.filtro {
+  min-height: var(--toque-min);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  padding: 0 var(--e-3) 0 var(--e-1);
+  border: 2px solid transparent;
+  border-radius: var(--radio-boton);
+  background: transparent;
+  cursor: pointer;
+}
+
+.filtro :global(.numero) {
+  font-size: var(--t-subtitulo);
+}
+
+.filtro[aria-pressed='true'] {
+  border-color: var(--tinta);
+  background: var(--papel-claro);
+}
+
+.fotos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
+  justify-items: center;
+  gap: var(--e-5) var(--e-3);
+}
+
+.enlace {
+  position: relative;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Aviso de cuidado especial (caso Bruno) pegado sobre la foto */
+.ojo {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  padding: 2px var(--e-2);
+  border-radius: 4px;
+  background: var(--urgente);
+  color: var(--borde-foto);
+  font-weight: 700;
+  font-size: var(--t-chico);
+  rotate: 6deg;
+}

@@ -1,0 +1,93 @@
+.categorias {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--e-3);
+}
+
+.categoria {
+  min-height: 112px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: var(--e-2);
+  padding: var(--e-3);
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-boton);
+  background: var(--papel-claro);
+  box-shadow: var(--sombra-boton);
+  font-weight: 700;
+  font-size: var(--t-texto);
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+}
+
+.categoria[aria-pressed='true'] {
+  background: var(--tinta);
+  color: var(--papel);
+}
+
+.clinicas {
+  display: grid;
+  gap: var(--e-2);
+}
+
+.subpregunta {
+  font-size: var(--t-subtitulo);
+  font-weight: 700;
+}
+
+.resumen {
+  display: grid;
+  gap: var(--e-2);
+  padding: var(--e-5) var(--e-4);
+  background: var(--papel-claro);
+  border-radius: var(--radio-papel);
+  box-shadow: var(--sombra-papel);
+}
+
+.monto {
+  font-size: var(--t-numero);
+  line-height: 1;
+}
+
+.salio {
+  color: var(--urgente);
+}
+
+.entro {
+  color: var(--bien);
+}
+
+.para {
+  font-size: var(--t-subtitulo);
+  font-weight: 700;
+}
+
+.deuda {
+  color: var(--lapiz);
+  font-weight: 700;
+}
+
+.foto {
+  min-height: var(--toque-grande);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e-3);
+  padding: var(--e-3);
+  border: 2px dashed var(--tinta);
+  border-radius: var(--radio-boton);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.foto img {
+  max-height: 180px;
+  border-radius: var(--radio-foto);
+}
+
+.foto:focus-within {
+  outline: 3px solid var(--tinta);
+  outline-offset: 3px;
+}

@@ -1,0 +1,48 @@
+.costal {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--e-4);
+}
+
+.dibujo {
+  flex: none;
+  width: 92px;
+  height: auto;
+}
+
+/* El costal se vacía despacio cuando se abre un bulto */
+.relleno {
+  opacity: 0.85;
+  transition:
+    y var(--normal) ease-out,
+    height var(--normal) ease-out;
+}
+
+.texto {
+  display: grid;
+  justify-items: start;
+  gap: var(--e-1);
+}
+
+.especie {
+  font-weight: 700;
+  color: var(--lapiz);
+}
+
+.dias {
+  display: flex;
+  align-items: baseline;
+  gap: var(--e-2);
+}
+
+.dias :global(.numero) {
+  font-size: var(--t-numero);
+  line-height: 0.9;
+}
+
+.unidad {
+  font-family: var(--letra-titulo);
+  font-weight: 700;
+  font-size: var(--t-subtitulo);
+}

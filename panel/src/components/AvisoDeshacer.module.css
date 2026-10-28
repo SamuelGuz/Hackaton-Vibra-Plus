@@ -1,0 +1,67 @@
+.aviso {
+  position: fixed;
+  left: var(--e-3);
+  right: var(--e-3);
+  bottom: calc(var(--e-3) + env(safe-area-inset-bottom));
+  z-index: 20;
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-3);
+  padding: var(--e-3) var(--e-3) var(--e-3) var(--e-4);
+  border-radius: var(--radio-boton);
+  background: var(--tinta);
+  color: var(--papel);
+  box-shadow: var(--sombra-papel);
+  overflow: hidden;
+  animation: subir var(--normal) var(--rebote);
+}
+
+.mensaje {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  font-weight: 700;
+}
+
+.deshacer {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  min-height: var(--toque-min);
+  padding: 0 var(--e-4);
+  border: 2px solid var(--papel);
+  border-radius: var(--radio-boton);
+  background: transparent;
+  color: var(--papel);
+  font-weight: 700;
+  font-size: var(--t-boton);
+  cursor: pointer;
+}
+
+/* Rayita que se acorta: cuánto tiempo queda para deshacer */
+.tiempo {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: 100%;
+  background: var(--cinta);
+  transform-origin: left;
+  animation: gastar linear forwards;
+}
+
+@keyframes subir {
+  from {
+    translate: 0 120%;
+  }
+}
+
+@keyframes gastar {
+  to {
+    transform: scaleX(0);
+  }
+}

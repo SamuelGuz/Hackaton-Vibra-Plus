@@ -36,6 +36,20 @@ export function fechaLocal(d: Date = new Date()): string {
   return `${y}-${m}-${dia}`
 }
 
+/** Fecha y hora local sin zona, como se guardan los registros: '2026-10-27T09:30' */
+export function momentoLocal(d: Date = new Date()): string {
+  const h = String(d.getHours()).padStart(2, '0')
+  const m = String(d.getMinutes()).padStart(2, '0')
+  return `${fechaLocal(d)}T${h}:${m}`
+}
+
+/** '2026-10-26T15:30' → 'lun 26 · 3:30 p. m.' */
+export function cuandoFue(fechaHora: string): string {
+  const [fecha, hora] = fechaHora.split('T')
+  const dia = new Date(`${fecha}T00:00`).toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric' })
+  return `${dia} · ${horaBonita(hora)}`
+}
+
 /** 4.4 → "4 días"; 1 → "1 día"; 0.6 → "menos de 1 día" */
 export function diasHablados(dias: number): string {
   if (dias < 1) return 'menos de 1 día'

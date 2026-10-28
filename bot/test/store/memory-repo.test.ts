@@ -23,6 +23,14 @@ beforeEach(() => {
 })
 
 describe('MemoryRepo: registros', () => {
+  it('guarda fechaHora en hora de Bogotá aunque llegue en UTC, y el día es el de Bogotá', async () => {
+    // 03:30Z del 28 es las 22:30 del 27 en Bogotá
+    await repo.agregarRegistros([dosis('r1', '2026-10-28T03:30:00Z', 'TOB')])
+    expect((await repo.registroPorId('r1'))?.fechaHora).toBe('2026-10-27T22:30:00-05:00')
+    expect((await repo.registrosDelDia('2026-10-27')).map((r) => r.id)).toEqual(['r1'])
+    expect(await repo.registrosDelDia('2026-10-28')).toEqual([])
+  })
+
   it('registrosDelDia devuelve solo los de ese día y animal', async () => {
     await repo.agregarRegistros([
       dosis('r1', '2026-10-27T14:01:00-05:00', 'TOB'),

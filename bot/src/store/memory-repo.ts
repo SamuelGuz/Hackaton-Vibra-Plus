@@ -1,6 +1,7 @@
 // Repo en memoria: pruebas, demo y arranque sin DATABASE_URL (D5). Guarda y devuelve copias,
 // así lo que cambie quien llama no altera lo guardado (igual que una base de datos).
 import type { Seguimiento, Solicitud } from '@huellitas/shared/adopcion/tipos'
+import { ahoraBogota } from '@huellitas/shared/domain/hora'
 import { animalIdDe, type BaseAlbergue, type ConfigServidor, type EstadoRegistro, type ItemCatalogo, type Padrinazgo, type Registro } from '@huellitas/shared/registro'
 import type { Animal, Clinica, ConfigComida, Persona, Tratamiento } from '@huellitas/shared/tipos'
 import type { DatosSemilla, Repo } from './repo'
@@ -104,7 +105,8 @@ export class MemoryRepo implements Repo {
     const nuevos: string[] = []
     for (const r of registros) {
       if (this.registrosLista.some((x) => x.id === r.id)) continue
-      this.registrosLista.push(copia(r))
+      // Igual que PgRepo: la hora se guarda en Bogotá (-05:00, a segundos), así ambos repos coinciden en el día
+      this.registrosLista.push({ ...copia(r), fechaHora: ahoraBogota(new Date(r.fechaHora)).iso })
       nuevos.push(r.id)
     }
     return nuevos

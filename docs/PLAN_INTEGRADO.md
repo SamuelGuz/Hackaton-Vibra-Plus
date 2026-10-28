@@ -1,9 +1,11 @@
 # Huellitas — Plan integrado (placa viva + paneles)
 
 > Este documento une los dos planes y manda sobre ellos cuando se contradicen.
-> - **Placa viva** (servidor, WhatsApp, IA, ficha de la placa): [spec](superpowers/specs/2026-10-27-huellitas-placa-viva-design.md) · [plan de implementación](superpowers/plans/2026-10-27-huellitas-placa-viva.md)
+> - **Placa viva** (servidor, WhatsApp, IA, ficha de la placa): [diseño](placa-viva/diseno.md) · [plan de implementación](placa-viva/plan.md)
 > - **Panel** (app React con el diseño "La libreta que no se moja"): [PLAN_PANEL.md](PLAN_PANEL.md)
 > - Requerimientos del cliente: [Huellitas_Requerimientos_VibraPlus.md](Huellitas_Requerimientos_VibraPlus.md)
+>
+> ⚠️ **El servidor cambió de forma.** Lo que se está construyendo en `bot/` y `db/` es Node (Hono) con Postgres en un VPS, con copia a Google Sheets (ver `db/README.md`), no un Cloudflare Worker con KV como dicen las secciones 1 y 2. El contrato `/api/*` de la sección 3 sigue igual.
 
 ---
 

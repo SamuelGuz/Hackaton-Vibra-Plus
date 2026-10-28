@@ -1,5 +1,9 @@
 # Huellitas "Placa viva" — Plan de implementación (30 h, ~25 agentes)
 
+> 🔗 Diseño: [diseno.md](diseno.md) · Cómo encaja con los paneles: [PLAN_INTEGRADO.md](../PLAN_INTEGRADO.md)
+>
+> ⚠️ **La parte técnica cambió.** El servidor que se está construyendo en `bot/` y `db/` es Node (Hono) con Postgres en un VPS, y copia cada cambio a Google Sheets (ver `db/README.md`). Aquí todavía dice Cloudflare Worker + KV. Lo funcional (placa, ficha, audios, cierre del día) sigue valiendo; en lo técnico manda el código.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** construir y demostrar en vivo la placa NFC/QR que abre la ficha de HOY de cada animal, el registro por audio en WhatsApp que deja la ficha "por confirmar" con la frase exacta y el cierre del día de paz mental. Además, como P1, la deuda por clínica a partir de fotos de facturas y el diario del padrino.
@@ -12,7 +16,7 @@
 
 **Tech Stack:** TypeScript 5, Cloudflare Workers + Wrangler, Workers KV, Vitest, Google Sheets API v4 (cuenta de servicio, JWT RS256 con WebCrypto), Gemini API (REST, `responseSchema`), WhatsApp Cloud API (Graph), promptfoo para evals, `qrcode-svg` o `nayuki/QR-Code-generator` para los QR.
 
-**Spec:** `docs/superpowers/specs/2026-10-27-huellitas-placa-viva-design.md`
+**Spec:** [diseno.md](diseno.md)
 
 ## Global Constraints
 

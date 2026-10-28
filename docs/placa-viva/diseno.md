@@ -1,8 +1,10 @@
 # Huellitas — "Placa viva": diseño de la solución (reto Vibra+)
 
-> 🔗 **Unido con el panel React en [PLAN_INTEGRADO.md](../../PLAN_INTEGRADO.md).**
+> 🔗 **Unido con el panel React en [PLAN_INTEGRADO.md](../PLAN_INTEGRADO.md).**
 > - Este documento sigue definiendo el servidor, WhatsApp, la IA y la ficha de la placa.
 > - El plan integrado agrega las rutas `/api/*` para los paneles: el principal (Samuel) y el de adopción (Daniel).
+>
+> ⚠️ **La parte técnica cambió.** El servidor que se está construyendo en `bot/` y `db/` es Node (Hono) con Postgres en un VPS, y copia cada cambio a Google Sheets (ver `db/README.md`). Aquí todavía dice Cloudflare Worker + KV. Lo funcional (placa, ficha, audios, cierre del día) sigue valiendo; en lo técnico manda el código.
 
 Fecha: 2026-10-27 · Estado: borrador para aprobación del equipo
 Fuentes: doc "Huellitas Bot — Arquitectura y documento de solución", entrevista al cliente simulado (Gem Vibra_IA, 10 rondas), 4 investigaciones y un scrape de GitHub (ver Anexos).
@@ -278,9 +280,9 @@ Decisión del equipo: Odoo es funcional pero "no sorprende", así que queda como
 - El dominio y la estructura de los enlaces de las placas.
 
 ## Anexos (en `docs/research/`)
-- Entrevista completa al cliente: [entrevista-respuestas.md](../../research/entrevista-respuestas.md)
-- r1: GitHub Trending: [r1-trending.md](../../research/r1-trending.md)
-- r2: Odoo frente a ASM3 frente a solución propia, y REA: [r2-build-vs-buy.md](../../research/r2-build-vs-buy.md)
-- r3: ideas más allá del NFC: [r3-innovation.md](../../research/r3-innovation.md)
-- r4 y r5: costos del stack y precios de WhatsApp: [r4-stack-costs.md](../../research/r4-stack-costs.md), [r5-whatsapp-pricing.md](../../research/r5-whatsapp-pricing.md)
-- Scrape de GitHub (137 repos en 5 categorías, con encaje, esfuerzo, licencia y riesgo): [github_scrape_huellitas.csv](../../research/github_scrape_huellitas.csv)
+- Entrevista completa al cliente: [entrevista-respuestas.md](../research/entrevista-respuestas.md)
+- r1: GitHub Trending: [r1-trending.md](../research/r1-trending.md)
+- r2: Odoo frente a ASM3 frente a solución propia, y REA: [r2-build-vs-buy.md](../research/r2-build-vs-buy.md)
+- r3: ideas más allá del NFC: [r3-innovation.md](../research/r3-innovation.md)
+- r4 y r5: costos del stack y precios de WhatsApp: [r4-stack-costs.md](../research/r4-stack-costs.md), [r5-whatsapp-pricing.md](../research/r5-whatsapp-pricing.md)
+- Scrape de GitHub (137 repos en 5 categorías, con encaje, esfuerzo, licencia y riesgo): [github_scrape_huellitas.csv](../research/github_scrape_huellitas.csv)

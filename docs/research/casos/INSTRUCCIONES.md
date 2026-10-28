@@ -1,6 +1,6 @@
 # Instrucciones comunes — investigación de casos reales
 
-Contexto: leer `../../superpowers/specs/2026-10-27-huellitas-placa-viva-design.md` (albergue de 70 animales en Colombia; placa NFC + ficha de hoy + registro por audio en WhatsApp + cierre del día; $0/mes; equipo poco técnico, celulares Android viejos, mala señal).
+Contexto: leer `../../placa-viva/diseno.md` (albergue de 70 animales en Colombia; placa NFC + ficha de hoy + registro por audio en WhatsApp + cierre del día; $0/mes; equipo poco técnico, celulares Android viejos, mala señal).
 
 ## Objetivo
 Encontrar PERSONAS u ORGANIZACIONES reales que tuvieron problemas parecidos: qué problema tenían, qué integraron, cómo se sintieron, qué resultados tuvieron y qué aprendieron. Mínimo 5 casos por tema, idealmente 8. Prioriza fuentes primarias: blogs de los propios albergues, casos de estudio, foros (Reddit), artículos de prensa, papers.

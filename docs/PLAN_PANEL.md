@@ -2,13 +2,13 @@
 
 > 🔗 **Este plan se unió con "Placa viva" en [PLAN_INTEGRADO.md](PLAN_INTEGRADO.md), que manda si algo se contradice.**
 > Cambios principales:
-> - El servidor ya no es Apps Script: es el Worker de placa viva, con rutas `/api/*`.
+> - El servidor ya no es Apps Script: es el backend (`bot/` + `db/`), con rutas `/api/*`.
 > - Las alertas van por WhatsApp, no por Telegram.
 > - Cambian los umbrales de deuda y de comida.
 > - Samuel lleva el panel principal y Daniel el panel de adopción.
 
 > Documento de trabajo del equipo. Base: [Huellitas_Requerimientos_VibraPlus.md](Huellitas_Requerimientos_VibraPlus.md).
-> El panel **complementa** al bot de WhatsApp/Telegram: el bot captura (voz, foto), el panel **muestra, confirma y corrige**.
+> El panel **complementa** al bot de WhatsApp: el bot captura (voz, foto), el panel **muestra, confirma y corrige**.
 
 ---
 
@@ -101,24 +101,19 @@ Los colores del semáforo (🟢🟡🔴) **siempre van con forma y palabra**: �
 
 Somos **2 personas programando durante 48 horas**. El cliente valora "una solución pequeña, enfocada y realista". Por eso recortamos fuerte: **es mejor tener 4 pantallas perfectas que 10 a medias.**
 
-| Prioridad | Pantalla / función | Requerimiento | Quién |
-|---|---|---|---|
-| **P0 — demo sí o sí** | Hoy del cuidador: comida (−1 bulto) + dosis del día (sello) | RF-01, RF-03 | A |
-| **P0** | Caja vs. deuda por clínica + registrar movimiento en 4 pasos con foto | RF-02 | B |
-| **P0** | Animales por estado + ficha / pasaporte del animal | RF-04, RF-09 | A |
-| **P0** | Bandeja "Por confirmar" (lo que el bot entendió → ✅ Confirmar / ✏️ Corregir) | Idea A | B |
-| **P0** | Offline: guardar en el celular y sincronizar con Sheets | RNF-02 | B |
-| P1 | Alerta diaria de las 6 a. m. por Telegram (Apps Script), que responde "¿cómo nos llegan las alertas?" | Idea B/C | B |
-| P1 | Celebración de adopción + contador de vidas (barata y emotiva para el pitch) | Q | A |
-| P2 | Solicitudes de adopción 🟢🟡🔴 | RF-05 / G | — se muestra en el pitch como "siguiente paso" |
-| ✂️ Fuera | Turnos, diario de transformación, Comunicación, roles de Adopciones | — | Se mencionan en el mapa de la solución, no se programan |
+| Prioridad | Pantalla / función | Requerimiento |
+|---|---|---|
+| **P0 — demo sí o sí** | Hoy del cuidador: comida (−1 bulto) + dosis del día (sello) | RF-01, RF-03 |
+| **P0** | Caja vs. deuda por clínica + registrar movimiento en 4 pasos con foto | RF-02 |
+| **P0** | Animales por estado + ficha del animal | RF-04, RF-09 |
+| **P0** | Bandeja "Por confirmar" (lo que el bot entendió → ✅ Confirmar / ✏️ Corregir) | Idea A |
+| **P0** | Sin señal: guardar en el celular y enviar al volver la señal | RNF-02 |
+| P1 | Celebración de adopción + contador de vidas | Q |
+| ✂️ Fuera | Turnos, diario de transformación, Comunicación | Se mencionan en el pitch |
 
-**Roles que se programan: solo 3** (Cuidador, Bienestar, Admin). Bienestar reutiliza las pantallas del cuidador más la ficha, así que casi no cuesta.
-
-**Sobre el bot:** con 2 personas, el bot real con IA (audio → texto) es arriesgado. Plan:
-1. El panel tiene la bandeja "Por confirmar" lista y alimentada desde la hoja `PorConfirmar`.
-2. Para la demo, esa hoja trae 3–4 ejemplos precargados ("Le di la amoxicilina a Mateo y abrí un bulto").
-3. Si a B le sobra tiempo (después de la hora 32), conecta un bot de Telegram con la API gratuita de Gemini que escribe en esa hoja. Si no, se muestra como flujo en el pitch.
+- **Panel principal (Samuel):** roles Cuidador, Bienestar y Admin.
+- **Panel de adopción (Daniel):** solicitudes, pasaporte de entrega y seguimientos. Ver [PLAN_INTEGRADO.md](PLAN_INTEGRADO.md) §5.
+- **Bot, alertas y servidor:** los hace el backend. Ver [PLAN_INTEGRADO.md](PLAN_INTEGRADO.md) §4.
 
 ---
 
@@ -163,61 +158,20 @@ La pantalla **Hoy** es una sola columna con orden fijo: **lo urgente arriba y gr
 
 ## 5. Arquitectura técnica ($0)
 
-```
-[ PWA React ] ──(online)──► [ Google Apps Script Web App ] ──► [ Google Sheets ]
-     │                              ▲                                  ▲
- IndexedDB (Dexie)                  │                                  │
- + cola de envíos              [ Bot Telegram/WhatsApp ] ─────────────┘
- (funciona offline)            [ Triggers 6 a. m. → alertas ]
-```
+El servidor, la base de datos y las rutas `/api/*` están en [PLAN_INTEGRADO.md](PLAN_INTEGRADO.md) §1 y §3. Del lado del panel:
 
 | Pieza | Elección | Por qué |
 |---|---|---|
-| Framework | **React 18 + Vite + TypeScript** | Rápido de levantar, buen build PWA |
-| PWA / offline | **vite-plugin-pwa** (Workbox) | Instalable en el celular, cachea la app completa |
-| Datos locales | **Dexie (IndexedDB)** + cola `outbox` | Cada registro se guarda primero en el celular |
-| Sincronización | `fetch` POST a Apps Script cuando vuelve la señal (`online` event + reintento) | $0. Truco: enviar con `Content-Type: text/plain` para evitar el preflight CORS de Apps Script |
-| Estado servidor | **TanStack Query** (con persistencia) | Cache y reintentos sin código extra |
+| Framework | **React + Vite + TypeScript** | Rápido de levantar, buen build PWA |
+| PWA / sin señal | **vite-plugin-pwa** (Workbox) | Instalable en el celular, guarda la app completa |
+| Datos locales | **Dexie (IndexedDB)** + cola de envíos | Cada registro se guarda primero en el celular |
 | Rutas | **React Router** | Simple |
-| Estilos | **CSS Modules + variables CSS** (tokens propios) | Sin el look por defecto de Tailwind o shadcn; control total |
-| Animación | **Motion** (Framer Motion) | Sello, costal que se vacía, celebración |
-| Imágenes | Compresión en el celular antes de subir (canvas → WebP ~100 KB) | Pocos datos (RNF-02) |
-| Hosting | **GitHub Pages / Cloudflare Pages / Netlify** (plan gratis) | $0, HTTPS (necesario para PWA) |
-| Modo demo | Flag `?demo=1` con datos simulados en JSON | Que la demo no dependa del wifi del evento |
+| Estilos | **CSS Modules + variables CSS** (tokens propios) | Sin el look por defecto de Tailwind o shadcn |
+| Pruebas | **Vitest + Testing Library** | Reglas y pantallas probadas sin abrir el navegador |
+| Imágenes | Compresión en el celular (canvas → WebP ~100 KB) | Pocos datos (RNF-02) |
+| Modo demo | Datos en memoria (`panel/src/data/demo.ts`) | Que la demo no dependa del wifi del evento |
 
-### Modelo de datos (una pestaña de Sheets por entidad)
-- `Animales`: id, nombre, especie, foto_url, estado, fecha_ingreso, advertencias, padrino
-- `Tratamientos`: id, animal_id, medicamento, dosis, frecuencia_h, inicio, fin
-- `Dosis`: id, tratamiento_id, fecha_hora, quien, origen (panel | bot)
-- `Inventario`: fecha_hora, tipo (perro | gato), cambio (−1 / +N), quien, origen
-- `Movimientos`: fecha_hora, tipo (ingreso | gasto), monto, categoria, clinica_id, foto_url, quien, confirmado
-- `Clinicas`: id, nombre, deuda_actual, limite
-- `PorConfirmar`: id, origen (audio | foto), texto_entendido, propuesta_json, estado
-- `Personas`: id, nombre, foto, rol, pin_hash
-- `Solicitudes`: id, datos_form, clasificacion, motivo, estado
-
-**Cálculo de días de comida** (en el cliente y en Apps Script):
-`días = (bultos_en_stock × kg_por_bulto) / consumo_diario_kg` → perro 22–25 kg por bulto entre 16–18 kg/día; gato 8–10 kg por bulto entre 1,5–1,8 kg/día. Alerta si ≤ 4 días.
-
-### Estructura de carpetas
-```
-panel/
-  src/
-    app/            rutas, layout por rol, proveedor de sesión
-    design/         tokens.css, textura de papel, fuentes, íconos SVG a mano
-    components/     Boton, FotoInstantanea, Cinta, Sello, Costal, Termometro,
-                    TecladoMonto, AvisoDeshacer, EstadoConexion, PasoAPaso
-    features/
-      comida/       pantalla + lógica de días restantes
-      dosis/        lista del día + sello
-      plata/        caja, termómetro, registrar movimiento
-      animales/     cintas por estado, ficha/pasaporte
-      confirmar/    bandeja de lo que entendió el bot
-      adopciones/   (P1)
-    data/           dexie.ts, outbox.ts, api.ts (Apps Script), demo-data.json
-    lib/            formato de pesos COP, fechas, vibración
-  apps-script/      Code.gs (doGet/doPost, triggers de alertas)
-```
+Carpetas y rutas del panel: [panel/README.md](../panel/README.md).
 
 ---
 
@@ -240,83 +194,11 @@ Cada componente se prueba en un celular real de gama baja (o con Chrome DevTools
 
 ---
 
-## 7. Cronograma de 48 horas (2 personas)
+## 7. Cronograma y estado
 
-- **A — Diseño y pantallas**: tokens, íconos, componentes, animaciones, pantallas Cuidador y Animales.
-- **B — Datos y flujos**: Dexie/offline, Apps Script + Sheets, pantallas Plata y Por confirmar, alerta de Telegram.
+El cronograma vigente es el de [PLAN_INTEGRADO.md](PLAN_INTEGRADO.md) §6.
 
-| Horas | Persona A | Persona B | Entregable al final del bloque |
-|---|---|---|---|
-| **0–3** | Juntos: crear proyecto, PWA, `tokens.css`, fuentes, `demo-data.json`, buscar y descargar fotos (sección 1.1) | ← | La app abre en el celular con la textura de papel |
-| **3–10** | Componentes: Boton, FotoInstantanea, Cinta, Sello, Costal + íconos a mano | Dexie + outbox, `api.ts`, Apps Script `doGet`/`doPost`, crear la hoja de Sheets | Página `/kit` y registro que llega a Sheets |
-| **10–11** | Juntos: **revisión anti-IA** (sección 9) del `/kit` | ← | Estilo aprobado y congelado |
-| **11–19** | Pantalla **Hoy del cuidador** (comida + dosis + deshacer) | Componentes Termometro y TecladoMonto + pantalla **Plata** (caja, termómetros, registrar en 4 pasos, foto comprimida) | 2 flujos P0 funcionando con datos demo |
-| **19–26** | 😴 Dormir (turnos escalonados: A de 19 a 25, B de 20 a 26) | ← | — |
-| **26–33** | **Animales**: cintas por estado + ficha / pasaporte + cambiar estado + "¿Quién eres?" | **Por confirmar** + conectar todas las pantallas a Sheets + EstadoConexion | **Todo el P0 completo** ✅ |
-| **33–38** | P1: celebración de adopción + contador de vidas; modo "sol fuerte" | P1: alerta 6 a. m. por Telegram; si sobra, el bot con IA | P1 hecho o descartado (sin culpa) |
-| **38–42** | Juntos: pruebas de la sección 8 (abuela, guantes, sol, modo avión) y arreglos | ← | Lista de bugs en cero o aceptados |
-| **42** | 🧊 **Congelar el código.** Desde aquí no se agregan funciones, solo se arreglan errores | ← | — |
-| **42–46** | Guion de demo, instalar en 2 celulares, grabar un video de respaldo de la demo | Mapa de la solución (quién usa qué, cómo se mantiene a $0) y apoyo al pitch | Demo ensayada 3 veces |
-| **46–48** | Colchón para imprevistos y descanso antes de presentar | ← | — |
-
-**Reglas para no quemarse:**
-- Si un bloque se atrasa más de 2 h, se corta su P1 y no se roba sueño.
-- `master` siempre debe funcionar: cada uno trabaja en su rama y se une al terminar cada bloque.
-- Desplegar a Cloudflare Pages o Netlify **desde la hora 3** y en cada unión, no al final.
-
----
-
-### Detalle de tareas por fase (lista de chequeo)
-
-### Fase 0 — Base (≈2 h)
-- [ ] `npm create vite@latest panel -- --template react-ts`, ESLint y Prettier
-- [ ] vite-plugin-pwa (manifest, íconos, `display: standalone`, color de tema `--papel`)
-- [ ] `tokens.css` (colores, espaciados, radios, tipografía), fuentes locales (no depender de Google Fonts sin señal)
-- [ ] Textura de papel (SVG de ruido en línea, menos de 2 KB)
-- [ ] `demo-data.json` con los 70 animales simulados (nombres y casos reales: Mateo, Bruno) y las 2 clínicas
-
-### Fase 1 — Componentes (≈3–4 h)
-- [ ] Los 10 componentes de la sección 6, en una página `/kit` para revisarlos juntos
-- [ ] Juego de íconos a mano (comida, medicina, plata, animal, cámara, deshacer, señal)
-- [ ] **Revisión anti-IA** (checklist de la sección 9) antes de seguir
-
-### Fase 2 — Cuidador "Hoy" (≈3 h) · P0
-- [ ] Entrar con foto de cara → rol
-- [ ] Tarjeta de comida con costales y −1 / +N, más el aviso de deshacer
-- [ ] Lista de dosis del día con sello; registra la hora y quién
-- [ ] Prueba: **registrar un bulto en menos de 5 s con guantes**
-
-### Fase 3 — Admin "Plata" (≈3 h) · P0
-- [ ] Número de caja + termómetros por clínica con límite
-- [ ] Flujo de 4 pasos: entró/salió → monto → categoría (5 íconos) → foto opcional
-- [ ] Compresión de la foto en el celular
-- [ ] Prueba: **registrar un gasto en menos de 15 s**
-
-### Fase 4 — Animales y pasaporte (≈2–3 h) · P0
-- [ ] Cintas por estado con conteo; filtrar tocando la cinta
-- [ ] Ficha / pasaporte: advertencias en rojo arriba (caso Bruno), tratamientos y botón "Cambiar estado" (lista de 6 opciones grandes)
-
-### Fase 5 — Offline + Sheets (≈3 h) · P0
-- [ ] Dexie + outbox; `EstadoConexion`
-- [ ] Apps Script: `doPost` (registrar) y `doGet` (leer todo en un JSON liviano)
-- [ ] Sincronizar al volver la señal; resolver conflictos con "gana el último + se guarda el historial"
-- [ ] Prueba: modo avión → registrar 5 cosas → activar la señal → ver la hoja actualizada
-
-### Fase 6 — Bandeja "Por confirmar" (≈2 h) · P0
-- [ ] Tarjeta: "Entendí: *Mateo · Amoxicilina 3 ml*" con el audio o la foto original → [✅ Confirmar] [✏️ Corregir]
-- [ ] Montos y dosis resaltados en grande para revisarlos (los errores 30 ml vs. 3 ml son el miedo número 1 del cliente)
-
-### Fase 7 — P1 si hay tiempo (horas 33–38)
-- [ ] (A) Celebración de adopción: confeti de huellitas una sola vez, con contador de vidas real
-- [ ] (B) Apps Script con trigger a las 6 a. m. → mensaje a un grupo de Telegram: "Quedan 3 días de comida de perro · Mateo: antibiótico 8:00"
-- [ ] (B, opcional) Bot de Telegram + Gemini que escribe en `PorConfirmar`
-
-### Fase 8 — Pulido y demo (≈2 h)
-- [ ] Modo "sol fuerte", revisión de contraste (WCAG AA mínimo, AAA en los números clave)
-- [ ] Lighthouse PWA/Accesibilidad en verde
-- [ ] Guion de la demo con `?demo=1`, instalada en un celular real
-
-> La Fase 7 original (adopciones 🟢🟡🔴 y "Lo que hace falta hoy") queda fuera para 2 personas; ver la sección 3.
+Estado del panel principal (27 de octubre): están hechos el kit (`/kit`), Hoy, Plata, Comida, Animales con su ficha y Por confirmar, todo con datos demo y en revisión en el PR #1. Falta conectar a `/api/hoy`, la cola sin señal, la celebración de adopción (P1) y las pruebas de la sección 8.
 
 ---
 

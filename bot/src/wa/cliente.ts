@@ -12,10 +12,13 @@ export function recortar(texto: string, max: number): string {
   return texto.length <= max ? texto : `${texto.slice(0, max - 1)}…`
 }
 
-/** Convierte una Salida en el cuerpo que espera la API de Meta. */
-export function cuerpoMensaje(telefono: string, s: Salida): Record<string, unknown> {
+/** Convierte una Salida en el cuerpo que espera la API de Meta. Una imagen necesita el id con que se subió. */
+export function cuerpoMensaje(telefono: string, s: Salida, mediaId?: string): Record<string, unknown> {
   const base = { messaging_product: 'whatsapp', recipient_type: 'individual', to: telefono }
   switch (s.tipo) {
+    case 'imagen':
+      if (!mediaId) throw new Error('La imagen se sube primero a Meta')
+      return { ...base, type: 'image', image: { id: mediaId, caption: recortar(s.texto, 1024) } }
     case 'texto':
       return { ...base, type: 'text', text: { body: recortar(s.texto, 4096), preview_url: true } }
     case 'botones':
@@ -59,12 +62,23 @@ export function crearWa(c: ConfigWa): Wa {
   const api = `https://graph.facebook.com/${c.version}`
   const auth = { Authorization: `Bearer ${c.token}` }
 
+  async function subir(png: Buffer): Promise<string> {
+    const form = new FormData()
+    form.append('messaging_product', 'whatsapp')
+    form.append('type', 'image/png')
+    form.append('file', new Blob([new Uint8Array(png)], { type: 'image/png' }), 'informe.png')
+    const r = await fetch(`${api}/${c.phoneId}/media`, { method: 'POST', headers: auth, body: form })
+    if (!r.ok) throw new Error(`WhatsApp no aceptó la imagen (${r.status}): ${await r.text()}`)
+    return ((await r.json()) as { id: string }).id
+  }
+
   return {
     async enviar(telefono, salida) {
+      const mediaId = salida.tipo === 'imagen' ? await subir(salida.png) : undefined
       const r = await fetch(`${api}/${c.phoneId}/messages`, {
         method: 'POST',
         headers: { ...auth, 'Content-Type': 'application/json' },
-        body: JSON.stringify(cuerpoMensaje(telefono, salida)),
+        body: JSON.stringify(cuerpoMensaje(telefono, salida, mediaId)),
       })
       if (!r.ok) throw new Error(`WhatsApp respondió ${r.status}: ${await r.text()}`)
     },

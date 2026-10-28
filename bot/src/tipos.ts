@@ -1,3 +1,4 @@
+import type { TipoInforme } from './informes/armar.js'
 import type { DatosAlbergue, Propuesta, Rol } from './panel-tipos.js'
 
 /** Lo que el bot (o el panel) propone guardar. Es la misma forma que usa el panel. */
@@ -43,6 +44,8 @@ export type Salida =
   | { tipo: 'botones'; texto: string; botones: Boton[] }
   /** Máximo 10 filas. `boton` es el texto del botón que abre la lista (máximo 20) */
   | { tipo: 'lista'; texto: string; boton: string; filas: Fila[] }
+  /** Imagen PNG con un pie de foto corto (máximo 1024) */
+  | { tipo: 'imagen'; png: Buffer; texto: string }
 
 // ---------- Estado de la conversación ----------
 
@@ -93,6 +96,8 @@ export interface Entendido {
   futuras: number
   /** Lo que se alcanzó a leer de una factura, aunque falte el monto o la clínica */
   factura?: { monto: number | null; clinicaId: string | null; concepto: string }
+  /** La persona pidió ver un informe o una gráfica en vez de anotar algo */
+  informe?: TipoInforme
 }
 
 // ---------- Dependencias (reales o falsas en las pruebas) ----------
@@ -181,6 +186,8 @@ export interface Deps {
   wa: Wa
   ia: Ia
   archivos: Archivos
+  /** Dibuja una hoja HTML como imagen PNG (informes y gráficas) */
+  dibujar(html: string): Promise<Buffer>
   panelUrl: string
   ahora: () => Date
 }

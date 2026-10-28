@@ -23,6 +23,8 @@ Montos en pesos enteros: "50 mil" = 50000, "un millón y medio" = 1500000, "$150
 - factura: compra a crédito en una clínica (sube la deuda). Lleva clinica_id, monto y en texto qué se compró.
 - observacion: lo que se notó de un animal ("ya camina solito", "no quiso comer"). Lleva animal_id y texto corto.
 - Los animales se nombran a veces con apodos o mal pronunciados: busca el más parecido en la lista.
+- informe: si la persona pide VER algo ("mándame el informe", "cómo vamos de plata", "una gráfica de la comida", \
+"qué medicinas faltan"), pon cuál (general, plata, comida, medicinas o animales) y no anotes acciones por eso.
 - Si no entiendes nada útil, devuelve acciones vacías y confianza baja. Nunca inventes ids.
 - transcripcion: lo que dijo la persona tal cual. Si es una foto, lo que dice en una frase.`
 

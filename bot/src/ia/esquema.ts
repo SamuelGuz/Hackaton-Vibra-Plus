@@ -4,6 +4,7 @@
 import { Type, type Schema } from '@google/genai'
 import type { CategoriaGasto, CategoriaIngreso, DatosAlbergue } from '../panel-tipos.js'
 import { parsearMonto } from '../conversacion/numeros.js'
+import { TIPOS_INFORME, type TipoInforme } from '../informes/armar.js'
 import type { Accion, Entendido } from '../tipos.js'
 
 export const CATEGORIAS_GASTO: CategoriaGasto[] = ['comida', 'veterinaria', 'limpieza', 'servicios', 'transporte', 'otro']
@@ -35,6 +36,11 @@ export const ESQUEMA: Schema = {
         required: ['tipo', 'ya_ocurrio'],
       },
     },
+    informe: {
+      type: Type.STRING,
+      enum: ['ninguno', ...TIPOS_INFORME],
+      description: 'Si la persona PIDE ver un informe, reporte, gráfica o resumen, cuál. Si no pide nada de eso: ninguno',
+    },
   },
   required: ['transcripcion', 'confianza', 'acciones'],
 }
@@ -58,6 +64,7 @@ export interface RespuestaCruda {
   transcripcion: string
   confianza: number
   acciones: AccionCruda[]
+  informe?: string
 }
 
 function minutos(hora: string): number {
@@ -152,5 +159,6 @@ export function convertir(crudo: RespuestaCruda, datos: DatosAlbergue, ahora: Da
   }
 
   const confianza = Math.min(1, Math.max(0, Number(crudo.confianza) || 0))
-  return { transcripcion: crudo.transcripcion ?? '', acciones, confianza, futuras, factura }
+  const informe = TIPOS_INFORME.includes(crudo.informe as TipoInforme) ? (crudo.informe as TipoInforme) : undefined
+  return { transcripcion: crudo.transcripcion ?? '', acciones, confianza, futuras, factura, informe }
 }

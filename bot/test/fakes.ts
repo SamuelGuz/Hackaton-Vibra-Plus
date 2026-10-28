@@ -227,14 +227,19 @@ export function crearDeps() {
   const repo = new RepoFalso()
   const wa = new WaFalso()
   const ia = new IaFalsa()
+  const dibujos: string[] = []
   let n = 0
   const deps: Deps = {
     repo,
     wa,
     ia,
     archivos: { guardar: async (_d, mime) => `/archivos/f${++n}.${mime.startsWith('image') ? 'jpg' : 'ogg'}` },
+    dibujar: async (html) => {
+      dibujos.push(html)
+      return Buffer.from('png')
+    },
     panelUrl: 'https://panel.huellitas.test',
     ahora: () => repo.ahora,
   }
-  return { deps, repo, wa, ia }
+  return { deps, repo, wa, ia, dibujos }
 }

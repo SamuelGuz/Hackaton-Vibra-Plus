@@ -3,6 +3,7 @@ import { textos } from '../textos.js'
 import type { Accion, Entendido, Estado, NuevoRegistro } from '../tipos.js'
 import type { Ctx } from './ctx.js'
 import { guardarYPreguntar } from './confirmar.js'
+import { enviarInforme } from './informe.js'
 import { bajarYGuardar, entenderSeguro } from './medios.js'
 import { yaReportada } from './medicina.js'
 import { mostrarMenu } from './menu.js'
@@ -40,6 +41,7 @@ export async function registrarEntendido(
   if (!e) return mostrarMenu(c, textos.noEntendi)
   const { acciones, avisos } = await sinDosisRepetidas(c, e.acciones)
   if (acciones.length === 0) {
+    if (e.informe && !avisos.length) return enviarInforme(c, e.informe)
     if (avisos.length) return mostrarMenu(c, avisos.join('\n'))
     return mostrarMenu(c, e.futuras > 0 ? textos.futura : textos.noEntendi)
   }

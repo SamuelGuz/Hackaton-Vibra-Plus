@@ -11,6 +11,7 @@ import { crearRepoPg } from './datos/repo-pg.js'
 import { crearIa } from './ia/gemini.js'
 import { crearIaOpenRouter } from './ia/openrouter.js'
 import { crearIaConRespaldo, type IaConNombre } from './ia/respaldo.js'
+import { crearDibujante } from './informes/dibujar.js'
 import type { Ia } from './tipos.js'
 import { crearWa } from './wa/cliente.js'
 
@@ -51,6 +52,7 @@ const app = crearApp({
     wa: crearWa({ token: exigir('WA_TOKEN'), phoneId: exigir('WA_PHONE_ID'), version: process.env.WA_API_VERSION || 'v21.0' }),
     ia: crearIas(),
     archivos,
+    dibujar: crearDibujante(),
     panelUrl: exigir('PANEL_URL'),
     ahora: () => new Date(),
   },

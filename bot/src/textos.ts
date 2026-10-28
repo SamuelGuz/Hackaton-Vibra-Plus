@@ -32,6 +32,12 @@ export const textos = {
   soloAudiosFotosTexto: 'Por ahora entiendo audios, fotos y mensajes escritos 🙂',
   algoFallo: 'Uy, algo me falló de mi lado 😓 No se guardó nada. Intentemos otra vez.',
   seMePerdio: 'Se me perdió el hilo 😅 Empecemos de nuevo.',
+  informeCual: '¿Qué informe quieres ver? Te lo mando como imagen 📊',
+  informeBoton: 'Ver informes',
+  informePreparando: 'Ya te lo preparo 📊 Dame un momentico.',
+  informeFallo: 'Uy, no pude armar la imagen del informe 😓 Mira lo de hoy o abre el panel mientras lo arreglo.',
+  informeOtro: 'Ahí está 👆 Si quieres otro, escribe "informe" cuando quieras.',
+  informeSinPlata: 'El informe de la plata solo lo ve la administración 🔒',
   futura: 'Entendí que todavía no se lo has dado. Cuando se lo des, me cuentas y lo anoto 👍',
   noPuedePlata: 'Lo de la plata lo registra la administradora 🙏 Cuéntale a ella.',
 
@@ -120,6 +126,7 @@ export const OPCIONES_MENU = [
   { id: 'm:factura', titulo: 'Factura de clínica', descripcion: 'Foto de una factura a crédito' },
   { id: 'm:animal', titulo: 'Contar algo de un animal', descripcion: 'Cómo está, qué le notaste' },
   { id: 'm:hoy', titulo: 'Ver lo de hoy', descripcion: 'Medicinas, comida y pendientes' },
+  { id: 'm:informe', titulo: 'Ver un informe', descripcion: 'Gráficas de plata, comida, animales…' },
   { id: 'm:panel', titulo: 'Abrir el panel', descripcion: 'Ver todo en el celular' },
 ]
 

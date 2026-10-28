@@ -10,6 +10,7 @@ import { elegirAnimal, empezarAnimal, guardarNota, nombreEscrito } from './anima
 import { cantidadEscrita, elegirCantidad, elegirEspecie, empezarComida, especieDeTexto } from './comida.js'
 import { responder, type Respuesta } from './confirmar.js'
 import { crearCtx, type Ctx } from './ctx.js'
+import { elegirInforme, enviarInforme, informePedido } from './informe.js'
 import { libreMedia, libreTexto, registrarEntendido } from './libre.js'
 import { elegirDosis, empezarMedicina, responderDuplicada } from './medicina.js'
 import { bajarYGuardar, entenderSeguro } from './medios.js'
@@ -99,6 +100,8 @@ function opcionDelMenu(c: Ctx, opcion: string): Promise<Estado> {
       return verHoy(c)
     case 'panel':
       return abrirPanel(c)
+    case 'informe':
+      return elegirInforme(c)
     default:
       return mostrarMenu(c)
   }
@@ -152,6 +155,8 @@ async function boton(c: Ctx, estado: Estado, id: string): Promise<Estado> {
       return elegirAnimal(c, id)
     case 'nf':
       return facturaSinFoto(c)
+    case 'i':
+      return enviarInforme(c, id.slice(2))
   }
 
   // Botones que dependen del paso en que va la persona
@@ -182,8 +187,10 @@ function texto(c: Ctx, estado: Estado, t: string): Promise<Estado> {
       return guardarNota(c, estado.animalId, t)
     case 'plata_foto':
       return /\b(no|sin)\b/i.test(t) ? guardarPlata(c, estado, null) : libreTexto(c, t)
-    default:
-      return libreTexto(c, t)
+    default: {
+      const informe = informePedido(t)
+      return informe ? enviarInforme(c, informe) : libreTexto(c, t)
+    }
   }
 }
 

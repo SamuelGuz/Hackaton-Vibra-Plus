@@ -64,9 +64,11 @@ Todas las frases están en [`src/textos.ts`](src/textos.ts), para ajustar el ton
    - Suscribirse al campo **messages**.
 5. Cada persona del equipo le escribe primero al número de prueba. Así se abre la ventana de 24 horas y las respuestas salen gratis.
 
-## Gemini
+## Gemini (y OpenRouter de respaldo)
 
 Crear la llave en [aistudio.google.com](https://aistudio.google.com/apikey) y ponerla en `GEMINI_API_KEY`. El modelo se cambia con `GEMINI_MODEL`.
+
+De respaldo, con una llave de [openrouter.ai](https://openrouter.ai/keys) en `OPENROUTER_API_KEY`: si Gemini falla, el mismo mensaje se manda a OpenRouter (`OPENROUTER_MODEL`, por defecto `google/gemini-2.5-flash`; debe aceptar audio e imágenes). Si a Gemini se le acaba la cuota, se salta 10 minutos y todo va directo a OpenRouter. Basta con una de las dos llaves ([`src/ia/respaldo.ts`](src/ia/respaldo.ts)).
 
 Privacidad: el plan gratis de Gemini usa los datos para entrenar. Por eso, a los textos se les quitan antes teléfonos y cédulas ([`src/ia/redactar.ts`](src/ia/redactar.ts)), y la IA solo recibe nombres de animales, dosis y clínicas.
 

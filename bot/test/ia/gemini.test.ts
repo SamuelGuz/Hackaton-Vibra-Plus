@@ -100,3 +100,17 @@ describe('generarJSON', () => {
     expect((error as Error).message).toBe('IA: error 429')
   })
 })
+
+describe('generarJSON: temperatura', () => {
+  it('por defecto 0 (extracción determinista)', async () => {
+    const { fetchFn, llamadas } = fetchFalso(() => conTexto('{"ok":true}'))
+    await generarJSON(env, [{ texto: 'x' }], esquema, 's', esOk, fetchFn)
+    expect(llamadas[0]?.body.generationConfig).toMatchObject({ temperature: 0 })
+  })
+
+  it('opciones.temperatura la cambia (conversación del agente)', async () => {
+    const { fetchFn, llamadas } = fetchFalso(() => conTexto('{"ok":true}'))
+    await generarJSON(env, [{ texto: 'x' }], esquema, 's', esOk, fetchFn, { temperatura: 0.7 })
+    expect(llamadas[0]?.body.generationConfig).toMatchObject({ temperature: 0.7, responseMimeType: 'application/json' })
+  })
+})

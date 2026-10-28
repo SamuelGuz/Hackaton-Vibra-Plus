@@ -21,6 +21,11 @@ function textoDeLaRespuesta(respuesta: unknown): string | undefined {
   return typeof texto === 'string' ? texto : undefined
 }
 
+export interface OpcionesGemini {
+  /** 0 por defecto: la extracción es determinista. El agente conversacional sube la suya. */
+  temperatura?: number
+}
+
 export async function generarJSON<T>(
   env: Env,
   partes: ParteIa[],
@@ -28,6 +33,7 @@ export async function generarJSON<T>(
   sistema: string,
   esValido: (x: unknown) => x is T,
   fetchFn: typeof fetch = fetch,
+  opciones: OpcionesGemini = {},
 ): Promise<T> {
   if (!env.GEMINI_API_KEY) throw new Error('IA: falta GEMINI_API_KEY')
   const modelo = env.GEMINI_MODEL ?? MODELO_POR_DEFECTO
@@ -38,7 +44,7 @@ export async function generarJSON<T>(
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: sistema }] },
       contents: [{ role: 'user', parts: partes.map(aParteGemini) }],
-      generationConfig: { responseMimeType: 'application/json', responseSchema: esquema, temperature: 0 },
+      generationConfig: { responseMimeType: 'application/json', responseSchema: esquema, temperature: opciones.temperatura ?? 0 },
     }),
   })
   // Solo el código: el cuerpo del error puede repetir el prompt (datos del albergue).

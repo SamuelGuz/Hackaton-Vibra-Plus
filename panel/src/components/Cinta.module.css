@@ -1,0 +1,13 @@
+.cinta {
+  display: inline-block;
+  padding: var(--e-1) var(--e-5);
+  background-color: var(--cinta);
+  /* Fibras de la cinta: rayitas casi invisibles */
+  background-image: repeating-linear-gradient(90deg, rgb(255 255 255 / 0.14) 0 2px, transparent 2px 7px);
+  color: var(--tinta);
+  font-weight: 700;
+  font-size: var(--t-chico);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}

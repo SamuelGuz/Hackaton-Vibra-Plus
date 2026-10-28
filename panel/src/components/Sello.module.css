@@ -1,0 +1,48 @@
+.sello {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--e-1) var(--e-4);
+  border: 3px solid var(--bien);
+  outline: 1.5px solid var(--bien);
+  outline-offset: 2px;
+  border-radius: 6px;
+  color: var(--bien);
+  rotate: -8deg;
+  text-transform: uppercase;
+  line-height: 1.1;
+  /* Tinta de sello: se pierde un poco en algunos puntos */
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.6 1.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23t)'/%3E%3C/svg%3E");
+}
+
+.texto {
+  font-family: var(--letra-titulo);
+  font-weight: 800;
+  font-size: var(--t-subtitulo);
+  letter-spacing: 0.08em;
+}
+
+.detalle {
+  font-weight: 700;
+  font-size: var(--t-chico);
+  text-transform: none;
+}
+
+.animar {
+  animation: caer var(--normal) var(--rebote) both;
+}
+
+@keyframes caer {
+  from {
+    opacity: 0;
+    scale: 1.6;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+:root[data-sol='fuerte'] .sello {
+  mask-image: none;
+}

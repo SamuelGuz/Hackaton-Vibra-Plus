@@ -1,0 +1,15 @@
+{
+  "name": "@huellitas/shared",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Tipos y funciones puras que comparten el panel y el servidor (solo fuentes .ts, sin build)",
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}

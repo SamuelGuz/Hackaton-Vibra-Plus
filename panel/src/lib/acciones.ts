@@ -30,8 +30,8 @@ export function moverBultos(
   cambio: number,
   quien: string,
   ahora: Date = new Date(),
+  id: string = nuevoId(),
 ): Resultado {
-  const id = nuevoId()
   const registro = { id, fechaHora: momentoLocal(ahora), tipo: especie, cambio, quien, origen: 'panel' as const }
   return { id, datos: { ...datos, inventario: [...datos.inventario, registro] } }
 }
@@ -42,8 +42,8 @@ export function darDosis(
   hora: string,
   quien: string,
   ahora: Date = new Date(),
+  id: string = nuevoId(),
 ): Resultado {
-  const id = nuevoId()
   const registro = { id, tratamientoId, hora, fechaHora: momentoLocal(ahora), quien, origen: 'panel' as const }
   return { id, datos: { ...datos, dosisDadas: [...datos.dosisDadas, registro] } }
 }
@@ -66,48 +66,15 @@ export function registrarMovimiento(
   movimiento: Omit<Movimiento, 'id' | 'fechaHora' | 'quien'>,
   quien: string,
   ahora: Date = new Date(),
+  id: string = nuevoId(),
 ): DatosAlbergue {
-  const registro: Movimiento = { ...movimiento, id: nuevoId(), fechaHora: momentoLocal(ahora), quien }
+  const registro: Movimiento = { ...movimiento, id, fechaHora: momentoLocal(ahora), quien }
   const { abonoDeuda, clinicaId, monto } = movimiento
   return {
     ...datos,
     movimientos: [...datos.movimientos, registro],
     clinicas: datos.clinicas.map((c) =>
       abonoDeuda && c.id === clinicaId ? { ...c, deuda: Math.max(0, c.deuda - monto) } : c,
-    ),
-  }
-}
-
-/**
- * Confirma una dosis que alguien reportó por audio: queda dada a la hora y a nombre
- * de quien la reportó, y sale de la bandeja. El resto del audio sigue pendiente.
- */
-export function confirmarDosisReportada(
-  datos: DatosAlbergue,
-  porConfirmarId: string,
-  tratamientoId: string,
-  hora: string,
-): DatosAlbergue {
-  const item = datos.porConfirmar.find((p) => p.id === porConfirmarId)
-  if (!item) return datos
-  const esEsta = (p: (typeof item.propuestas)[number]) =>
-    p.tipo === 'dosis' && p.tratamientoId === tratamientoId && p.hora === hora
-  const quedan = item.propuestas.filter((p) => !esEsta(p))
-  const registro = {
-    id: nuevoId(),
-    tratamientoId,
-    hora,
-    fechaHora: item.fechaHora,
-    quien: item.quien,
-    origen: 'bot' as const,
-  }
-  return {
-    ...datos,
-    dosisDadas: [...datos.dosisDadas, registro],
-    porConfirmar: datos.porConfirmar.map((p) =>
-      p.id === porConfirmarId
-        ? { ...p, propuestas: quedan, estado: quedan.length ? p.estado : ('confirmado' as const) }
-        : p,
     ),
   }
 }
@@ -140,14 +107,20 @@ export function confirmarPorConfirmar(datos: DatosAlbergue, id: string, propuest
           registro.abonoDeuda && c.id === registro.clinicaId ? { ...c, deuda: Math.max(0, c.deuda - registro.monto) } : c,
         ),
       }
-    } else {
+    } else if (p.tipo === 'deuda') {
       // Factura a crédito: no sale de caja, sube la deuda
       d = { ...d, clinicas: d.clinicas.map((c) => (c.id === p.clinicaId ? { ...c, deuda: c.deuda + p.monto } : c)) }
+    } else {
+      d = cambiarEstado(d, p.animalId, p.estado)
     }
   }
-  const igual = JSON.stringify(propuestas) === JSON.stringify(item.propuestas)
-  const estado = igual ? ('confirmado' as const) : ('corregido' as const)
+  const estado = mismasPropuestas(propuestas, item.propuestas) ? ('confirmado' as const) : ('corregido' as const)
   return { ...d, porConfirmar: d.porConfirmar.map((p) => (p.id === id ? { ...p, estado } : p)) }
+}
+
+/** true si la persona confirmó tal cual lo que entendió la IA (sin quitar ni cambiar nada) */
+export function mismasPropuestas(a: Propuesta[], b: Propuesta[]): boolean {
+  return JSON.stringify(a) === JSON.stringify(b)
 }
 
 export function descartarPorConfirmar(datos: DatosAlbergue, id: string): DatosAlbergue {

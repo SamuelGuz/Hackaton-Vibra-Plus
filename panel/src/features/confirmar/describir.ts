@@ -1,4 +1,5 @@
 import type { DatosAlbergue, Propuesta } from '../../data/tipos'
+import { NOMBRE_ESTADO } from '../../lib/calculos'
 import { horaBonita, pesos } from '../../lib/formato'
 import { nombreCategoria } from '../plata/categorias'
 
@@ -35,6 +36,8 @@ export function describir(datos: DatosAlbergue, p: Propuesta): { grande: string 
       const clinica = datos.clinicas.find((c) => c.id === p.clinicaId)?.nombre ?? 'la clínica'
       return { grande: pesos(p.monto), texto: `Factura a crédito con ${clinica}: sube la deuda · ${p.nota}` }
     }
+    case 'estado_animal':
+      return { grande: null, texto: `${animal(p.animalId)} pasa a "${NOMBRE_ESTADO[p.estado]}"` }
   }
 }
 

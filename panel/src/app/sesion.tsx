@@ -1,5 +1,5 @@
-// Quién está usando el celular. Sin contraseña: se elige la cara al entrar.
-// Se recuerda en el celular para no tener que elegir cada vez.
+// Quién está usando el celular. Con servidor, es la persona del enlace que mandó el bot.
+// En modo demo se elige la cara al entrar y se recuerda en el celular.
 import { createContext, useContext, useState } from 'react'
 import { useDatos } from '../data/DatosProvider'
 import type { Persona } from '../data/tipos'
@@ -32,8 +32,9 @@ function guardar(id: string | null) {
 }
 
 export function SesionProvider({ children }: { children: React.ReactNode }) {
-  const { datos } = useDatos()
-  const [id, setId] = useState<string | null>(leer)
+  const { datos, yo } = useDatos()
+  const [elegido, setId] = useState<string | null>(leer)
+  const id = yo ?? elegido
   const persona = datos.personas.find((p) => p.id === id) ?? null
 
   const entrar = (nuevo: string) => {

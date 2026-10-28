@@ -129,3 +129,17 @@
   display: grid;
   gap: var(--e-2);
 }
+
+.tambien {
+  justify-self: stretch;
+  font-size: var(--t-chico);
+}
+
+.tambien p {
+  font-weight: 700;
+}
+
+.tambien ul {
+  margin: var(--e-1) 0 0;
+  padding-left: var(--e-5);
+}

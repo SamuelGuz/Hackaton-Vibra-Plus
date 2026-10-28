@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { crearDatosDemo } from '../data/demo'
 import {
   cambiarEstado,
-  confirmarDosisReportada,
   confirmarPorConfirmar,
   darDosis,
   descartarPorConfirmar,
@@ -44,27 +43,6 @@ describe('darDosis', () => {
     expect(dosis.estado).toBe('dada')
     expect(dosis.dada).toMatchObject({ id, quien: 'p-luis', fechaHora: '2026-10-27T09:30' })
     expect(dosisDeHoy(deshacer(datos, id), AHORA).find((d) => d.tratamiento.id === 't-2')!.estado).toBe('atrasada')
-  })
-})
-
-describe('dosis reportadas por el bot', () => {
-  it('una dosis que llegó por audio sin confirmar aparece como reportada, no como pendiente de dar', () => {
-    const datos = crearDatosDemo(AHORA)
-    const mateo = dosisDeHoy(datos, AHORA).find((d) => d.tratamiento.id === 't-1' && d.hora === '08:00')!
-    expect(mateo.reporte).toMatchObject({ id: 'c-1', quien: 'p-luis' })
-  })
-
-  it('confirmarla registra la dosis con la hora y la persona del audio, y la saca de la bandeja', () => {
-    const antes = crearDatosDemo(AHORA)
-    const datos = confirmarDosisReportada(antes, 'c-1', 't-1', '08:00')
-    const mateo = dosisDeHoy(datos, AHORA).find((d) => d.tratamiento.id === 't-1' && d.hora === '08:00')!
-    expect(mateo.estado).toBe('dada')
-    expect(mateo.dada).toMatchObject({ quien: 'p-luis', origen: 'bot', fechaHora: antes.porConfirmar[0].fechaHora })
-    expect(mateo.reporte).toBeNull()
-    // El resto del audio (la nota y el bulto) sigue esperando confirmación
-    const item = datos.porConfirmar.find((p) => p.id === 'c-1')!
-    expect(item.estado).toBe('pendiente')
-    expect(item.propuestas.map((p) => p.tipo)).toEqual(['nota', 'inventario'])
   })
 })
 
@@ -134,6 +112,18 @@ describe('bandeja Por confirmar', () => {
     const datos = descartarPorConfirmar(antes, 'c-2')
     expect(datos.porConfirmar.find((p) => p.id === 'c-2')!.estado).toBe('descartado')
     expect(plataEnCaja(datos)).toBe(plataEnCaja(antes))
+  })
+})
+
+describe('estado_animal', () => {
+  it('confirmar un cambio de estado lo aplica al animal', () => {
+    const antes = crearDatosDemo(AHORA)
+    const datos = confirmarPorConfirmar(
+      { ...antes, porConfirmar: [{ ...antes.porConfirmar[0], propuestas: [{ tipo: 'estado_animal', animalId: 'perro-9', estado: 'adoptable' }] }] },
+      'c-1',
+      [{ tipo: 'estado_animal', animalId: 'perro-9', estado: 'adoptable' }],
+    )
+    expect(datos.animales.find((a) => a.id === 'perro-9')!.estado).toBe('adoptable')
   })
 })
 

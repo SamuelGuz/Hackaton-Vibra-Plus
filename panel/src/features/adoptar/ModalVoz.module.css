@@ -1,0 +1,237 @@
+.fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--e-3);
+  background: rgb(31 42 68 / 0.55);
+}
+
+.dialogo {
+  display: grid;
+  gap: var(--e-4);
+  width: min(100%, 520px);
+  max-height: calc(100dvh - var(--e-5));
+  overflow-y: auto;
+  padding: var(--e-5);
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-boton);
+  background: var(--papel-claro);
+  box-shadow: var(--sombra-foto);
+}
+
+@media (min-width: 640px) {
+  .fondo {
+    align-items: center;
+  }
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-3);
+}
+
+.titulo {
+  font-size: var(--t-subtitulo);
+}
+
+.cerrar {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-boton);
+  background: var(--papel);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.estado {
+  color: var(--lapiz);
+  text-align: center;
+}
+
+.conversacion {
+  list-style: none;
+  margin: 0;
+  padding: var(--e-3);
+  display: grid;
+  align-content: start;
+  gap: var(--e-3);
+  min-height: 120px;
+  max-height: 34dvh;
+  overflow-y: auto;
+  border-radius: var(--radio-papel);
+  background: var(--papel);
+}
+
+.conversacion li {
+  display: grid;
+  gap: 2px;
+  max-width: 88%;
+  padding: var(--e-2) var(--e-3);
+  border-radius: var(--radio-boton);
+}
+
+.quien {
+  font-size: var(--t-chico);
+  font-weight: 700;
+  color: var(--lapiz);
+}
+
+.tu {
+  justify-self: end;
+  background: var(--bien-suave);
+}
+
+.agente {
+  justify-self: start;
+  background: var(--papel-claro);
+  border: 1px solid var(--papel-hondo);
+}
+
+.conversacion .vacio {
+  max-width: 100%;
+  color: var(--lapiz);
+  font-family: var(--letra-mano);
+  text-align: center;
+}
+
+.mencionados {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2);
+}
+
+.mencionados li {
+  padding: var(--e-1) var(--e-3);
+  border-radius: var(--radio-pildora);
+  background: var(--cinta);
+  font-size: var(--t-chico);
+  font-weight: 700;
+}
+
+.exito {
+  padding: var(--e-3);
+  border-radius: var(--radio-papel);
+  background: var(--bien-suave);
+  font-weight: 700;
+}
+
+.error {
+  padding: var(--e-3);
+  border-radius: var(--radio-papel);
+  background: var(--urgente-suave);
+  color: var(--urgente);
+  font-weight: 700;
+}
+
+.controles {
+  display: grid;
+  justify-items: center;
+}
+
+.mic {
+  display: grid;
+  place-items: center;
+  width: 112px;
+  height: 112px;
+  border: 3px solid var(--tinta);
+  border-radius: 50%;
+  background: var(--bien);
+  color: var(--borde-foto);
+  box-shadow: var(--sombra-boton);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.mic:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+.escuchando {
+  background: var(--ojo);
+  animation: latido 1.2s ease-in-out infinite;
+}
+
+@keyframes latido {
+  50% {
+    box-shadow:
+      var(--sombra-boton),
+      0 0 0 14px rgb(168 67 44 / 0.22);
+  }
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--e-3);
+}
+
+.secundario,
+.colgar,
+.enviar {
+  min-height: 52px;
+  padding: 0 var(--e-5);
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-boton);
+  background: var(--papel);
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.colgar {
+  border-color: var(--urgente);
+  background: var(--urgente);
+  color: var(--borde-foto);
+}
+
+.enviar {
+  background: var(--bien);
+  color: var(--borde-foto);
+}
+
+.enviar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.escribir {
+  display: grid;
+  gap: var(--e-2);
+}
+
+.aviso {
+  color: var(--lapiz);
+  font-size: var(--t-chico);
+}
+
+.etiqueta {
+  font-weight: 700;
+}
+
+.fila {
+  display: flex;
+  gap: var(--e-2);
+}
+
+.campo {
+  flex: 1;
+  min-width: 0;
+  min-height: 52px;
+  padding: 0 var(--e-3);
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-boton);
+  background: var(--papel);
+  font: inherit;
+}

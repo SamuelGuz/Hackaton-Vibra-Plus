@@ -4,13 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#F5EFE3" />
-    <meta name="description" content="La libreta del albergue Huellitas que no se moja" />
+    <meta
+      name="description"
+      content="Fundación Huellitas: conoce a los perritos y gatitos que buscan hogar, apadrina desde $20.000 al mes o habla con nuestro agente de voz."
+    />
+    <!-- Respaldo para quien no ejecuta JavaScript (rastreadores, vistas previas); la landing /adoptar lo reemplaza al cargar -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:site_name" content="Fundación Huellitas" />
+    <meta property="og:title" content="Adoptar perrito - Fundación Huellitas" />
+    <meta
+      property="og:description"
+      content="Conoce a los perritos y gatitos de la Fundación Huellitas que buscan hogar y apadrina desde $20.000 al mes."
+    />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
     <title>Huellitas</title>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <h1>Adoptar perrito - Fundación Huellitas</h1>
+      <p>
+        En la Fundación Huellitas cuidamos a perros y gatos rescatados hasta que encuentran familia. Puedes adoptar,
+        apadrinar desde $20.000 al mes o escribirnos por WhatsApp para conocerlos.
+      </p>
+      <p>Para ver a los peluditos y hablar con nuestro agente de voz, activa JavaScript en tu navegador.</p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -11,6 +11,7 @@ import { Animales } from '../features/animales/Animales'
 import { Ficha } from '../features/animales/Ficha'
 import { Confirmar } from '../features/confirmar/Confirmar'
 import { Marco } from './Marco'
+import { Adoptar, esVistaAdoptar } from '../features/adoptar/Adoptar'
 
 /** Con el enlace del bot no se pregunta quién es: se entra directo a la primera pestaña */
 function Inicio() {
@@ -25,6 +26,8 @@ function RutaConSesion({ children }: { children: React.ReactNode }) {
 }
 
 export function App() {
+  // Landing pública: antes de los proveedores, para que nunca pida sesión ni abra la base local
+  if (esVistaAdoptar()) return <Adoptar />
   return (
     <DatosProvider>
       <SesionProvider>

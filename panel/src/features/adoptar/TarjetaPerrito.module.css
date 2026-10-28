@@ -1,0 +1,144 @@
+.tarjeta {
+  display: grid;
+  gap: var(--e-4);
+  align-content: start;
+  padding: var(--e-5);
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-papel);
+  background: var(--papel-claro);
+  box-shadow: var(--sombra-papel);
+  scroll-margin-top: var(--e-5);
+}
+
+.motivo {
+  justify-self: start;
+  padding: var(--e-1) var(--e-3);
+  border-radius: var(--radio-pildora);
+  background: var(--cinta);
+  font-size: var(--t-chico);
+  font-weight: 700;
+}
+
+.cabecera {
+  display: flex;
+  gap: var(--e-4);
+  align-items: flex-start;
+}
+
+.datos {
+  display: grid;
+  gap: var(--e-2);
+  min-width: 0;
+}
+
+.sub {
+  color: var(--lapiz);
+}
+
+.chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2);
+}
+
+.chips li {
+  padding: 2px var(--e-3);
+  border: 1.5px solid var(--tinta);
+  border-radius: var(--radio-pildora);
+  background: var(--papel);
+  font-size: var(--t-chico);
+}
+
+/* Solo 3 líneas de la historia: la tarjeta invita, no abruma */
+.historia {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.hoy {
+  padding: var(--e-3);
+  border-radius: var(--radio-papel);
+  background: var(--bien-suave);
+}
+
+.hoyTitulo {
+  margin: 0 0 var(--e-1);
+  font-family: var(--letra-titulo);
+  font-size: var(--t-chico);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hoy ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.nota {
+  font-family: var(--letra-mano);
+}
+
+.meta {
+  display: grid;
+  gap: var(--e-2);
+}
+
+.barra {
+  height: 14px;
+  overflow: hidden;
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-pildora);
+  background: var(--papel);
+}
+
+.relleno {
+  display: block;
+  height: 100%;
+  background: var(--bien);
+}
+
+.metaTexto {
+  font-size: var(--t-chico);
+}
+
+.whatsapp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--toque-min);
+  padding: var(--e-2) var(--e-4);
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-boton);
+  background: var(--bien);
+  color: var(--borde-foto);
+  font-size: var(--t-boton);
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: var(--sombra-boton);
+  touch-action: manipulation;
+}
+
+.whatsapp:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgb(31 42 68 / 0.28);
+}
+
+.sinWhatsapp {
+  padding: var(--e-3);
+  border: 2px dashed var(--lapiz);
+  border-radius: var(--radio-boton);
+  color: var(--lapiz);
+  font-size: var(--t-chico);
+  text-align: center;
+}

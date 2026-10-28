@@ -1,0 +1,12 @@
+{
+  "name": "huellitas-db",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "espejo": "node --env-file=.env espejo/espejo.js"
+  },
+  "dependencies": {
+    "@googleapis/sheets": "^18.1.1",
+    "pg": "^8.23.1"
+  }
+}

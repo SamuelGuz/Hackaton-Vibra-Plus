@@ -1,0 +1,25 @@
+# Postgres de Huellitas. El mismo archivo sirve en el PC y en el VPS.
+# Los .sql de sql/ se ejecutan solo la primera vez (cuando el volumen está vacío).
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: huellitas
+      POSTGRES_USER: huellitas
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Falta POSTGRES_PASSWORD en db/.env}
+      TZ: America/Bogota
+      PGTZ: America/Bogota
+    ports:
+      # 5434 porque en el PC de desarrollo el 5432 y el 5433 ya los usan otros Postgres
+      - "${POSTGRES_PORT:-5434}:5432"
+    volumes:
+      - datos:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U huellitas -d huellitas"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  datos:

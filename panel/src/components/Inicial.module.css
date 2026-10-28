@@ -1,0 +1,11 @@
+.inicial {
+  flex: none;
+  overflow: visible;
+}
+
+.letra {
+  font-family: var(--letra-mano);
+  font-weight: 700;
+  font-size: 54px;
+  fill: var(--borde-foto);
+}

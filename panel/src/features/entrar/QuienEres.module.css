@@ -1,0 +1,109 @@
+.pagina {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: var(--e-4) var(--e-4) var(--e-7);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-3);
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+  font-family: var(--letra-mano);
+  font-weight: 700;
+  font-size: var(--t-subtitulo);
+  color: var(--ojo);
+}
+
+.saludo {
+  margin: var(--e-7) 0 var(--e-6);
+}
+
+.hola {
+  font-family: var(--letra-mano);
+  font-weight: 700;
+  font-size: var(--t-subtitulo);
+  color: var(--lapiz);
+}
+
+.saludo h1 {
+  font-size: clamp(2.75rem, 12vw, 3.5rem);
+  margin-top: var(--e-1);
+}
+
+.ayuda {
+  margin-top: var(--e-3);
+  font-size: var(--t-boton);
+  color: var(--lapiz);
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--e-4);
+}
+
+.persona {
+  width: 100%;
+  min-height: 108px;
+  display: flex;
+  align-items: center;
+  gap: var(--e-4);
+  padding: var(--e-4) var(--e-4) var(--e-4) var(--e-3);
+  border: 0;
+  border-radius: var(--radio-papel);
+  background: var(--papel-claro);
+  box-shadow: var(--sombra-papel);
+  text-align: left;
+  cursor: pointer;
+  transition: transform var(--rapido) ease, box-shadow var(--rapido) ease;
+}
+
+/* Al tocar, la hoja "se pega" a la mesa */
+.persona:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgb(31 42 68 / 0.1);
+}
+
+.texto {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nombre {
+  font-family: var(--letra-titulo);
+  font-weight: 700;
+  font-size: var(--t-titulo);
+  line-height: 1.05;
+}
+
+.cargo {
+  font-size: var(--t-texto);
+  color: var(--lapiz);
+}
+
+.flecha {
+  flex: none;
+  color: var(--bien);
+}
+
+.pie {
+  margin-top: auto;
+  padding-top: var(--e-7);
+  font-size: var(--t-chico);
+  color: var(--lapiz);
+  text-align: center;
+}

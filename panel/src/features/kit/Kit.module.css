@@ -1,0 +1,149 @@
+.pagina {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--e-4) var(--e-4) var(--e-8);
+}
+
+.cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--e-3);
+}
+
+.volver {
+  color: var(--tinta);
+  font-weight: 700;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+  font-size: var(--t-titulo);
+  margin-top: var(--e-6);
+}
+
+.bajada {
+  color: var(--lapiz);
+  margin-top: var(--e-2);
+}
+
+.bloque {
+  margin-top: var(--e-7);
+  padding-top: var(--e-5);
+  border-top: 2px dashed var(--papel-hondo);
+}
+
+.bloque h2 {
+  font-size: var(--t-subtitulo);
+  margin-bottom: var(--e-4);
+}
+
+.colores {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--e-4);
+}
+
+.colores li {
+  display: flex;
+  gap: var(--e-3);
+  align-items: center;
+  font-size: var(--t-chico);
+}
+
+.muestra {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radio-papel);
+  box-shadow: inset 0 0 0 1px rgb(31 42 68 / 0.2);
+}
+
+.numeroXl {
+  font-size: var(--t-numero-xl);
+  line-height: 1;
+}
+
+.textoMuestra {
+  font-size: var(--t-texto);
+  margin-top: var(--e-5);
+}
+
+.mano {
+  font-family: var(--letra-mano);
+  font-weight: 700;
+  font-size: var(--t-titulo);
+  margin-top: var(--e-5);
+  color: var(--tinta);
+}
+
+.nota {
+  font-size: var(--t-chico);
+  color: var(--lapiz);
+  margin-top: var(--e-1);
+}
+
+.semaforo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+}
+
+.semaforo span {
+  min-height: 48px;
+  padding: 0 var(--e-4);
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radio-pildora);
+  font-weight: 700;
+}
+
+.bien {
+  background: var(--bien-suave);
+  color: var(--bien);
+}
+
+.ojo {
+  background: var(--ojo-suave);
+  color: var(--ojo);
+}
+
+.urgente {
+  background: var(--urgente);
+  color: #fff;
+}
+
+.personas {
+  display: flex;
+  gap: var(--e-5);
+  flex-wrap: wrap;
+}
+
+.personas figure {
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+}
+
+.toques {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--e-4);
+}
+
+.toques span {
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-boton);
+  font-size: var(--t-chico);
+  text-align: center;
+}

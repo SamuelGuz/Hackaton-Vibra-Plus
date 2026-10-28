@@ -1,0 +1,85 @@
+/*
+  Tokens de diseño de Huellitas — "La libreta que no se moja".
+  Los colores se nombran por lo que significan, no por cómo se ven.
+  Contrastes verificados (WCAG): todo texto ≥ 4.5:1 sobre --papel.
+*/
+:root {
+  /* Superficies */
+  --papel: #f5efe3;          /* fondo, como la hoja de la libreta */
+  --papel-hondo: #ebe2d0;    /* zonas hundidas, separadores */
+  --papel-claro: #fbf8f1;    /* tarjetas que "flotan" sobre la hoja */
+  --borde-foto: #fffdf8;     /* borde blanco de la foto instantánea */
+  --cinta: #e8d9a8;          /* cinta de enmascarar de las etiquetas */
+
+  /* Texto */
+  --tinta: #1f2a44;          /* azul tinta de esfero (12.4:1) */
+  --lapiz: #595449;          /* texto secundario, grafito cálido (6.6:1) */
+
+  /* Significado */
+  --bien: #2f6b3b;           /* verde potrero: acción principal, todo bien (5.6:1) */
+  --ojo: #a8432c;            /* arcilla: revisar, ojo (5.2:1) */
+  --urgente: #b3261e;        /* rojo sello: crítico, límite superado (5.7:1) */
+  --bien-suave: #dce8d4;
+  --ojo-suave: #f3dccf;
+  --urgente-suave: #f5d3cf;
+
+  /* Tipografía */
+  --letra-titulo: 'Bricolage Grotesque Variable', 'Trebuchet MS', sans-serif;
+  --letra-texto: 'Atkinson Hyperlegible Next Variable', Verdana, sans-serif;
+  --letra-mano: 'Kalam', 'Comic Sans MS', cursive;
+
+  --t-chico: 1rem;           /* 16px: solo para créditos y notas al pie */
+  --t-texto: 1.125rem;       /* 18px: mínimo para leer */
+  --t-boton: 1.25rem;        /* 20px */
+  --t-subtitulo: 1.5rem;     /* 24px */
+  --t-titulo: 2rem;          /* 32px */
+  --t-numero: 3.5rem;        /* 56px: días de comida, plata en caja */
+  --t-numero-xl: 4.5rem;     /* 72px: el número principal de la pantalla */
+
+  /* Espacios (base 4px, escala no lineal para crear jerarquía) */
+  --e-1: 4px;
+  --e-2: 8px;
+  --e-3: 12px;
+  --e-4: 16px;
+  --e-5: 24px;
+  --e-6: 32px;
+  --e-7: 48px;
+  --e-8: 72px;
+
+  /* Tamaños táctiles (con guantes) */
+  --toque-min: 64px;
+  --toque-grande: 72px;
+
+  /* Radios: distintos a propósito según el objeto real que imitan */
+  --radio-papel: 4px;        /* hojas y recibos */
+  --radio-boton: 14px;       /* botones */
+  --radio-foto: 2px;         /* fotos instantáneas */
+  --radio-pildora: 999px;
+
+  /* Sombras: luz que viene de arriba, como en una mesa */
+  --sombra-papel: 0 1px 0 rgb(31 42 68 / 0.06), 0 8px 18px -10px rgb(31 42 68 / 0.35);
+  --sombra-foto: 0 2px 3px rgb(31 42 68 / 0.12), 0 12px 24px -12px rgb(31 42 68 / 0.45);
+  --sombra-boton: 0 3px 0 rgb(31 42 68 / 0.28);
+
+  /* Movimiento */
+  --rapido: 120ms;
+  --normal: 220ms;
+  --rebote: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  color-scheme: light;
+}
+
+/* Modo "sol fuerte": máximo contraste para usarlo a pleno sol en el patio */
+:root[data-sol='fuerte'] {
+  --papel: #ffffff;
+  --papel-hondo: #e9e9e9;
+  --papel-claro: #ffffff;
+  --cinta: #ffe58a;
+  --tinta: #000000;
+  --lapiz: #2b2b2b;
+  --bien: #1d5228;
+  --ojo: #8a3220;
+  --urgente: #9c1a13;
+  --sombra-papel: 0 0 0 2px #000;
+  --sombra-foto: 0 0 0 2px #000;
+}

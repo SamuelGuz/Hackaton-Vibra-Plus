@@ -37,7 +37,7 @@ function aPublico(p: PerritoPublico): PerritoPublico {
     foto: p.foto && /^https?:\/\//i.test(p.foto) ? p.foto : null,
     urgencia: p.urgencia,
     adoptable: p.adoptable,
-    hoy: { comioHoy: p.hoy.comioHoy, medicinas: p.hoy.medicinas, notaDelDia: p.hoy.notaDelDia },
+    hoy: { comioHoy: p.hoy.comioHoy, medicinas: p.hoy.medicinas, notaDelDia: null },
     ...extrasPublicos(p),
   }
 }

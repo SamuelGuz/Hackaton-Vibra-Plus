@@ -120,16 +120,17 @@ describe('CORS y datos internos', () => {
 
   it('con datos reales no sale nada interno: personas, deudas, teléfonos ni fotos privadas', async () => {
     const d = datosRag()
-    d.notas.push({ id: 'n1', animalId: '2', texto: 'Ya comió. Llamar a Pedro al 300 123 4567', fechaHora: '2026-10-27T09:00', quien: '3' })
-    d.notas.push({ id: 'n2', animalId: '3', texto: 'Nota de ayer interna', fechaHora: '2026-10-26T09:00', quien: '3' })
+    d.notas.push({ id: 'n1', animalId: '3', texto: 'Ya comió. Elena dejó un comentario interno para el equipo', fechaHora: '2026-10-27T09:00', quien: '3' })
+    d.notas.push({ id: 'n2', animalId: '2', texto: 'Nota de ayer interna', fechaHora: '2026-10-26T09:00', quien: '3' })
     const rag = crearRag({ datos: async () => d, ahora: () => AHORA, perfiles: PERFILES })
     const app = montar(rag)
     const a = await (await app.request('/api/publico/rag/perritos')).text()
     const b = await (await app.request('/api/publico/rag/buscar?q=perrito%20tranquilo')).text()
     for (const txt of [a, b]) {
-      expect(txt).not.toMatch(/Carolina|Don Luis|Andrea|573000000|clinica|Clínica|deuda|Pedro al 3|ayer interna|archivos|"quien"|porConfirmar/i)
+      expect(txt).not.toMatch(/Carolina|Don Luis|Andrea|573000000|clinica|Clínica|deuda|comentario interno|ayer interna|archivos|"quien"|porConfirmar/i)
     }
-    expect(a).toContain('Ya comió.')
+    expect(a).toContain('"notaDelDia":null')
+    expect(b).toContain('"notaDelDia":null')
     const perrito = JSON.parse(a).perritos[0]
     expect(Object.keys(perrito).sort()).toEqual(
       ['adoptable', 'compatibilidad', 'edadAnios', 'edadTexto', 'especie', 'estado', 'foto', 'historia', 'historiaConfirmada', 'hoy', 'id', 'meta', 'necesidadesMedicas', 'nombre', 'personalidad', 'tamano', 'urgencia'],

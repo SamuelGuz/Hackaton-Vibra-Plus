@@ -1,15 +1,12 @@
 // Lo que de verdad pasó hoy con un animal, tomado de los registros del albergue (notas y dosis).
 // Si no hay registro, se dice que no hay: nunca se adivina.
 import { fechaLocal } from '../formato.js'
-import { quitarDatosSensibles } from '../ia/redactar.js'
 import type { DatosAlbergue } from '../panel-tipos.js'
 import { normalizar, tratamientosActivos } from './perfil.js'
 import type { ActividadHoy } from './tipos.js'
 
 const NO_COMIO = /\bno (quiso |ha querido |quiere |pudo |ha |habia )?(comer|comio|comido|come|probo)|\bsin (comer|apetito)|\brechaz\w* (la )?comida|\bno tiene apetito|\bnada de comida/
 const COMIO = /\bcomio\b|\bcomiendo\b|\bya comio\b|\bha comido\b|\bse comio\b|\bdesayuno\b|\balmorzo\b|\bceno\b|\bdevoro\b|\bcomio (bien|todo|poquito|mucho)/
-
-const LARGO_MAXIMO_NOTA = 240
 
 /** true si la nota dice que comió, false si dice que no, null si no habla de comida */
 function comioSegun(texto: string): boolean | null {
@@ -43,8 +40,7 @@ export function actividadHoy(animalId: string, datos: DatosAlbergue, ahora: Date
     }
   }
 
-  const ultima = notasDeHoy[0]
-  const notaDelDia = ultima ? quitarDatosSensibles(ultima.texto.trim()).slice(0, LARGO_MAXIMO_NOTA) || null : null
-
+  // Las notas son texto interno de libre forma; solo se derivan hechos estructurados, nunca se publican.
+  const notaDelDia: string | null = null
   return { comioHoy, medicinas: { programadas, tomadas }, notaDelDia }
 }

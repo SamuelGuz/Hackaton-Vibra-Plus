@@ -12,7 +12,7 @@ describe('actividadHoy', () => {
   it('comió: una nota de hoy lo dice', () => {
     const d = datosRag()
     d.notas.push(nota('2', 'Ya comió todo su concentrado'))
-    expect(actividadHoy('2', d, AHORA)).toMatchObject({ comioHoy: true, notaDelDia: 'Ya comió todo su concentrado' })
+    expect(actividadHoy('2', d, AHORA)).toMatchObject({ comioHoy: true, notaDelDia: null })
   })
 
   it('no comió: "no quiso comer" y "no comió" dan false', () => {
@@ -27,13 +27,13 @@ describe('actividadHoy', () => {
     const d = datosRag()
     d.notas.push(nota('2', 'Ya camina solito'))
     d.notas.push(nota('2', 'Comió bien', '09:00', '2026-10-26'))
-    expect(actividadHoy('2', d, AHORA)).toMatchObject({ comioHoy: null, notaDelDia: 'Ya camina solito' })
+    expect(actividadHoy('2', d, AHORA)).toMatchObject({ comioHoy: null, notaDelDia: null })
   })
 
   it('manda la nota más reciente del animal y no la de otro', () => {
     const d = datosRag()
     d.notas.push(nota('2', 'No quiso comer', '08:00'), nota('2', 'Ya comió', '13:00'), nota('3', 'Otra cosa', '14:00'))
-    expect(actividadHoy('2', d, AHORA)).toMatchObject({ comioHoy: true, notaDelDia: 'Ya comió' })
+    expect(actividadHoy('2', d, AHORA)).toMatchObject({ comioHoy: true, notaDelDia: null })
   })
 
   it('medicinas: 1 de 2 dosis tomadas hoy', () => {
@@ -49,9 +49,9 @@ describe('actividadHoy', () => {
     expect(actividadHoy('1', d, AHORA).medicinas).toEqual({ programadas: 0, tomadas: 0 })
   })
 
-  it('no deja salir teléfonos que alguien escribió en una nota', () => {
+  it('no devuelve una nota interna aunque no incluya datos de contacto', () => {
     const d = datosRag()
-    d.notas.push(nota('2', 'Ya comió. Llamar a Pedro al 300 123 4567'))
-    expect(actividadHoy('2', d, AHORA).notaDelDia).not.toMatch(/4567/)
+    d.notas.push(nota('2', 'Ya comió. Elena dejó un comentario interno para el equipo'))
+    expect(actividadHoy('2', d, AHORA)).toMatchObject({ comioHoy: true, notaDelDia: null })
   })
 })

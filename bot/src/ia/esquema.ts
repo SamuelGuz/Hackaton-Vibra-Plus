@@ -3,6 +3,7 @@
 
 import { Type, type Schema } from '@google/genai'
 import type { CategoriaGasto, CategoriaIngreso, DatosAlbergue } from '../panel-tipos.js'
+import { parsearMonto } from '../conversacion/numeros.js'
 import type { Accion, Entendido } from '../tipos.js'
 
 export const CATEGORIAS_GASTO: CategoriaGasto[] = ['comida', 'veterinaria', 'limpieza', 'servicios', 'transporte', 'otro']
@@ -79,6 +80,13 @@ export function convertir(crudo: RespuestaCruda, datos: DatosAlbergue, ahora: Da
   let factura: Entendido['factura']
   const animal = (id?: string) => datos.animales.find((a) => a.id === id)
   const clinica = (id?: string) => datos.clinicas.find((c) => c.id === id)
+  // A veces la IA entiende la plata pero deja el monto vacío: se lee de su nota o, si es la única
+  // plata del mensaje, de lo que dijo la persona.
+  const conPlata = (crudo.acciones ?? []).filter((a) => a.ya_ocurrio !== false && (a.tipo === 'movimiento' || a.tipo === 'factura'))
+  const montoDe = (a: AccionCruda): number | null => {
+    if (montoValido(a.monto)) return Math.round(a.monto)
+    return parsearMonto(a.texto ?? '') ?? (conPlata.length === 1 ? parsearMonto(crudo.transcripcion ?? '') : null)
+  }
 
   for (const a of crudo.acciones ?? []) {
     if (a.ya_ocurrio === false) {
@@ -106,8 +114,8 @@ export function convertir(crudo: RespuestaCruda, datos: DatosAlbergue, ahora: Da
         break
       }
       case 'movimiento': {
-        if (!montoValido(a.monto)) break
-        const monto = Math.round(a.monto)
+        const monto = montoDe(a)
+        if (!monto) break
         if (a.movimiento === 'abono') {
           if (!clinica(a.clinica_id)) break
           acciones.push({
@@ -135,7 +143,7 @@ export function convertir(crudo: RespuestaCruda, datos: DatosAlbergue, ahora: Da
       }
       case 'factura': {
         const k = clinica(a.clinica_id)
-        const monto = montoValido(a.monto) ? Math.round(a.monto) : null
+        const monto = montoDe(a)
         factura = { monto, clinicaId: k ? k.id : null, concepto: a.texto ?? '' }
         if (k && monto) acciones.push({ tipo: 'deuda', clinicaId: k.id, monto, nota: a.texto ?? '' })
         break

@@ -104,6 +104,36 @@ describe('convertir lo que devuelve la IA', () => {
     expect(e.acciones[0]).toMatchObject({ tipo: 'movimiento', movimiento: { tipo: 'ingreso', monto: 150_000, categoria: 'otro' } })
   })
 
+  it('si la IA no pone el monto, lo saca de lo que dijo la persona', () => {
+    // Respuesta real de Gemini a un audio de WhatsApp: entendió el ingreso pero dejó el monto vacío
+    const e = convertir(
+      {
+        transcripcion: 'No, no tengo foto. Me acaba de llegar otros 5000 pesos.',
+        confianza: 0.9,
+        acciones: [{ tipo: 'movimiento', ya_ocurrio: true, movimiento: 'ingreso', texto: 'Llegaron 5000 pesos', tratamiento_id: 'null' }],
+      },
+      d,
+      AHORA,
+    )
+    expect(e.acciones[0]).toMatchObject({ tipo: 'movimiento', movimiento: { tipo: 'ingreso', monto: 5000 } })
+  })
+
+  it('con dos movimientos sin monto no adivina cuál número es de cuál', () => {
+    const e = convertir(
+      {
+        transcripcion: 'Entraron 30 mil por Nequi y 40 mil por la llave',
+        confianza: 0.9,
+        acciones: [
+          { tipo: 'movimiento', ya_ocurrio: true, movimiento: 'ingreso' },
+          { tipo: 'movimiento', ya_ocurrio: true, movimiento: 'ingreso' },
+        ],
+      },
+      d,
+      AHORA,
+    )
+    expect(e.acciones).toEqual([])
+  })
+
   it('una factura sin clínica queda a medias para preguntarla', () => {
     const e = convertir({ transcripcion: '', confianza: 1, acciones: [{ tipo: 'factura', ya_ocurrio: true, monto: 320000 }] }, d, AHORA)
     expect(e.acciones).toEqual([])

@@ -1,0 +1,33 @@
+{
+  "name": "huellitas-bot",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "test": "vitest run",
+    "build": "tsc --noEmit",
+    "seed": "tsx scripts/seed.ts",
+    "hojas": "tsx scripts/crear-hojas.ts",
+    "qr": "tsx scripts/qr-placas.ts"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.12",
+    "@hono/node-server": "^2.1.5",
+    "hono": "^4.13.14",
+    "jsqr": "^1.4.0",
+    "pg": "^8.23.1",
+    "pngjs": "^7.0.0",
+    "qrcode": "^1.5.4",
+    "tsx": "^4.23.15"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/pg": "^8.23.1",
+    "@types/pngjs": "^6.0.5",
+    "@types/qrcode": "^1.5.6",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}

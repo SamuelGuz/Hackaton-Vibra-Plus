@@ -1,6 +1,6 @@
 # Caso 02: placas NFC/QR para mascotas y tarjetas de canil con QR
 
-Tema: NN=02, placas-nfc-qr-mascotas. Relacionado con `../../superpowers/specs/2026-10-27-huellitas-placa-viva-design.md` (secciones 5.1, 5.2 y 11).
+Tema: NN=02, placas-nfc-qr-mascotas. Relacionado con `../../placa-viva/diseno.md` (secciones 5.1, 5.2 y 11).
 
 Nota de método: se hicieron 9 búsquedas web. Se abrieron 5 páginas (ver sección 4). Varias cifras vienen solo de fragmentos de búsqueda o de páginas de proveedores y están marcadas "NO VERIFICADO". No se encontró ningún caso independiente de albergue colombiano o latinoamericano que use placa NFC/QR con voluntarios.
 

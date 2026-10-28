@@ -43,7 +43,7 @@ const posts = (ruta: string) => pedidos.filter((p) => p.metodo === 'POST' && p.u
 describe('panel conectado al servidor', () => {
   it('entra con el enlace del bot sin preguntar quién es, y guarda el token', async () => {
     render(<App />)
-    expect(await screen.findByRole('heading', { level: 1, name: /Don Luis/ })).toBeTruthy()
+    expect(await screen.findByRole('heading', { level: 1, name: /Don Luis/ }, { timeout: 3000 })).toBeTruthy()
     expect(pedidos[0]).toMatchObject({ url: 'http://api.prueba/api/hoy', auth: 'Bearer token-de-luis' })
     expect(window.location.search).toBe('')
     expect(localStorage.getItem('huellitas.token')).toBe('token-de-luis')

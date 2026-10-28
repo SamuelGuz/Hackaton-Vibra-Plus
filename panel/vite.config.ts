@@ -2,7 +2,14 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// Tipos compartidos con el servidor (ver shared/)
+// Sin @types/node en el panel: pasamos la URL a ruta a mano (en Windows quita la barra de "/C:/...")
+const shared = decodeURIComponent(new URL('../shared/src', import.meta.url).pathname).replace(/^[/]([A-Za-z]:)/, '$1')
+
 export default defineConfig({
+  resolve: { alias: { '@huellitas/shared': shared } },
+  // El servidor de desarrollo sirve el panel y ../shared, nada más del repo (corre con --host)
+  server: { fs: { allow: ['.', '../shared'] } },
   plugins: [
     react(),
     VitePWA({

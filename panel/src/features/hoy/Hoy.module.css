@@ -1,0 +1,131 @@
+.hoy {
+  display: grid;
+  gap: var(--e-6);
+}
+
+.fecha {
+  color: var(--lapiz);
+  font-weight: 700;
+}
+
+.fecha::first-letter {
+  text-transform: uppercase;
+}
+
+.saludo {
+  font-size: var(--t-titulo);
+}
+
+.medicinas {
+  display: grid;
+  gap: var(--e-4);
+}
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--e-2);
+}
+
+.encabezado h2 {
+  font-size: var(--t-subtitulo);
+}
+
+.cuenta {
+  color: var(--lapiz);
+  font-weight: 700;
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--e-5);
+}
+
+.dosis {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--e-3) var(--e-4);
+  align-items: start;
+  padding: var(--e-4) var(--e-3);
+  border-bottom: 2px dashed var(--papel-hondo);
+}
+
+.atrasada {
+  background: var(--urgente-suave);
+  border-radius: var(--radio-papel);
+  border-bottom-color: transparent;
+}
+
+.detalle {
+  display: grid;
+  gap: 2px;
+}
+
+.hora {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-2);
+  font-weight: 700;
+  color: var(--lapiz);
+}
+
+.marcaAtrasada {
+  padding: 0 var(--e-2);
+  border-radius: 4px;
+  background: var(--urgente);
+  color: var(--borde-foto);
+  font-size: var(--t-chico);
+}
+
+.medicamento {
+  font-weight: 700;
+}
+
+/* La cantidad va grande: el miedo número 1 es confundir 3 ml con 30 ml */
+.cantidad {
+  font-family: var(--letra-titulo);
+  font-size: var(--t-titulo);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.accion {
+  grid-column: 1 / -1;
+  display: grid;
+  justify-items: center;
+  gap: var(--e-2);
+}
+
+.reportada {
+  justify-self: stretch;
+  padding: var(--e-2) var(--e-3);
+  background: var(--cinta);
+  border-radius: var(--radio-papel);
+  font-weight: 700;
+}
+
+.logros {
+  display: grid;
+  gap: var(--e-3);
+  padding: var(--e-5) var(--e-4);
+  border: 2px dashed var(--bien);
+  border-radius: var(--radio-papel);
+}
+
+.logros h2 {
+  font-size: var(--t-subtitulo);
+  color: var(--bien);
+}
+
+.logros ul {
+  margin: 0;
+  padding-left: var(--e-5);
+  display: grid;
+  gap: var(--e-2);
+}

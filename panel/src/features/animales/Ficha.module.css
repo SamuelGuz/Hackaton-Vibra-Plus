@@ -1,0 +1,121 @@
+.ficha {
+  display: grid;
+  gap: var(--e-5);
+}
+
+.volver {
+  justify-self: start;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  color: var(--tinta);
+  font-weight: 700;
+}
+
+.advertencias {
+  display: grid;
+  gap: var(--e-2);
+  padding: var(--e-4);
+  border: 3px solid var(--urgente);
+  border-radius: var(--radio-papel);
+  background: var(--urgente-suave);
+  color: var(--urgente);
+}
+
+.advertencias h2 {
+  font-size: var(--t-subtitulo);
+}
+
+.advertencias ul {
+  margin: 0;
+  padding-left: var(--e-5);
+  display: grid;
+  gap: var(--e-2);
+  font-weight: 700;
+}
+
+.cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-5);
+}
+
+.datos {
+  display: grid;
+  justify-items: start;
+  gap: var(--e-2);
+}
+
+.datos h1 {
+  font-size: var(--t-titulo);
+}
+
+.estado {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.opciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--e-2);
+}
+
+.opcion {
+  min-height: var(--toque-grande);
+  padding: var(--e-2);
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio-boton);
+  background: var(--cinta);
+  font-weight: 700;
+  font-size: var(--t-texto);
+  cursor: pointer;
+}
+
+.bloque {
+  display: grid;
+  gap: var(--e-2);
+  padding-top: var(--e-4);
+  border-top: 2px dashed var(--papel-hondo);
+}
+
+.bloque h2 {
+  font-size: var(--t-subtitulo);
+}
+
+.tratamientos,
+.notas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--e-3);
+}
+
+.tratamientos li {
+  display: grid;
+}
+
+.medicamento {
+  font-weight: 700;
+}
+
+.dosis {
+  font-family: var(--letra-titulo);
+  font-size: var(--t-subtitulo);
+  font-weight: 800;
+}
+
+.horas,
+.quien {
+  color: var(--lapiz);
+  font-size: var(--t-chico);
+}
+
+.nota {
+  font-family: var(--letra-mano);
+  font-weight: 700;
+  font-size: var(--t-subtitulo);
+}

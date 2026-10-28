@@ -1,0 +1,81 @@
+.marco {
+  min-height: 100dvh;
+  /* Espacio para las pestañas fijas de abajo */
+  padding-bottom: calc(84px + env(safe-area-inset-bottom));
+}
+
+.cabecera {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+  padding: var(--e-3) var(--e-4) 0;
+}
+
+.persona {
+  margin-left: auto;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--lapiz);
+  font-size: var(--t-chico);
+  font-weight: 700;
+}
+
+.contenido {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--e-5) var(--e-4) var(--e-7);
+}
+
+.pestanas {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: grid;
+  padding: var(--e-2) var(--e-2) calc(var(--e-2) + env(safe-area-inset-bottom));
+  gap: var(--e-2);
+  background: var(--papel-claro);
+  border-top: 2px solid var(--tinta);
+}
+
+.pestana {
+  position: relative;
+  min-height: var(--toque-min);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border-radius: var(--radio-boton);
+  color: var(--lapiz);
+  font-size: var(--t-chico);
+  font-weight: 700;
+  text-decoration: none;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.pestana[aria-current='page'] {
+  background: var(--tinta);
+  color: var(--papel);
+}
+
+.cuenta {
+  position: absolute;
+  top: 2px;
+  right: 10%;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radio-pildora);
+  background: var(--urgente);
+  color: var(--borde-foto);
+  font-size: 0.875rem;
+}

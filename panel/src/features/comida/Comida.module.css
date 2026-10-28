@@ -1,0 +1,38 @@
+.comida {
+  display: grid;
+  gap: var(--e-6);
+}
+
+.semana {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.semana h2 {
+  font-size: var(--t-subtitulo);
+}
+
+.semana ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.semana li {
+  display: grid;
+  padding: var(--e-3) 0;
+  border-bottom: 2px dashed var(--papel-hondo);
+}
+
+.que {
+  font-weight: 700;
+}
+
+.detalle {
+  color: var(--lapiz);
+  font-size: var(--t-chico);
+}
+
+.detalle::first-letter {
+  text-transform: uppercase;
+}

@@ -1,0 +1,51 @@
+.nivel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  min-height: 36px;
+  padding: 0 var(--e-3) 0 var(--e-1);
+  border-radius: var(--radio-pildora);
+  font-weight: 700;
+  font-size: var(--t-chico);
+  white-space: nowrap;
+}
+
+/* La forma también cambia: círculo (bien), rombo (ojo), cuadro (urgente) */
+.signo {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.bien {
+  background: var(--bien-suave);
+  color: var(--bien);
+}
+.bien .signo {
+  border-radius: 50%;
+  background: var(--bien);
+  color: var(--borde-foto);
+}
+
+.ojo {
+  background: var(--ojo-suave);
+  color: var(--ojo);
+}
+.ojo .signo {
+  background: var(--ojo);
+  color: var(--borde-foto);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.urgente {
+  background: var(--urgente);
+  color: var(--borde-foto);
+}
+.urgente .signo {
+  border-radius: 4px;
+  background: var(--borde-foto);
+  color: var(--urgente);
+}

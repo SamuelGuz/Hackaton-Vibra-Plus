@@ -1,9 +1,23 @@
 // Página interna del equipo para revisar el sistema visual (no la ve el albergue).
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { AvisoDeshacer } from '../../components/AvisoDeshacer'
+import { Boton } from '../../components/Boton'
 import { BotonSol } from '../../components/BotonSol'
+import { Cinta } from '../../components/Cinta'
+import { Costal } from '../../components/Costal'
+import { EstadoConexion } from '../../components/EstadoConexion'
+import { FotoInstantanea } from '../../components/FotoInstantanea'
 import { Huella } from '../../components/Huella'
+import { Icono, NOMBRES_ICONOS } from '../../components/Icono'
 import { Inicial } from '../../components/Inicial'
+import { Nivel } from '../../components/Nivel'
+import { PasoAPaso } from '../../components/PasoAPaso'
+import { Sello } from '../../components/Sello'
+import { TecladoMonto } from '../../components/TecladoMonto'
+import { Termometro } from '../../components/Termometro'
 import { useDatos } from '../../data/DatosProvider'
+import { diasDeComida, NOMBRE_ESTADO, nivelComida } from '../../lib/calculos'
 import { pesos } from '../../lib/formato'
 import styles from './Kit.module.css'
 
@@ -20,6 +34,10 @@ const COLORES = [
 
 export function Kit() {
   const { datos } = useDatos()
+  const [sellos, setSellos] = useState(0)
+  const [monto, setMonto] = useState(0)
+  const [aviso, setAviso] = useState(false)
+  const muestraAnimales = ['Mateo', 'Bruno', 'Luna'].map((n) => datos.animales.find((a) => a.nombre === n)!)
 
   return (
     <main className={styles.pagina}>
@@ -66,10 +84,110 @@ export function Kit() {
       <section className={styles.bloque}>
         <h2>Semáforo: siempre color + forma + palabra</h2>
         <div className={styles.semaforo}>
-          <span className={styles.bien}>✓ Bien</span>
-          <span className={styles.ojo}>! Ojo</span>
-          <span className={styles.urgente}>✕ Urgente</span>
+          <Nivel nivel="bien" />
+          <Nivel nivel="ojo" />
+          <Nivel nivel="urgente" />
         </div>
+      </section>
+
+      <section className={styles.bloque}>
+        <h2>Botones: siempre ícono + palabra</h2>
+        <div className={styles.botones}>
+          <Boton icono="menos" tamano="grande" ancho>
+            Abrí un bulto
+          </Boton>
+          <Boton icono="mas" variante="secundario">
+            Llegaron bultos
+          </Boton>
+          <Boton icono="deshacer" variante="peligro">
+            Deshacer
+          </Boton>
+          <Boton icono="check" disabled>
+            Sin señal
+          </Boton>
+        </div>
+      </section>
+
+      <section className={styles.bloque}>
+        <h2>Íconos a mano</h2>
+        <ul className={styles.iconos}>
+          {NOMBRES_ICONOS.map((n) => (
+            <li key={n}>
+              <Icono nombre={n} tamano={36} />
+              <span>{n}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className={styles.bloque}>
+        <h2>Fotos instantáneas</h2>
+        <div className={styles.fotos}>
+          {muestraAnimales.map((a) => (
+            <FotoInstantanea key={a.id} animal={a} />
+          ))}
+        </div>
+        <p className={styles.nota}>Sin fotos reales todavía: silueta dibujada, fondo fijo por animal.</p>
+      </section>
+
+      <section className={styles.bloque}>
+        <h2>Cintas de estado</h2>
+        <div className={styles.cintas}>
+          {(['cuarentena', 'tratamiento', 'adoptable', 'hogar_temporal'] as const).map((e) => (
+            <Cinta key={e}>{NOMBRE_ESTADO[e]}</Cinta>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.bloque}>
+        <h2>Sello</h2>
+        <div className={styles.sello}>
+          <Sello key={sellos} texto="Dada" hora="07:12" quien="Don Luis" animar={sellos > 0} />
+          <Boton icono="medicina" variante="secundario" onClick={() => setSellos((n) => n + 1)}>
+            Ver caer el sello
+          </Boton>
+        </div>
+      </section>
+
+      <section className={styles.bloque}>
+        <h2>Costales de comida</h2>
+        <div className={styles.costales}>
+          {(['perro', 'gato'] as const).map((e) => {
+            const dias = diasDeComida(datos, e)
+            return <Costal key={e} especie={e} dias={dias} nivel={nivelComida(datos, dias)} />
+          })}
+        </div>
+      </section>
+
+      <section className={styles.bloque}>
+        <h2>Termómetros de deuda</h2>
+        <div className={styles.termometros}>
+          {datos.clinicas.map((c) => (
+            <Termometro key={c.id} nombre={c.nombre} deuda={c.deuda} limite={c.limite} />
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.bloque}>
+        <h2>Paso a paso + teclado de montos</h2>
+        <PasoAPaso paso={2} total={4} pregunta="¿Cuánta plata salió?" alVolver={() => setMonto(0)}>
+          <TecladoMonto monto={monto} alCambiar={setMonto} />
+        </PasoAPaso>
+      </section>
+
+      <section className={styles.bloque}>
+        <h2>Señal y deshacer</h2>
+        <div className={styles.senales}>
+          <EstadoConexion enLinea pendientes={0} />
+          <EstadoConexion enLinea pendientes={3} />
+          <EstadoConexion enLinea={false} pendientes={1} />
+          <Boton icono="menos" variante="secundario" onClick={() => setAviso(true)}>
+            Probar el aviso de deshacer
+          </Boton>
+        </div>
+        {aviso && (
+          <AvisoDeshacer mensaje="Listo, quedó guardado" alDeshacer={() => setAviso(false)} alCerrar={() => setAviso(false)} />
+        )}
       </section>
 
       <section className={styles.bloque}>

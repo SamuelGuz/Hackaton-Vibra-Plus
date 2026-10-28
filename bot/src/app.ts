@@ -22,6 +22,10 @@ export interface ConfigApp {
 const TIPOS_EVENTO = { dosis: 'dosisDadas', inventario: 'inventario', movimiento: 'movimientos', nota: 'notas' } as const
 const FECHA = /^\d{4}-\d{2}-\d{2}$/
 const HORAS_AVISO_DESCONOCIDO = 24
+/** Espera antes de cada reintento de un mensaje. Al agotarlas, el mensaje queda como fallido. */
+export const ESPERAS_REINTENTO_SEG = [10, 60, 300]
+/** Un mensaje que lleva más que esto sin atender ya no se contesta: la respuesta llegaría fuera de lugar */
+const HORAS_VENCE_ENTRANTE = 12
 
 export function crearApp(cfg: ConfigApp) {
   const { deps } = cfg
@@ -31,10 +35,10 @@ export function crearApp(cfg: ConfigApp) {
 
   // Mensajes de una misma persona se atienden en orden, uno a la vez
   const colas = new Map<string, Promise<void>>()
+  const enCurso = new Set<string>()
   const avisadosDesconocidos = new Map<string, number>()
 
   async function procesar(m: MensajeWa) {
-    if (!(await deps.repo.marcarMensaje(m.id))) return
     const usuario = await deps.repo.usuarioPorTelefono(m.de)
     if (!usuario) {
       await deps.repo.anotarSolicitud(m.de, m.nombre ?? null)
@@ -48,14 +52,44 @@ export function crearApp(cfg: ConfigApp) {
     await atender(deps, usuario, m.entrada)
   }
 
-  function encolar(m: MensajeWa): Promise<void> {
+  /** El mensaje se cierra en el buzón solo cuando ya se atendió. Si algo falla, queda para reintentar. */
+  async function atenderDelBuzon(m: MensajeWa, intentos: number) {
+    try {
+      await procesar(m)
+      await deps.repo.cerrarEntrante(m.id, 'atendido')
+    } catch (e) {
+      const error = e instanceof Error ? e.message : String(e)
+      const espera = ESPERAS_REINTENTO_SEG[intentos]
+      console.error(`Error con un mensaje de WhatsApp (intento ${intentos + 1}):`, e)
+      if (espera === undefined) await deps.repo.cerrarEntrante(m.id, 'fallido', error)
+      else await deps.repo.reintentarEntrante(m.id, new Date(deps.ahora().getTime() + espera * 1000), error)
+    }
+  }
+
+  function encolar(m: MensajeWa, intentos = 0) {
+    if (enCurso.has(m.id)) return
+    enCurso.add(m.id)
     const antes = colas.get(m.de) ?? Promise.resolve()
-    const ahora = antes.then(() => procesar(m)).catch((e) => console.error('Error con un mensaje de WhatsApp:', e))
+    const ahora = antes
+      .then(() => atenderDelBuzon(m, intentos))
+      .catch((e) => console.error('El buzón no pudo anotar cómo terminó un mensaje:', e))
+      .finally(() => enCurso.delete(m.id))
     colas.set(m.de, ahora)
     void ahora.finally(() => {
       if (colas.get(m.de) === ahora) colas.delete(m.de)
     })
-    return ahora
+  }
+
+  /** Retoma lo que quedó pendiente en el buzón: al arrancar (si el bot se cayó) y cada rato (reintentos). */
+  async function retomar(): Promise<number> {
+    const ahora = deps.ahora()
+    const pendientes = await deps.repo.entrantesPendientes(ahora, 50)
+    for (const m of pendientes) {
+      if (ahora.getTime() - m.recibidoEn.getTime() > HORAS_VENCE_ENTRANTE * 3_600_000) {
+        await deps.repo.cerrarEntrante(m.id, 'fallido', 'vencido: llevaba demasiado tiempo sin atender')
+      } else encolar(m, m.intentos)
+    }
+    return pendientes.length
   }
 
   app.get('/wa', (c) => {
@@ -73,8 +107,16 @@ export function crearApp(cfg: ConfigApp) {
     } catch {
       return c.text('JSON inválido', 400)
     }
-    // Se responde de una vez: si Meta espera mucho, reenvía el mensaje
-    leerMensajes(json as Record<string, unknown>).forEach(encolar)
+    // Se guarda en el buzón y se responde de una vez: si Meta espera mucho, reenvía el mensaje.
+    // Si no se pudo guardar, el 500 hace que Meta lo vuelva a mandar.
+    try {
+      for (const m of leerMensajes(json as Record<string, unknown>)) {
+        if (await deps.repo.guardarEntrante(m, deps.ahora())) encolar(m)
+      }
+    } catch (e) {
+      console.error('No se pudo guardar un mensaje de WhatsApp en el buzón:', e)
+      return c.text('No se pudo guardar', 500)
+    }
     return c.text('ok')
   })
 
@@ -230,5 +272,5 @@ export function crearApp(cfg: ConfigApp) {
   const ociosa = async () => {
     while (colas.size) await Promise.all(colas.values())
   }
-  return Object.assign(app, { ociosa })
+  return Object.assign(app, { ociosa, retomar })
 }

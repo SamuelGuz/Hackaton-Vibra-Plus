@@ -112,9 +112,41 @@ export function crearRepoPg(pool: Pool): RepoPg {
       return r.rows[0] ? usuarioDe(r.rows[0]) : null
     },
 
-    async marcarMensaje(waMessageId) {
-      const r = await pool.query(`INSERT INTO mensajes_wa (wa_message_id) VALUES ($1) ON CONFLICT DO NOTHING`, [waMessageId])
+    async guardarEntrante(m, ahora) {
+      const r = await pool.query(
+        `INSERT INTO mensajes_wa (wa_message_id, telefono, nombre, entrada, estado, recibido_en, proximo_en)
+         VALUES ($1, $2, $3, $4, 'pendiente', $5, $5) ON CONFLICT DO NOTHING`,
+        [m.id, m.de, m.nombre, JSON.stringify(m.entrada), ahora],
+      )
       return r.rowCount === 1
+    },
+
+    async entrantesPendientes(ahora, limite) {
+      const r = await pool.query(
+        `SELECT wa_message_id, telefono, nombre, entrada, intentos, recibido_en FROM mensajes_wa
+         WHERE estado = 'pendiente' AND proximo_en <= $1
+         ORDER BY recibido_en LIMIT $2`,
+        [ahora, limite],
+      )
+      return r.rows.map((x) => ({
+        id: x.wa_message_id,
+        de: x.telefono,
+        nombre: x.nombre,
+        entrada: x.entrada,
+        intentos: x.intentos,
+        recibidoEn: x.recibido_en,
+      }))
+    },
+
+    async cerrarEntrante(id, estado, error) {
+      await pool.query(`UPDATE mensajes_wa SET estado = $2, error = $3 WHERE wa_message_id = $1`, [id, estado, error ?? null])
+    },
+
+    async reintentarEntrante(id, proximoEn, error) {
+      await pool.query(
+        `UPDATE mensajes_wa SET intentos = intentos + 1, proximo_en = $2, error = $3 WHERE wa_message_id = $1`,
+        [id, proximoEn, error],
+      )
     },
 
     async leerEstado(usuarioId) {

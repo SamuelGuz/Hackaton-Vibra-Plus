@@ -93,6 +93,77 @@ describe('webhook de WhatsApp', () => {
   })
 })
 
+describe('buzón duradero de WhatsApp', () => {
+  const hola = { id: 'w9', de: LUIS.telefono, nombre: 'Luis', entrada: { tipo: 'texto' as const, texto: 'hola' } }
+  const masTarde = (seg: number) => {
+    t.repo.ahora = new Date(t.repo.ahora.getTime() + seg * 1000)
+  }
+
+  it('un mensaje atendido queda cerrado en el buzón', async () => {
+    await webhook(LUIS.telefono, 'w1', 'hola')
+    await app.ociosa()
+    expect(t.repo.buzon.get('w1')?.estado).toBe('atendido')
+  })
+
+  it('si el bot se cayó con un mensaje guardado, al volver lo atiende', async () => {
+    await t.repo.guardarEntrante(hola, t.repo.ahora)
+    expect(await app.retomar()).toBe(1)
+    await app.ociosa()
+    expect(t.wa.enviados.at(-1)?.telefono).toBe(LUIS.telefono)
+    expect(t.repo.buzon.get('w9')?.estado).toBe('atendido')
+  })
+
+  it('si falla, lo reintenta más tarde y no antes', async () => {
+    const original = t.repo.usuarioPorTelefono.bind(t.repo)
+    let fallos = 1
+    t.repo.usuarioPorTelefono = async (tel) => {
+      if (fallos-- > 0) throw new Error('la base no responde')
+      return original(tel)
+    }
+    await webhook(LUIS.telefono, 'w1', 'hola')
+    await app.ociosa()
+    expect(t.repo.buzon.get('w1')).toMatchObject({ estado: 'pendiente', intentos: 1, error: 'la base no responde' })
+    expect(await app.retomar()).toBe(0)
+    masTarde(11)
+    await app.retomar()
+    await app.ociosa()
+    expect(t.repo.buzon.get('w1')?.estado).toBe('atendido')
+    expect(t.wa.ultimo().tipo).toBe('lista')
+  })
+
+  it('después de agotar los reintentos lo marca como fallido', async () => {
+    t.repo.usuarioPorTelefono = async () => {
+      throw new Error('caída')
+    }
+    await webhook(LUIS.telefono, 'w1', 'hola')
+    await app.ociosa()
+    for (let i = 0; i < 3; i++) {
+      masTarde(301)
+      await app.retomar()
+      await app.ociosa()
+    }
+    expect(t.repo.buzon.get('w1')).toMatchObject({ estado: 'fallido', intentos: 3 })
+  })
+
+  it('un mensaje que lleva más de 12 horas sin atender ya no se contesta', async () => {
+    await t.repo.guardarEntrante(hola, t.repo.ahora)
+    masTarde(13 * 3600)
+    await app.retomar()
+    await app.ociosa()
+    expect(t.wa.enviados).toHaveLength(0)
+    expect(t.repo.buzon.get('w9')?.estado).toBe('fallido')
+  })
+
+  it('si no se puede guardar en el buzón responde 500 para que Meta lo reenvíe', async () => {
+    t.repo.guardarEntrante = async () => {
+      throw new Error('sin base')
+    }
+    expect((await webhook(LUIS.telefono, 'w1', 'hola')).status).toBe(500)
+    await app.ociosa()
+    expect(t.wa.enviados).toHaveLength(0)
+  })
+})
+
 describe('API del panel', () => {
   const conToken = async () => ({ Authorization: `Bearer ${await t.repo.crearSesion(LUIS.id)}` })
 

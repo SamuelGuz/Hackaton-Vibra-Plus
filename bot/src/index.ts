@@ -15,6 +15,8 @@ import { crearDibujante } from './informes/dibujar.js'
 import type { Ia } from './tipos.js'
 import { crearWa } from './wa/cliente.js'
 
+const SEGUNDOS_REVISAR_BUZON = 15
+
 function exigir(nombre: string): string {
   const v = process.env[nombre]
   if (!v) {
@@ -65,3 +67,12 @@ const app = crearApp({
 
 const puerto = Number(process.env.PUERTO || 8787)
 serve({ fetch: app.fetch, port: puerto }, () => console.log(`Bot del Refugio Yesenia escuchando en http://localhost:${puerto}`))
+
+// Lo que quedó sin atender si el bot se cayó, y los reintentos que ya tocan
+const retomar = () =>
+  app
+    .retomar()
+    .then((n) => n && console.log(`Buzón: retomando ${n} mensaje(s) pendiente(s)`))
+    .catch((e) => console.error('No se pudo revisar el buzón:', e))
+void retomar()
+setInterval(retomar, SEGUNDOS_REVISAR_BUZON * 1000)

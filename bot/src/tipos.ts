@@ -1,5 +1,12 @@
 import type { TipoInforme } from './informes/armar.js'
 import type { DatosAlbergue, Propuesta, Rol } from './panel-tipos.js'
+import type { MensajeWa } from './wa/webhook.js'
+
+/** Un mensaje del buzón que falta atender */
+export interface EntrantePendiente extends MensajeWa {
+  intentos: number
+  recibidoEn: Date
+}
 
 /** Lo que el bot (o el panel) propone guardar. Es la misma forma que usa el panel. */
 export type Accion = Propuesta
@@ -155,8 +162,15 @@ export interface Repo {
   descartarSolicitud(telefono: string): Promise<void>
   contarSolicitudes(): Promise<number>
   usuarioPorId(id: number): Promise<Usuario | null>
-  /** true si el mensaje es nuevo; false si Meta lo está reenviando */
-  marcarMensaje(waMessageId: string): Promise<boolean>
+  /** Guarda el mensaje como pendiente. true si es nuevo; false si Meta lo está reenviando.
+   *  Las horas del buzón las pone siempre el bot, para no depender del reloj de la base. */
+  guardarEntrante(m: MensajeWa, ahora: Date): Promise<boolean>
+  /** Pendientes cuya hora de intento ya llegó, del más viejo al más nuevo */
+  entrantesPendientes(ahora: Date, limite: number): Promise<EntrantePendiente[]>
+  /** Cierra el mensaje: ya se atendió, o se rindió con él */
+  cerrarEntrante(id: string, estado: 'atendido' | 'fallido', error?: string): Promise<void>
+  /** Suma un intento y lo deja para más tarde */
+  reintentarEntrante(id: string, proximoEn: Date, error: string): Promise<void>
   leerEstado(usuarioId: number): Promise<{ estado: Estado; actualizadoEn: Date } | null>
   guardarEstado(usuarioId: number, estado: Estado): Promise<void>
   hoy(ahora: Date): Promise<DatosAlbergue>

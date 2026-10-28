@@ -5,6 +5,7 @@ import type {
   Deps,
   Entendido,
   EntradaIa,
+  EntrantePendiente,
   Estado,
   EstadoRegistro,
   NuevoMiembro,
@@ -14,6 +15,7 @@ import type {
   SolicitudEquipo,
   Usuario,
 } from '../src/tipos.js'
+import type { MensajeWa } from '../src/wa/webhook.js'
 
 /** Martes 27 de octubre de 2026, 3:00 p. m. en Bogotá */
 export const AHORA = new Date('2026-10-27T15:00:00-05:00')
@@ -60,7 +62,7 @@ export class RepoFalso implements Repo {
   datos = datosDePrueba()
   registros: RegistroFalso[] = []
   estados = new Map<number, { estado: Estado; actualizadoEn: Date }>()
-  mensajes = new Set<string>()
+  buzon = new Map<string, EntrantePendiente & { estado: 'pendiente' | 'atendido' | 'fallido'; proximoEn: Date; error?: string }>()
   sesiones = new Map<string, number>()
   ahora = AHORA
 
@@ -106,10 +108,24 @@ export class RepoFalso implements Repo {
   async contarSolicitudes() {
     return this.solicitudes.length
   }
-  async marcarMensaje(id: string) {
-    if (this.mensajes.has(id)) return false
-    this.mensajes.add(id)
+  async guardarEntrante(m: MensajeWa, ahora: Date) {
+    if (this.buzon.has(m.id)) return false
+    this.buzon.set(m.id, { ...m, intentos: 0, recibidoEn: ahora, estado: 'pendiente', proximoEn: ahora })
     return true
+  }
+  async entrantesPendientes(ahora: Date, limite: number) {
+    return [...this.buzon.values()]
+      .filter((x) => x.estado === 'pendiente' && x.proximoEn <= ahora)
+      .slice(0, limite)
+      .map(({ estado: _e, proximoEn: _p, error: _x, ...m }) => m)
+  }
+  async cerrarEntrante(id: string, estado: 'atendido' | 'fallido', error?: string) {
+    const x = this.buzon.get(id)
+    if (x) Object.assign(x, { estado, error })
+  }
+  async reintentarEntrante(id: string, proximoEn: Date, error: string) {
+    const x = this.buzon.get(id)
+    if (x) Object.assign(x, { intentos: x.intentos + 1, proximoEn, error })
   }
   async leerEstado(id: number) {
     return this.estados.get(id) ?? null

@@ -31,6 +31,7 @@ docker compose exec -T db psql -U huellitas -d huellitas < sql/003_bot.sql
 ```
 
 `003_bot.sql` crea `conversaciones`, `mensajes_wa` y `sesiones_panel`, que son internas del bot: el espejo no las copia a la hoja.
+`004_equipo.sql` crea `solicitudes_equipo` y `005_buzon.sql` convierte `mensajes_wa` en el buzón duradero: cada mensaje de WhatsApp se guarda al llegar y solo se cierra cuando el bot lo atendió.
 
 ## Permiso para escribir en la hoja (una sola vez)
 

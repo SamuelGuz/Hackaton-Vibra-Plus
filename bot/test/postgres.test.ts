@@ -30,9 +30,17 @@ describe.skipIf(!URL_PRUEBA)('repositorio sobre Postgres', () => {
     expect(await repo.usuarioPorTelefono('573119999999')).toBeNull()
   })
 
-  it('un mensaje de Meta se marca una sola vez', async () => {
-    expect(await repo.marcarMensaje('wamid.1')).toBe(true)
-    expect(await repo.marcarMensaje('wamid.1')).toBe(false)
+  it('el buzón guarda un mensaje una sola vez y lo cierra o lo deja para después', async () => {
+    const m = { id: 'wamid.1', de: '573000000001', nombre: 'Luis', entrada: { tipo: 'texto' as const, texto: 'hola' } }
+    const ahora = new Date()
+    expect(await repo.guardarEntrante(m, ahora)).toBe(true)
+    expect(await repo.guardarEntrante(m, ahora)).toBe(false)
+    expect(await repo.entrantesPendientes(ahora, 10)).toMatchObject([{ ...m, intentos: 0 }])
+    await repo.reintentarEntrante(m.id, new Date(ahora.getTime() + 60_000), 'sin red')
+    expect(await repo.entrantesPendientes(ahora, 10)).toHaveLength(0)
+    expect(await repo.entrantesPendientes(new Date(ahora.getTime() + 61_000), 10)).toMatchObject([{ intentos: 1 }])
+    await repo.cerrarEntrante(m.id, 'atendido')
+    expect(await repo.entrantesPendientes(new Date(ahora.getTime() + 61_000), 10)).toHaveLength(0)
   })
 
   it('guarda y lee el paso de la conversación', async () => {

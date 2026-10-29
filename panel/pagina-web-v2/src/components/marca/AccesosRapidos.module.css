@@ -1,0 +1,150 @@
+/*
+ * Accesos rápidos flotantes. Siguen docs/DESIGN.md:
+ * - solo tokens (sin hex ni px sueltos), receta del botón principal (§8), hover y presión de §7;
+ * - sin degradados, sin vidrio ni desenfoque, sin sombra en reposo (§10): la sombra aparece solo al pasar;
+ * - sin bucles (solo los videos del hero se repiten); toques de 48px o más (§4); móvil primero.
+ */
+.dock {
+  position: fixed;
+  right: max(var(--margen), env(safe-area-inset-right, 0px));
+  bottom: max(var(--esp-4), calc(env(safe-area-inset-bottom, 0px) + var(--esp-3)));
+  z-index: var(--z-pegajoso);
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  pointer-events: none;
+  transition: transform var(--dur-abrir) var(--ease-salida), opacity var(--dur-ui) var(--ease-salida);
+}
+.dock > * { pointer-events: auto; }
+.oculto { transform: translateY(calc(100% + var(--esp-8))); opacity: 0; }
+.oculto > * { pointer-events: none; }
+
+/* En /aportar, en móvil, sube sobre la barra fija de "Donar" (que vive hasta 62em) */
+.sobreBarra { bottom: max(calc(var(--esp-4) + 4.5rem), calc(env(safe-area-inset-bottom, 0px) + var(--esp-3) + 4.5rem)); }
+@media (min-width: 62em) {
+  .sobreBarra { bottom: max(var(--esp-4), calc(env(safe-area-inset-bottom, 0px) + var(--esp-3))); }
+}
+
+.icono {
+  width: var(--icono-editorial);
+  height: var(--icono-editorial);
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- Apoya: el botón principal del sitio, en pequeño ---------- */
+.apoya {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: var(--control-editorial);
+  padding: var(--esp-3) var(--esp-5) var(--esp-3) var(--esp-4);
+  border-radius: var(--radio-pill);
+  background: var(--color-acento);
+  color: var(--color-acento-tinta);
+  font: var(--peso-semi) var(--texto-base)/1 var(--fuente-texto);
+  letter-spacing: var(--tracking-boton);
+  text-decoration: none;
+  transition: background-color var(--dur-hover) var(--ease-salida), transform var(--dur-hover) var(--ease-salida), box-shadow var(--dur-hover) var(--ease-salida);
+}
+.apoya:hover { background: var(--color-acento-hover); transform: translateY(-2px); box-shadow: var(--sombra-levantada); }
+.apoya:active { transform: scale(var(--escala-presion)); transition-duration: var(--dur-presion); }
+
+/* ---------- Instagram: botón redondo secundario ---------- */
+.redondo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--control-editorial);
+  height: var(--control-editorial);
+  border-radius: var(--radio-pill);
+  background: var(--color-crema);
+  color: var(--color-tinta);
+  box-shadow: inset 0 0 0 1px var(--marca-borde);
+  transition: background-color var(--dur-hover) var(--ease-salida), color var(--dur-hover) var(--ease-salida), transform var(--dur-hover) var(--ease-salida), box-shadow var(--dur-hover) var(--ease-salida);
+}
+.redondo:hover { background: var(--color-tinta); color: var(--color-crema); transform: translateY(-2px); box-shadow: var(--sombra-levantada); }
+.redondo:active { transform: scale(var(--escala-presion)); transition-duration: var(--dur-presion); }
+
+/* Pista "Síguenos" a la izquierda, solo con mouse */
+.pista {
+  position: absolute;
+  right: calc(100% + var(--esp-2));
+  top: 50%;
+  padding: var(--esp-2) var(--esp-3);
+  border-radius: var(--radio-sm);
+  background: var(--color-tinta);
+  color: var(--color-crema);
+  font: var(--peso-semi) var(--texto-xs)/1 var(--fuente-texto);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(var(--esp-2), -50%);
+  pointer-events: none;
+  transition: opacity var(--dur-hover) var(--ease-salida), transform var(--dur-hover) var(--ease-salida);
+}
+@media (hover: hover) and (pointer: fine) {
+  .redondo:hover .pista, .redondo:focus-visible .pista { opacity: 1; transform: translate(0, -50%); }
+}
+
+/* ---------- Chat: foto de Yesenia + texto; en móvil solo la foto ---------- */
+.chat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: var(--control-editorial);
+  padding: 0;
+  border-radius: var(--radio-pill);
+  background: var(--color-crema);
+  color: var(--color-tinta);
+  text-decoration: none;
+  box-shadow: inset 0 0 0 1px var(--marca-borde);
+  transition: transform var(--dur-hover) var(--ease-salida), box-shadow var(--dur-hover) var(--ease-salida);
+}
+.chat:hover { transform: translateY(-2px); box-shadow: inset 0 0 0 1px var(--color-acento), var(--sombra-levantada); }
+.chat:active { transform: scale(var(--escala-presion)); transition-duration: var(--dur-presion); }
+.foto { position: relative; flex: none; width: var(--control-editorial); height: var(--control-editorial); }
+.foto img { display: block; width: 100%; height: 100%; border-radius: var(--radio-pill); object-fit: cover; }
+/* Punto fijo de "en línea" (sin animación: los bucles son solo de los videos del hero) */
+.enLinea {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--esp-3);
+  height: var(--esp-3);
+  border-radius: var(--radio-pill);
+  background: var(--color-exito);
+  box-shadow: 0 0 0 2px var(--color-crema);
+}
+.chatTexto, .flecha { display: none; }
+
+.apoya:focus-visible, .redondo:focus-visible, .chat:focus-visible { outline: 2px solid var(--color-acento); outline-offset: 3px; }
+
+/* sm: aparece el texto del chat y la flecha; el grupo se apila a la derecha */
+@media (min-width: 37.5em) {
+  .dock { flex-direction: column; align-items: flex-end; gap: var(--esp-3); }
+  .chat { padding: var(--esp-1) var(--esp-4) var(--esp-1) var(--esp-1); }
+  .chatTexto { display: grid; gap: var(--esp-1); }
+  .chatTexto strong { font: var(--peso-semi) var(--texto-base)/1 var(--fuente-texto); letter-spacing: var(--tracking-boton); }
+  .chatTexto small { font: var(--peso-texto) var(--texto-xs)/1.2 var(--fuente-texto); color: var(--color-tinta-suave); }
+  .flecha {
+    display: block;
+    width: var(--esp-5);
+    height: var(--esp-5);
+    fill: none;
+    stroke: var(--color-acento);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform var(--dur-hover) var(--ease-salida);
+  }
+  .chat:hover .flecha { transform: translateX(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock, .apoya, .redondo, .chat, .flecha, .pista { transition: none; }
+  .apoya:hover, .redondo:hover, .chat:hover { transform: none; }
+}

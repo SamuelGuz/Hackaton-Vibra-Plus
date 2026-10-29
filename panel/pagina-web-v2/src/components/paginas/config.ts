@@ -10,8 +10,8 @@ export function waUrl(texto: string): string | null {
   return `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(texto)}`
 }
 
-/** Datos de pago: todos por confirmar. Si `valor` llega a tener contenido, la UI ofrece copiarlo. */
+/** Datos de pago confirmados con Yesenia. La UI ofrece copiarlos. */
 export const DATOS_PAGO: { etiqueta: string; valor: string | null }[] = [
-  { etiqueta: 'Nequi', valor: null },
-  { etiqueta: 'Titular', valor: null },
+  { etiqueta: 'Nequi', valor: '3114565817' },
+  { etiqueta: 'Titular', valor: 'Yesenia' },
 ]

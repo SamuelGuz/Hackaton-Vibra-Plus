@@ -31,6 +31,13 @@ export function acotarPuntaje(v: unknown): number | null {
   return Math.min(100, Math.max(0, Math.round(n)))
 }
 
+/** Conserva decimales al decidir idoneidad para no convertir 74,6 en el umbral de 75. */
+function acotarIdoneidad(v: unknown): number | null {
+  const n = typeof v === 'number' ? v : typeof v === 'string' && v.trim() !== '' ? Number(v) : NaN
+  if (!Number.isFinite(n)) return null
+  return Math.min(100, Math.max(0, n))
+}
+
 export function evaluacionInicial(): Evaluacion {
   return {
     suitability: 0,
@@ -66,7 +73,7 @@ export function normalizarEvaluacion(crudo: unknown): EvaluacionParcial {
   if (!o) return {}
   const vivienda = objeto(o.vivienda)
   const r: EvaluacionParcial = {}
-  const suitability = acotarPuntaje(o.suitability_score)
+  const suitability = acotarIdoneidad(o.suitability_score)
   const risk = acotarPuntaje(o.risk_score)
   if (suitability !== null) r.suitability = suitability
   if (risk !== null) r.risk = risk
@@ -170,7 +177,11 @@ export function mencionaPadrinazgo(texto: string): boolean {
 /** Texto de chat → texto para decir en voz alta: sin emojis, markdown ni viñetas, y con las cifras en pesos legibles */
 export function aGuionVoz(texto: string): string {
   return texto
-    .replace(/[\p{Extended_Pictographic}‍️⃣]/gu, '')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/\b(\d{1,2}):(\d{2})\s*(a\.?\s*m\.?|p\.?\s*m\.?)\b/gi, (_m, hora: string, _min: string, periodo: string) => `${hora} de la ${/^a/i.test(periodo) ? 'mañana' : 'tarde'}`)
+    .replace(/[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}\u{1F1E6}-\u{1F1FF}‍️⃣]/gu, '')
+    .replace(/\+?57\s*\d(?:[\s.-]*\d){9,}/g, 'el teléfono de la fundación')
+    .replace(/\b\d{10,}\b/g, 'el teléfono de la fundación')
     .replace(/\$\s?(\d(?:[\d.]*\d)?)(?:\s?COP\b)?/g, '$1 pesos')
     .replace(/[*_`~#>]/g, '')
     .split(/\r?\n/)
@@ -179,6 +190,7 @@ export function aGuionVoz(texto: string): string {
     .map((l) => (/[.!?…:;,]$/.test(l) ? l : `${l}.`))
     .join(' ')
     .replace(/\s+([.,;:!?…])/g, '$1')
+    .replace(/\s+/g, ' ').trim()
 }
 
 // ---------- Respuesta de Gemini ----------
@@ -205,7 +217,7 @@ export function normalizarRespuesta(crudo: unknown): RespuestaModelo {
     perritosMencionados: mencionados,
     intencion: (INTENCIONES as readonly string[]).includes(o.intencion as string) ? (o.intencion as Intencion) : 'explorar',
     conexionEmocional: o.conexion_emocional === true,
-    alertaBienestar: o.alerta_bienestar === true,
+    alertaBienestar: o.alerta_bienestar === true || (typeof o.alerta_bienestar === 'string' && o.alerta_bienestar.trim().toLowerCase() === 'true'),
     evaluacion: normalizarEvaluacion(o.evaluacion),
   }
 }

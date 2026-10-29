@@ -206,8 +206,8 @@ export class RepoFalso implements Repo {
       // Lo de la coordinación (montón, nota, llamada) no se toca
       Object.assign(ya, s.respuestas, {
         animalId,
-        visitaPropuesta: visita ?? ya.visitaPropuesta,
-        visitaEstado: visita ? 'propuesta' : ya.visitaEstado,
+        visitaPropuesta: s.visitaPropuesta === null ? null : visita ?? ya.visitaPropuesta,
+        visitaEstado: s.visitaPropuesta === null ? null : visita ? 'propuesta' : ya.visitaEstado,
         puntajeIdoneidad: s.puntajeIdoneidad ?? ya.puntajeIdoneidad,
         puntajeRiesgo: s.puntajeRiesgo ?? ya.puntajeRiesgo,
       })
@@ -236,6 +236,23 @@ export class RepoFalso implements Repo {
     if ((this.dias.get(clave) ?? '') >= fecha) return false
     this.dias.set(clave, fecha)
     return true
+  }
+
+  memoria = new Map<string, { valor: unknown; vence: Date | null }>()
+  async leerMemoria(clave: string, ahora: Date) {
+    const fila = this.memoria.get(clave)
+    if (!fila) return null
+    if (fila.vence && fila.vence <= ahora) {
+      this.memoria.delete(clave)
+      return null
+    }
+    return structuredClone(fila.valor)
+  }
+  async guardarMemoria(clave: string, valor: unknown, vence: Date | null) {
+    this.memoria.set(clave, { valor: structuredClone(valor), vence: vence ? new Date(vence) : null })
+  }
+  async borrarMemoria(clave: string) {
+    return this.memoria.delete(clave)
   }
 
   /** Adopciones entregadas y cómo salieron las llamadas (tablas adopciones y checkins) */

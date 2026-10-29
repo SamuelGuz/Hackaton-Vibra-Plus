@@ -4,7 +4,7 @@ import { textosAgente } from '../../src/adopciones-agente/textos.js'
 import type { Entrada, Usuario } from '../../src/tipos.js'
 import { AHORA, CAROLINA } from '../fakes.js'
 import { MATEO, perrito, TOBY } from '../externo/fakes.js'
-import { crudo, excelente, montar, silenciarConsola, TEL, texto } from './ayudas.js'
+import { crudo, enviadosSinAviso, excelente, montar, silenciarConsola, TEL, texto } from './ayudas.js'
 
 const MARIA: Usuario = { id: 4, nombre: 'María', rol: 'adopciones', telefono: '573000000004' }
 
@@ -20,7 +20,7 @@ afterEach(() => vi.restoreAllMocks())
 const escribir = (msg: string | Entrada, tel = TEL) =>
   atenderInteresadoExterno(t.deps, tel, typeof msg === 'string' ? texto(msg) : msg, t.ctx)
 
-const alTelefono = (tel: string) => t.wa.enviados.filter((e) => e.telefono === tel).map((e) => (e.salida.tipo === 'texto' ? e.salida.texto : ''))
+const alTelefono = (tel: string) => enviadosSinAviso(t.wa.enviados).filter((e) => e.telefono === tel).map((e) => (e.salida.tipo === 'texto' ? e.salida.texto : ''))
 
 function agregarAdmin(u: Usuario) {
   t.repo.usuarios.push(u)
@@ -40,7 +40,7 @@ describe('conversación por WhatsApp', () => {
   it('responde con la respuesta cálida de Gemini a quien escribió, y nada más', async () => {
     t.llm.responder(crudo({ respuesta: 'Mira, te cuento la historia de Toby... 🐶' }))
     await escribir('Hola, quiero adoptar un perrito')
-    expect(t.wa.enviados).toEqual([{ telefono: TEL, salida: { tipo: 'texto', texto: 'Mira, te cuento la historia de Toby... 🐶' } }])
+    expect(enviadosSinAviso(t.wa.enviados)).toEqual([{ telefono: TEL, salida: { tipo: 'texto', texto: 'Mira, te cuento la historia de Toby... 🐶' } }])
     expect(t.llm.llamadas).toHaveLength(1)
   })
 
@@ -84,7 +84,7 @@ describe('conversación por WhatsApp', () => {
       expect(t.llm.llamadas).toHaveLength(1)
       expect(t.llm.llamadas[0].media).toEqual({ datos: Buffer.from('archivo aud1'), mime: 'audio/ogg' })
       expect(t.rag.consultas).toEqual(['perrito para adoptar'])
-      expect(t.wa.enviados).toEqual([{ telefono: TEL, salida: { tipo: 'texto', texto: 'Qué bonito, cuéntame más 🐶' } }])
+      expect(enviadosSinAviso(t.wa.enviados)).toEqual([{ telefono: TEL, salida: { tipo: 'texto', texto: 'Qué bonito, cuéntame más 🐶' } }])
     })
 
     it('guarda en el historial lo que se transcribió, no el marcador del audio', async () => {
@@ -100,7 +100,7 @@ describe('conversación por WhatsApp', () => {
       }
       await escribir({ tipo: 'audio', mediaId: 'aud1', mime: 'audio/ogg' })
       expect(t.llm.llamadas).toHaveLength(0)
-      expect(t.wa.enviados).toEqual([{ telefono: TEL, salida: { tipo: 'texto', texto: textosAgente.audioNoLlego } }])
+      expect(enviadosSinAviso(t.wa.enviados)).toEqual([{ telefono: TEL, salida: { tipo: 'texto', texto: textosAgente.audioNoLlego } }])
       expect(consola.error).toHaveBeenCalled()
     })
 
@@ -125,7 +125,7 @@ describe('conversación por WhatsApp', () => {
     it('manda un mensaje cálido, no lanza y lo deja en el log', async () => {
       t.llm.responder(new Error('Gemini 503'))
       await expect(escribir('cuéntame de los peluditos')).resolves.toBeUndefined()
-      expect(t.wa.enviados).toEqual([{ telefono: TEL, salida: { tipo: 'texto', texto: textosAgente.falla } }])
+      expect(enviadosSinAviso(t.wa.enviados)).toEqual([{ telefono: TEL, salida: { tipo: 'texto', texto: textosAgente.falla } }])
       expect(consola.error).toHaveBeenCalled()
     })
 
@@ -142,13 +142,12 @@ describe('conversación por WhatsApp', () => {
       expect(t.llm.llamadas[1].mensajes).toEqual([{ rol: 'user', texto: '¿Sigues ahí?' }])
     })
 
-    it('tampoco lanza si WhatsApp falla al contestar', async () => {
+    it('propaga el fallo de WhatsApp para que el buzón reintente', async () => {
       t.llm.responder(crudo())
       t.wa.enviar = async () => {
         throw new Error('WhatsApp 131047')
       }
-      await expect(escribir('cuéntame de los peluditos')).resolves.toBeUndefined()
-      expect(consola.error).toHaveBeenCalled()
+      await expect(escribir('cuéntame de los peluditos')).rejects.toThrow('WhatsApp 131047')
     })
 
     it('si el RAG falla, la conversación sigue sin perritos inventados', async () => {
@@ -171,7 +170,7 @@ describe('conversación por WhatsApp', () => {
       await escribir('mensaje 32')
       expect(t.llm.llamadas).toHaveLength(30)
       expect(alTelefono(TEL)).toHaveLength(31)
-      expect(alTelefono(TEL).at(-1)).toBe(textosAgente.limite)
+      expect(alTelefono(TEL).at(-1)).toBe(textosAgente.limite.replace(/\.$/, ''))
     })
 
     it('otro número no se afecta, y pasada la ventana vuelve a atender', async () => {
@@ -262,15 +261,16 @@ describe('conversación por WhatsApp', () => {
       t.llm.responder(excelente({ suitability: 82, respuesta: 'Qué hermoso hogar para Toby 🏡' }))
       await escribir('Tengo casa, plata para el veterinario y tiempo')
       expect(alTelefono(CAROLINA.telefono)).toEqual([AVISO_CAROLINA])
-      const resp = alTelefono(TEL)
-      expect(resp).toHaveLength(1)
-      expect(resp[0]).toContain('Qué hermoso hogar para Toby 🏡')
-      expect(resp[0]).toContain('Toby')
-      expect(resp[0]).toContain('sábado 31 de octubre')
-      expect(resp[0]).toContain('10:00 a. m.')
-      expect(resp[0]).toMatch(/decisión[^.]*equipo de la fundación/i)
-      expect(resp[0]).not.toMatch(/aprobad|aprobamos|garantiz/i)
-      expect(t.wa.enviados).toHaveLength(2)
+      const mensajes = alTelefono(TEL)
+      expect(mensajes.every(m => m.length <= 600)).toBe(true)
+      const resp = mensajes.join(' ')
+      expect(resp).toContain('Qué hermoso hogar para Toby 🏡')
+      expect(resp).toContain('Toby')
+      expect(resp).toContain('sábado 31 de octubre')
+      expect(resp).toContain('10:00 a. m.')
+      expect(resp).toMatch(/decisión[^.]*equipo de la fundación/i)
+      expect(resp).not.toMatch(/aprobad|aprobamos|garantiz/i)
+      expect(t.wa.enviados).toHaveLength(mensajes.length + 1)
     })
 
     it('exactamente en el límite (75) también agenda', async () => {
@@ -348,7 +348,7 @@ describe('conversación por WhatsApp', () => {
       await escribir('listo')
       expect(alTelefono(CAROLINA.telefono)).toEqual([AVISO_CAROLINA])
       expect(alTelefono(MARIA.telefono)).toEqual([AVISO_CAROLINA.replace('🐾 Carolina,', '🐾 María,')])
-      const destinos = t.wa.enviados.map((e) => e.telefono).sort()
+      const destinos = [...new Set(t.wa.enviados.map((e) => e.telefono))].sort()
       expect(destinos).toEqual([CAROLINA.telefono, MARIA.telefono, TEL].sort())
     })
 
@@ -370,7 +370,7 @@ describe('conversación por WhatsApp', () => {
       await escribir('listo')
       expect(alTelefono(CAROLINA.telefono)).toEqual([AVISO_CAROLINA])
       expect(alTelefono(MARIA.telefono)).toEqual([])
-      expect(alTelefono(TEL)[0]).toContain('sábado 31 de octubre')
+      expect(alTelefono(TEL).join(' ')).toContain('sábado 31 de octubre')
       expect(consola.error).toHaveBeenCalled()
     })
 

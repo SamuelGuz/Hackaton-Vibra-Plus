@@ -42,7 +42,7 @@ describe('foco del animal', () => {
     expect(e.alTelefono(TEL).join('\n')).toMatch(/padrin/i)
   })
 
-  brecha('[C-04] una persona no puede agendar visitas para varios animales en cascada (spam de avisos a las administradoras)', async () => {
+  it('[C-04] una persona no puede agendar visitas para varios animales en cascada (spam de avisos a las administradoras)', async () => {
     e.t.llm.responder(excelente({ nombre: 'Ana', perrito_id_foco: '5' }), excelente({ nombre: 'Ana', perrito_id_foco: '1' }), excelente({ nombre: 'Ana', perrito_id_foco: '12' }))
     await e.escribir('Toby')
     await e.escribir('y Mateo')
@@ -95,7 +95,7 @@ describe('cambios de opinión y puntajes raros', () => {
     expect(e.avisos()).toEqual([])
   })
 
-  brecha('[C-10] 74,6 no cuenta como 75: el umbral se evalúa sobre el número real, no sobre el redondeado', async () => {
+  it('[C-10] 74,6 no cuenta como 75: el umbral se evalúa sobre el número real, no sobre el redondeado', async () => {
     e.t.llm.responder(excelente({ suitability: 74.6 }))
     await e.escribir('todo bien')
     expect(e.avisos()).toEqual([])
@@ -117,40 +117,45 @@ describe('cambios de opinión y puntajes raros', () => {
 })
 
 describe('visita agendada y después...', () => {
-  brecha('[C-12] si luego dice que no puede pagar el veterinario, las administradoras reciben una retractación del aviso', async () => {
+  it('[C-12] si luego dice que no puede pagar el veterinario, las administradoras reciben una retractación del aviso', async () => {
     e.t.llm.responder(excelente({ nombre: 'Ana' }), excelente({ presupuesto: 'no', suitability: 30 }))
     await e.escribir('todo bien')
     await e.escribir('ay, la verdad no podría pagar el veterinario')
     expect(e.avisos()).toHaveLength(2)
+    expect(e.t.repo.adopcion[0].visitaEstado).toBe('retractada')
   })
 
-  brecha('[C-13] si luego cuenta algo preocupante del bienestar (alerta), las administradoras reciben una retractación', async () => {
+  it('[C-13] si luego cuenta algo preocupante del bienestar (alerta), las administradoras reciben una retractación', async () => {
     e.t.llm.responder(excelente({ nombre: 'Ana' }), crudo({ alerta_bienestar: true }))
     await e.escribir('todo bien')
     await e.escribir('lo dejaría atado en el patio todo el día')
     expect(e.avisos()).toHaveLength(2)
+    expect(e.t.repo.adopcion[0].visitaEstado).toBe('retractada')
   })
 
-  brecha('[C-14] "cancela mi visita" / "no puedo ir" avisa a las administradoras que se cancela', async () => {
+  it('[C-14] "cancela mi visita" / "no puedo ir" avisa a las administradoras que se cancela', async () => {
     e.t.llm.responder(excelente({ nombre: 'Ana' }), crudo())
     await e.escribir('todo bien')
     await e.escribir('Ya no puedo ir el sábado, cancela la visita')
     expect(e.avisos().join('\n')).toMatch(/cancel/i)
+    expect(e.t.repo.adopcion[0].visitaEstado).toBe('cancelada')
   })
 
-  brecha('[C-15] pedir otro día u hora ("solo puedo el domingo") llega a las administradoras (hoy el sábado 10 AM es fijo)', async () => {
+  it('[C-15] pedir otro día u hora ("solo puedo el domingo") llega a las administradoras (hoy el sábado 10 AM es fijo)', async () => {
     e.t.llm.responder(excelente({ nombre: 'Ana' }), crudo())
     await e.escribir('todo bien')
     await e.escribir('El sábado trabajo, solo puedo el domingo en la tarde')
     expect(e.avisos().join('\n')).toMatch(/domingo/i)
+    expect(e.t.repo.adopcion[0].visitaEstado).toBe('cambio_solicitado')
   })
 
-  brecha('[C-16] 7 h después (sesión nueva) la misma persona no vuelve a disparar un segundo aviso por el mismo animal', async () => {
+  it('[C-16] 7 h después (sesión nueva) la misma persona no vuelve a disparar un segundo aviso por el mismo animal', async () => {
     e.t.llm.responder(excelente({ nombre: 'Ana' }))
     await e.escribir('todo bien')
     e.t.repo.ahora = new Date(AHORA.getTime() + 7 * HORA)
     await e.escribir('hola de nuevo, ya tengo todo listo')
     expect(e.avisos()).toHaveLength(1)
+    expect(e.t.repo.adopcion).toHaveLength(1)
   })
 
   it('[C-17] dos mensajes simultáneos del mismo número no duplican el aviso', async () => {

@@ -56,6 +56,8 @@ export type Salida =
   | { tipo: 'lista'; texto: string; boton: string; filas: Fila[] }
   /** Imagen con un pie de foto corto (máximo 1024). PNG salvo que diga otro `mime` (p. ej. la foto de un comprobante). */
   | { tipo: 'imagen'; png: Buffer; mime?: string; texto: string }
+  /** Plantilla aprobada por Meta: lo único que WhatsApp deja enviar fuera de la ventana de 24 h. `texto` es solo la vista previa para registros y pruebas. */
+  | { tipo: 'plantilla'; nombre: string; idioma: string; parametros: string[]; texto: string }
 
 // ---------- Estado de la conversación ----------
 
@@ -203,6 +205,11 @@ export interface Repo {
 
   /** Marca `fecha` (AAAA-MM-DD) como hecha para `clave`. true solo la primera vez: así una tarea del día corre una vez. */
   reclamarDia(clave: string, fecha: string): Promise<boolean>
+
+  /** Estado protegido por clave seudónima; vence=null significa que no caduca. */
+  leerMemoria?(clave: string, ahora: Date): Promise<unknown | null>
+  guardarMemoria?(clave: string, valor: unknown, vence: Date | null): Promise<void>
+  borrarMemoria?(clave: string): Promise<boolean>
 
   // ---------- Seguimientos después de la adopción ----------
   /** Los 5 seguimientos de cada adopción activa, con el resultado de los que ya se llamaron */

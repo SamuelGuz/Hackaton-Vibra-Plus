@@ -26,6 +26,16 @@ describe.skipIf(!URL_PRUEBA)('repositorio sobre Postgres', () => {
 
   afterAll(() => pool?.end())
 
+  it('persiste memoria privada, respeta vencimientos y confirma borrado real', async () => {
+    const ahora = new Date()
+    await repo.guardarMemoria!('prueba:memoria', { mensajes: ['Hola'], noContactar: true }, null)
+    expect(await repo.leerMemoria!('prueba:memoria', ahora)).toEqual({ mensajes: ['Hola'], noContactar: true })
+    await repo.guardarMemoria!('prueba:memoria', { mensajes: [] }, new Date(ahora.getTime() + 60_000))
+    expect(await repo.leerMemoria!('prueba:memoria', new Date(ahora.getTime() + 61_000))).toBeNull()
+    expect(await repo.borrarMemoria!('prueba:memoria')).toBe(true)
+    expect(await repo.borrarMemoria!('prueba:memoria')).toBe(false)
+  })
+
   it('encuentra a la persona por su número, escrito como sea', async () => {
     expect((await repo.usuarioPorTelefono('573000000001'))?.nombre).toBe('Don Luis')
     expect((await repo.usuarioPorTelefono('+57 300 000 0002'))?.nombre).toBe('Andrea')

@@ -71,3 +71,16 @@ export function silenciarConsola() {
 
 export const texto = (t: string) => ({ tipo: 'texto' as const, texto: t })
 export const TEL = '573115550000'
+
+/** El primer envío de una persona nueva lleva pegado el aviso de privacidad; estos helpers lo quitan para comparar el resto. */
+const AVISO_PRIVACIDAD_FINAL = /\s+Este chat trata tus datos personales[\s\S]*$/
+
+export function sinAvisoPrivacidad<T extends { tipo: string }>(salida: T): T {
+  if (salida.tipo !== 'texto') return salida
+  const s = salida as unknown as { texto: string }
+  return { ...salida, texto: s.texto.replace(AVISO_PRIVACIDAD_FINAL, '') }
+}
+
+export function enviadosSinAviso<E extends { salida: { tipo: string } }>(enviados: E[]): E[] {
+  return enviados.map((e) => ({ ...e, salida: sinAvisoPrivacidad(e.salida) }))
+}

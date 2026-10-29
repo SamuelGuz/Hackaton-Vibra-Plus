@@ -57,7 +57,8 @@ describe('las capturas del 29 de octubre, con el bot nuevo', () => {
   it('el comprobante de Nequi de $1.000: se lee, Samuel toca "Sí, me llegó" y queda registrado', async () => {
     t.llm.responder({ es_comprobante: true, monto: 1000, fecha: '28 de octubre de 2026 a las 11:17 p. m.', referencia: 'S17273100', medio: 'Nequi', descripcion: 'Envío' })
     await afuera({ tipo: 'imagen', mediaId: 'img-nequi', mime: 'image/jpeg' })
-    expect(a(INTERESADO).at(-1)!.texto).toMatch(/gracias por tu donación de \$1\.000/i)
+    expect(a(INTERESADO).at(-1)!.texto).toMatch(/gracias por enviar el comprobante de \$1\.000/i)
+    expect(a(INTERESADO).at(-1)!.texto).toMatch(/falta que confirme/i)
     expect(a(SAMUEL.telefono).map((s) => s.tipo)).toEqual(['imagen', 'botones'])
     await samuel(boton('cpb:si:1'))
     expect(t.repo.datos.movimientos.map((m) => [m.tipo, m.monto, m.categoria])).toEqual([['ingreso', 1000, 'donacion']])
@@ -72,9 +73,9 @@ describe('las capturas del 29 de octubre, con el bot nuevo', () => {
     expect(a(INTERESADO).at(-1)!.tipo).toBe('botones')
   })
 
-  it('"Donar" muestra los datos y el teléfono de donaciones de una', async () => {
+  it('"Donar" muestra los datos y el teléfono de donaciones en tres mensajes', async () => {
     await afuera(boton('ext:donar'))
-    const m = a(INTERESADO).at(-1)!.texto
+    const m = a(INTERESADO).map(s => s.texto).join(' ')
     expect(m).toContain('3001234567')
     expect(m).toContain('3009876543')
   })

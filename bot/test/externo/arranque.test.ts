@@ -69,7 +69,13 @@ describe('un solo servidor para el equipo y para el público', () => {
     const r = await app().request('/api/publico/rag/perritos')
     expect(r.status).toBe(200)
     const cuerpo = (await r.json()) as { perritos: { nombre: string }[] }
-    expect(cuerpo.perritos.map((p) => p.nombre)).toContain('Luna')
+    expect(cuerpo.perritos.map((p) => p.nombre)).toEqual(['Mateo'])
+  })
+
+  it('CATALOGO_DEMO apagado conserva el catálogo previo de un despliegue', async () => {
+    const r = await app({ ...ENV, CATALOGO_DEMO: 'apagado' }).request('/api/publico/rag/perritos')
+    const cuerpo = await r.json()
+    expect(cuerpo.perritos.map((p: { nombre: string }) => p.nombre)).toContain('Luna')
   })
 
   it('la API del panel sigue pidiendo sesión', async () => {

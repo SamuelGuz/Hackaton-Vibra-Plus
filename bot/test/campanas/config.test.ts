@@ -7,7 +7,7 @@ describe('leerConfigCorreo', () => {
   it('sin variables: remitente por defecto y ningún canal de correo', () => {
     const cfg = leerConfigCorreo({}, URL_BASE, null)
 
-    expect(cfg).toEqual({ remitente: 'Fundación Huellitas <onboarding@resend.dev>', urlBase: URL_BASE, whatsappPublico: null })
+    expect(cfg).toEqual({ remitente: 'Refugio Yesenia <onboarding@resend.dev>', urlBase: URL_BASE, whatsappPublico: null })
     expect(crearCorreo(cfg)).toBeNull()
   })
 

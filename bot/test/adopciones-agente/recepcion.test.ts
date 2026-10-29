@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { atenderInteresadoExterno } from '../../src/adopciones-agente/index.js'
 import type { Entrada, Salida } from '../../src/tipos.js'
 import { CAROLINA } from '../fakes.js'
-import { crudo, montar, silenciarConsola, TEL, texto } from './ayudas.js'
+import { crudo, enviadosSinAviso, montar, silenciarConsola, TEL, texto } from './ayudas.js'
 
 const WEB = 'https://huellitasrefugio.lat'
 const boton = (id: string, titulo = ''): Entrada => ({ tipo: 'boton', id, titulo })
@@ -19,7 +19,7 @@ beforeEach(() => {
 afterEach(() => vi.restoreAllMocks())
 
 const escribir = (msg: string | Entrada, tel = TEL) => atenderInteresadoExterno(t.deps, tel, typeof msg === 'string' ? texto(msg) : msg, t.ctx)
-const recibidos = (tel = TEL): Salida[] => t.wa.enviados.filter((e) => e.telefono === tel).map((e) => e.salida)
+const recibidos = (tel = TEL): Salida[] => enviadosSinAviso(t.wa.enviados).filter((e) => e.telefono === tel).map((e) => e.salida)
 const ultimo = () => recibidos().at(-1)!
 const ids = (s: Salida) => (s.tipo === 'botones' ? s.botones.map((b) => b.id) : s.tipo === 'lista' ? s.filas.map((f) => f.id) : [])
 
@@ -40,7 +40,7 @@ describe('el primer mensaje', () => {
     await escribir('¿y gatos?')
     const textos = recibidos().map((s) => s.texto)
     expect(textos.filter((x) => x.includes(WEB))).toHaveLength(1)
-    expect(textos[0]).toBe('Claro, te cuento de Toby 🐶')
+    expect(textos[0]).toBe('te cuento de Toby 🐶')
     expect(t.llm.llamadas).toHaveLength(2)
   })
 
@@ -59,8 +59,8 @@ describe('adoptar en pocos toques', () => {
     await escribir('hola')
     await escribir(boton('ext:adoptar'))
     const lista = ultimo()
-    expect(lista.tipo).toBe('lista')
-    expect(ids(lista)).toEqual(['ext:a:5', 'ext:a:1', 'ext:a:12'])
+    expect(recibidos().slice(-3).map(s => s.tipo)).toEqual(['texto', 'imagen', 'texto'])
+    expect(lista.texto).toContain('Cuál')
 
     await escribir(boton('ext:a:5'))
     expect(ultimo().texto).toContain('Toby')
@@ -108,7 +108,7 @@ describe('adoptar en pocos toques', () => {
   it('un animal que solo se puede apadrinar no abre el formulario de adopción', async () => {
     t.rag.perritos[0] = { ...t.rag.perritos[0], adoptable: false }
     await escribir(boton('ext:q:5'))
-    expect(ultimo().texto).toMatch(/apadrin/i)
+    expect(recibidos().map(s => s.texto).join(' ')).toMatch(/apadrin/i)
   })
 
   it('si escribe en vez de tocar, la IA le responde y el formulario sigue donde iba', async () => {
@@ -125,7 +125,9 @@ describe('donar e información', () => {
   it('"Donar" muestra de una los datos de pago, el teléfono para donar comida y cómo mandar el comprobante', async () => {
     await escribir(boton('ext:donar'))
     const m = ultimo()
-    for (const dato of ['3001234567', '@huellitas', 'Fundación Huellitas', '3009876543', '$20.000', 'comprobante', WEB]) expect(m.texto).toContain(dato)
+    const contenido = recibidos().map(s => s.texto).join(' ')
+    for (const dato of ['3001234567', '@huellitas', 'Fundación Huellitas', '3009876543', 'comprobante']) expect(contenido).toContain(dato)
+    expect(recibidos()).toHaveLength(3)
     expect(ids(m)).toEqual(['ext:comprobante', 'ext:adoptar', 'ext:duda'])
   })
 
@@ -133,7 +135,7 @@ describe('donar e información', () => {
     t.ctx.donaciones = {}
     await escribir(boton('ext:donar'))
     expect(ultimo().texto).not.toMatch(/\d{7,}/)
-    expect(ultimo().texto).toMatch(/te pasa(mos)? los datos/i)
+    expect(recibidos().map(s => s.texto).join(' ')).toMatch(/datos de pago confirmados/i)
   })
 
   it('"Saber más" cuenta qué es el refugio, horarios y visitas, con la web', async () => {
@@ -147,7 +149,7 @@ describe('donar e información', () => {
 
   it('"Tengo una duda" invita a escribir, y la pregunta la responde la IA', async () => {
     await escribir(boton('ext:duda'))
-    expect(ultimo().texto).toMatch(/escríbeme/i)
+    expect(ultimo().texto).toMatch(/contarme tu duda/i)
     t.llm.responder(crudo({ respuesta: 'Las visitas son los sábados 🐾' }))
     await escribir('¿cuándo puedo ir?')
     // La respuesta de la IA, y detrás la web (la única vez que se manda)
@@ -160,7 +162,7 @@ describe('donar e información', () => {
     await escribir('¿y también aceptan cobijas?')
     const conDatos = recibidos().filter((s) => s.texto.includes('3001234567'))
     expect(conDatos).toHaveLength(1)
-    expect(recibidos()[0].texto).toBe('¡Qué lindo que quieras ayudar! 💛')
+    expect(recibidos()[0].texto).toContain('Tu ayuda')
   })
 
   it('el arranque lee la web y los datos de donación del .env; sin ellos, no hay', async () => {

@@ -16,8 +16,8 @@ export interface AvisoDonacion {
   foto?: { datos: Buffer; mime: string; url: string }
 }
 
-/** Crea el registro por confirmar y le avisa a cada administradora. Devuelve el id del registro. */
-export async function avisarDonacion(deps: Deps, d: AvisoDonacion): Promise<string> {
+/** Crea el registro por confirmar y le avisa a cada administradora. Devuelve el id del registro y a cuántas les llegó el aviso. */
+export async function avisarDonacion(deps: Deps, d: AvisoDonacion): Promise<{ id: string; entregados: number }> {
   const accion: Accion = {
     tipo: 'movimiento',
     movimiento: {
@@ -42,6 +42,7 @@ export async function avisarDonacion(deps: Deps, d: AvisoDonacion): Promise<stri
     estado: 'por_confirmar',
   })
   const admins = (await buscarAdministradoras(deps).catch(() => [])).filter((a) => a.rol === 'admin')
+  let entregados = 0
   for (const a of admins) {
     const mensajes: Salida[] = [
       ...(d.foto ? [{ tipo: 'imagen' as const, png: d.foto.datos, mime: d.foto.mime, texto: `🧾 Comprobante que mandó ${d.de}` }] : []),
@@ -56,9 +57,10 @@ export async function avisarDonacion(deps: Deps, d: AvisoDonacion): Promise<stri
     ]
     try {
       for (const m of mensajes) await deps.wa.enviar(a.telefono, m)
+      entregados++
     } catch (e) {
       console.error(`No se pudo avisar a ${a.nombre} de la donación:`, e instanceof Error ? e.message : e)
     }
   }
-  return id
+  return { id, entregados }
 }

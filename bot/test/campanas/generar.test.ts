@@ -114,7 +114,7 @@ describe('generarCampana', () => {
     expect(llm.llamadas).toHaveLength(0)
     expect(c.perritos).toEqual([])
     expect(c.asunto.length).toBeGreaterThan(0)
-    expect(c.html).toContain('Fundación Huellitas')
+    expect(c.html).toContain('Refugio Yesenia')
   })
 
   it('no manda a Gemini la historia de un perfil sin confirmar', async () => {

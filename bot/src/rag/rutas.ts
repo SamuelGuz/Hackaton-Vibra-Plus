@@ -4,6 +4,7 @@ import type { Context } from 'hono'
 import { cors } from 'hono/cors'
 import type { Hono } from 'hono'
 import { crearLimitador, ipDe } from './limitador.js'
+import { fotoPublicaSegura } from '../catalogo/datos.js'
 import type { ContextoExterno, PerritoPublico } from './tipos.js'
 
 const LIMITE_MAXIMO = 50
@@ -19,7 +20,8 @@ export interface OpcionesRutasRag {
 }
 
 /** Copia solo los campos públicos: si el tipo crece con algo interno, no sale hasta agregarlo aquí a propósito */
-function aPublico(p: PerritoPublico): PerritoPublico {
+function aPublico(p: PerritoPublico, origen?: string): PerritoPublico {
+  const foto = fotoPublicaSegura(p.foto)
   return {
     id: p.id,
     nombre: p.nombre,
@@ -34,7 +36,8 @@ function aPublico(p: PerritoPublico): PerritoPublico {
     compatibilidad: p.compatibilidad,
     necesidadesMedicas: p.necesidadesMedicas,
     meta: p.meta,
-    foto: p.foto && /^https?:\/\//i.test(p.foto) ? p.foto : null,
+    foto: foto?.startsWith('/') && origen ? new URL(foto, origen).href : foto,
+    ...(p.datosDemo ? { datosDemo: true } : {}),
     urgencia: p.urgencia,
     adoptable: p.adoptable,
     hoy: { comioHoy: p.hoy.comioHoy, medicinas: p.hoy.medicinas, notaDelDia: null },
@@ -89,7 +92,7 @@ export function montarRutasRag(app: Hono<any>, ctx: ContextoExterno, opciones: O
     try {
       const perritos = await ctx.rag.listar({ especie: especie ? (especie as 'perro' | 'gato') : undefined, limite })
       c.header('Cache-Control', 'public, max-age=15')
-      return c.json({ total: perritos.length, contacto, perritos: perritos.map(aPublico) })
+      return c.json({ total: perritos.length, contacto, perritos: perritos.map(p => aPublico(p, c.req.url)) })
     } catch (e) {
       console.error('[rag] listar falló:', e)
       return error(c, 500, 'No pudimos cargar los perritos ahora. Intenta de nuevo en un momento.')
@@ -136,7 +139,7 @@ export function montarRutasRag(app: Hono<any>, ctx: ContextoExterno, opciones: O
         consulta: r.consulta,
         modo: r.modo,
         contacto,
-        resultados: r.resultados.map((x) => ({ perrito: aPublico(x.perrito), puntaje: x.puntaje, motivo: x.motivo })),
+        resultados: r.resultados.map((x) => ({ perrito: aPublico(x.perrito, c.req.url), puntaje: x.puntaje, motivo: x.motivo })),
       })
     } catch (e) {
       console.error('[rag] buscar falló:', e)

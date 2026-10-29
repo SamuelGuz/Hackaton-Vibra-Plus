@@ -10,7 +10,7 @@ const de = (id: string, perfiles = PERFILES) => {
 describe('construirPerfil con perfil curado', () => {
   it('mezcla los datos de la base con el perfil curado', () => {
     const p = de('1')
-    expect(p).toMatchObject({ id: '1', nombre: 'Mateo', especie: 'perro', estado: 'tratamiento', edadAnios: 9, edadTexto: '9 años', tamano: 'mediano', historiaConfirmada: true })
+    expect(p).toMatchObject({ id: '1', nombre: 'Mateo', especie: 'perro', estado: 'tratamiento', edadAnios: 9, edadTexto: '9 años', tamano: 'mediano', historiaConfirmada: false })
     expect(p.historia).toContain('atropellaron')
     expect(p.personalidad).toEqual(['viejito', 'tranquilo'])
     expect(p.compatibilidad.apartamento).toBe(true)

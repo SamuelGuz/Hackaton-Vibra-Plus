@@ -67,6 +67,8 @@ export interface CambioSolicitud {
   montonManual?: Monton | null
   nota?: string
   llamadaAgendada?: string | null
+  visitaPropuesta?: string | null
+  visitaEstado?: 'propuesta' | 'retractada' | 'cancelada' | 'cambio_solicitado' | null
 }
 
 /** Días después de la entrega en que se llama al adoptante */

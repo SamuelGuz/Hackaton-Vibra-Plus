@@ -52,7 +52,7 @@ describe('plantilla de campaña', () => {
     const html = renderHtml(base)
     expect(html).toContain('href="https://huellitas.test/?vista=adoptar"')
     expect(html).toContain('Quiero apadrinar')
-    expect(html).toContain('Fundación Huellitas')
+    expect(html).toContain('Refugio Yesenia')
     expect(html).toContain('Responde BAJA a este correo para no recibir más.')
     expect(html).toContain('max-width:600px')
   })

@@ -7,6 +7,7 @@ import { validarCambioEstado, validarEvento } from './api/eventos.js'
 import { datosParaRol, esDePlata, manejaPlata, veraPlata } from './api/permisos.js'
 import { montarRutaMetaDelDia } from './api/publico.js'
 import { montarRutasProgreso } from './api/progreso.js'
+import { montarRutasFotosCatalogo } from './catalogo/index.js'
 import { pendientesDeHoy, veAdoptantes } from './adopcion/seguimientos.js'
 import { sugerencia, validarCambioSolicitud, validarSolicitudFormulario } from './adopcion/solicitudes.js'
 import { atenderInteresadoExterno, montarRutasAgente } from './adopciones-agente/index.js'
@@ -55,9 +56,9 @@ export function crearApp(cfg: ConfigApp) {
   async function procesar(m: MensajeWa) {
     const usuario = await deps.repo.usuarioPorTelefono(m.de)
     if (!usuario) {
-      await deps.repo.anotarSolicitud(m.de, m.nombre ?? null)
       // Alguien de afuera (posible adoptante o padrino): lo atiende el agente emocional en vez del aviso de siempre
       if (cfg.externo) return atenderInteresadoExterno(deps, m.de, m.entrada, cfg.externo, { mensajeId: m.id })
+      await deps.repo.anotarSolicitud(m.de, m.nombre ?? null)
       const ultimo = avisadosDesconocidos.get(m.de) ?? 0
       if (Date.now() - ultimo > HORAS_AVISO_DESCONOCIDO * 3_600_000) {
         avisadosDesconocidos.set(m.de, Date.now())
@@ -155,6 +156,7 @@ export function crearApp(cfg: ConfigApp) {
 
   if (cfg.externo) {
     montarRutasRag(app, cfg.externo)
+    montarRutasFotosCatalogo(app)
     montarRutasAgente(app, deps, cfg.externo)
     montarRutasCampanas(app, cfg.externo, cfg.externo.correo.config, cfg.externo.correo.enviador)
   }

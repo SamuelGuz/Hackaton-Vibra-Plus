@@ -27,6 +27,25 @@ export function crearRepoPg(pool: Pool): RepoPg {
   return {
     pool,
 
+    async leerMemoria(clave, ahora) {
+      const r = await pool.query('SELECT valor FROM bot_memoria WHERE clave = $1 AND (vence_en IS NULL OR vence_en > $2)', [clave, ahora])
+      return r.rows[0]?.valor ?? null
+    },
+
+    async guardarMemoria(clave, valor, vence) {
+      await pool.query(
+        `INSERT INTO bot_memoria (clave, valor, vence_en) VALUES ($1, $2::jsonb, $3)
+         ON CONFLICT (clave) DO UPDATE SET valor = EXCLUDED.valor, vence_en = EXCLUDED.vence_en, actualizado_en = now()`,
+        [clave, JSON.stringify(valor), vence],
+      )
+      await pool.query('DELETE FROM bot_memoria WHERE vence_en IS NOT NULL AND vence_en <= now()')
+    },
+
+    async borrarMemoria(clave) {
+      const r = await pool.query('DELETE FROM bot_memoria WHERE clave = $1', [clave])
+      return (r.rowCount ?? 0) > 0
+    },
+
     async usuarioPorTelefono(telefono) {
       const r = await pool.query(
         `SELECT id, nombre, rol, telefono FROM usuarios
@@ -367,6 +386,8 @@ export function crearRepoPg(pool: Pool): RepoPg {
       if (cambio.montonManual !== undefined) poner('monton_manual', cambio.montonManual)
       if (cambio.nota !== undefined) poner('nota', cambio.nota)
       if (cambio.llamadaAgendada !== undefined) poner('llamada_agendada', cambio.llamadaAgendada)
+      if (cambio.visitaPropuesta !== undefined) poner('visita_propuesta', cambio.visitaPropuesta)
+      if (cambio.visitaEstado !== undefined) poner('visita_estado', cambio.visitaEstado)
       const r = await pool.query(
         `UPDATE solicitudes_adopcion SET ${[...columnas, 'actualizado_en = now()'].join(', ')} WHERE id = $1 RETURNING id`,
         valores,

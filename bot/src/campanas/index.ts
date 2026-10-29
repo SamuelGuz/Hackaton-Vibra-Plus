@@ -6,7 +6,7 @@ export { crearCorreo, enviarCampana, limpiarDestinatarios, type OpcionesCorreo, 
 export { montarRutasCampanas } from './rutas.js'
 export type { Campana, CampanaEstructura, ConfigCorreo, Correo, MensajeCorreo, Objetivo, PerritoCampana } from './tipos.js'
 
-const REMITENTE_POR_DEFECTO = 'Fundación Huellitas <onboarding@resend.dev>'
+const REMITENTE_POR_DEFECTO = 'Refugio Yesenia <onboarding@resend.dev>'
 const PUERTO_SMTP_POR_DEFECTO = 587
 
 /** Lee la configuración de correo del entorno. Sin RESEND_API_KEY ni SMTP_HOST no hay envío real. */

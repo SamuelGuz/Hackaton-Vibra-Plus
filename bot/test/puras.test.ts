@@ -57,6 +57,11 @@ describe('quitarDatosSensibles', () => {
     expect(quitarDatosSensibles('su número es 3001234567')).toBe('su número es [teléfono]')
     expect(quitarDatosSensibles('cuenta 12345678901')).toBe('cuenta [número]')
   })
+
+  it('quita documentos formateados aunque haya palabras entre la etiqueta y el número', () => {
+    expect(quitarDatosSensibles('Mi cédula es 1.234.567.890')).not.toContain('1.234.567.890')
+    expect(quitarDatosSensibles('Documento número: 12 345 678')).not.toContain('12 345 678')
+  })
 })
 
 describe('convertir lo que devuelve la IA', () => {

@@ -6,9 +6,10 @@ import type { CanalAgente } from './tipos.js'
 export const PADRINAZGO_DESDE = '$20.000 COP'
 
 export const textosAgente = {
-  falla: 'Ay, se me enredó la conexión un momentico 🐾 ¿Me escribes de nuevo en un ratico? Aquí sigo para ayudarte con los peluditos.',
+  falla: 'Se me enredó la conexión un momento. ¿Me escribes de nuevo en un rato?',
   fallaWeb: 'Se me enredó la conexión un momentico. ¿Lo intentamos de nuevo?',
-  limite: 'Qué alegría que quieras saber tanto de nuestros peluditos 🐾 Hemos hablado bastante hoy; escríbeme de nuevo dentro de un rato y seguimos.',
+  salidaNoSegura: 'No alcancé a preparar una respuesta confiable. ¿Me cuentas de nuevo qué necesitas saber?',
+  limite: 'Qué alegría que quieras saber tanto de nuestros peluditos 🐾 Hemos hablado bastante hoy; escríbeme de nuevo dentro de un rato y seguimos',
   limiteWeb: 'Hemos hablado bastante por ahora. Inténtalo de nuevo en unos minutos, ¿sí?',
   audioNoLlego: 'No alcancé a escuchar tu audio 🙈 ¿Me lo mandas de nuevo o me cuentas por escrito?',
   audioLargo: 'Tu audio quedó larguito y no lo pude procesar 🙈 ¿Me lo mandas más cortico o me escribes?',
@@ -17,7 +18,7 @@ export const textosAgente = {
   marcadorAudio: '(La persona te mandó una nota de voz: transcríbela en "transcripcion" y respóndele.)',
 
   // ---------- Recepción por botones (recepcion.ts) ----------
-  bienvenida: '¡Hola! 👋 Qué alegría que nos escribas. Soy el asistente de la Fundación Huellitas 🐾\n\n¿En qué te podemos ayudar? Elige una opción 👇',
+  bienvenida: 'Hola, soy el asistente del Refugio Yesenia 🐾 Puedes conocer a los peluditos o ver cómo ayudar. ¿Qué te gustaría hacer?',
   menuOtraVez: '¿En qué más te ayudo? Elige una opción 👇',
   web: (url: string) => `🌐 Conoce a todos nuestros peluditos y nuestra historia en ${url}\nSi te queda cualquier duda, pregúntame aquí mismo 💬`,
   lista: 'Estos peluditos están buscando hogar 🐾 Toca *Ver peluditos* y elige uno para conocerlo.\n\nSi buscas algo especial (tamaño, que se lleve con niños, para apartamento), escríbemelo y te digo cuál encaja.',
@@ -28,6 +29,15 @@ export const textosAgente = {
     `¡Gracias, ${nombre}! 🐾 Ya tengo todo. Alguien del equipo te va a escribir por aquí para coordinar la visita.`,
   visitaYaPropuesta: (nombre: string, perro: string) =>
     `${nombre}, tu visita para conocer a ${perro} ya está propuesta 🐾 Alguien del equipo te escribe para confirmarla.`,
+  visitaCancelada: (avisado: boolean, persistido = true) => !persistido
+    ? avisado ? 'Avisé a la administración de tu cancelación, pero no pude actualizar la solicitud' : 'No pude actualizar la solicitud ni avisar a la administración de tu cancelación'
+    : avisado ? 'Anoté la cancelación de la visita y avisé a la administración' : 'Anoté la cancelación de la visita, pero aún no le llegó el aviso a la administración',
+  visitaRetirada: (avisado: boolean, persistido = true) => !persistido
+    ? avisado ? 'Gracias por contarme. Avisé a la administración, pero no pude actualizar la solicitud' : 'Gracias por contarme. No pude actualizar la solicitud ni avisar a la administración'
+    : avisado ? 'Gracias por contarme. Dejé sin efecto la propuesta de visita y avisé a la administración' : 'Gracias por contarme. Dejé sin efecto la propuesta de visita, pero aún no le llegó el aviso a la administración',
+  cambioVisitaSolicitado: (avisado: boolean, persistido = true) => !persistido
+    ? avisado ? 'Avisé a la administración del horario que prefieres, pero no pude actualizar la solicitud' : 'No pude actualizar la solicitud ni avisar a la administración del horario que prefieres'
+    : avisado ? 'Anoté el horario que prefieres y se lo pasé a la administración; la visita sigue por confirmar' : 'Anoté el horario que prefieres, pero aún no le llegó el aviso a la administración; la visita sigue por confirmar',
   mejorApadrinar: (nombre: string, perro: string, porTiempo: boolean) =>
     `Gracias por contarme con sinceridad, ${nombre} 💛 ${porTiempo ? `${perro} necesita compañía buena parte del día` : `Cuidar a ${perro} trae gastos de comida y veterinario`}, así que quizás este no es el momento de adoptar. ` +
     `Pero igual puedes cambiarle la vida: apadrinándolo desde ${PADRINAZGO_DESDE} al mes, o donando comida 🐾`,
@@ -41,13 +51,13 @@ export const textosAgente = {
   comidaPorChat: '*Para donar comida o insumos:* escríbeme aquí y coordinamos la entrega.',
   mandaComprobante: '🧾 Cuando dones, mándame aquí la foto del comprobante y le aviso al equipo para que lo confirme.',
   infoDudas: 'Si tienes cualquier duda, escríbemela aquí y te respondo 💬',
-  escribeDuda: '¡Claro! Escríbeme tu pregunta o mándame una nota de voz 💬',
+  escribeDuda: 'Puedes contarme tu duda por aquí o mandarme una nota de voz. ¿Qué necesitas saber?',
   // ---------- Comprobantes (comprobantes.ts) ----------
   fotoNoLlego: 'No me llegó bien la foto 🙈 ¿Me la mandas otra vez?',
   fotoNoComprobante:
     '¡Gracias por la foto! 🐾 Por aquí con fotos solo puedo leer comprobantes de donación. Si quieres contarme o preguntarme algo, escríbeme o mándame una nota de voz.',
-  graciasComprobante: (monto: string) => `¡Mil gracias por tu donación de ${monto}! 💛 Ya le avisé al equipo para que confirme que llegó. Los peluditos te lo agradecen 🐾`,
-  graciasComprobanteRevisar: '¡Mil gracias! 💛 No alcancé a leer bien tu foto, así que se la pasé al equipo para que la revise. Si es un comprobante, ellos confirman que llegó 🐾',
+  graciasComprobante: (monto: string) => `Gracias por enviar el comprobante de ${monto}. Ya le avisé al equipo; falta que confirme si el dinero llegó`,
+  graciasComprobanteRevisar: 'Gracias por enviarlo. No alcancé a leer bien la foto y se la pasé al equipo para revisión; el ingreso sigue pendiente de confirmación',
   comprobanteLlego: (admin: string, de: string, monto: string, detalle: string) =>
     `💸 ${admin}, llegó un comprobante de donación de ${de}: *${monto}*${detalle ? `\n${detalle}` : ''}\n\n¿Te llegó la plata? Si dices que sí, la registro como donación.`,
   comprobanteSinValor: (de: string) => `🧾 ${de} mandó un comprobante, pero no alcancé a leer el valor. Revísalo y, si te llegó, regístralo en el panel o cuéntamelo.`,

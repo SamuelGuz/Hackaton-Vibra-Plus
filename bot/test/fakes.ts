@@ -248,6 +248,9 @@ export class RepoFalso implements Repo {
 
 export class WaFalso {
   enviados: { telefono: string; salida: Salida }[] = []
+  /** Sin definir por defecto, como un WhatsApp que no muestra "escribiendo…"; las pruebas lo ponen cuando lo miran */
+  escribiendo?: (mensajeId: string) => Promise<void>
+
   async enviar(telefono: string, salida: Salida) {
     this.enviados.push({ telefono, salida })
   }

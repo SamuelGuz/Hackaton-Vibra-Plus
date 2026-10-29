@@ -198,6 +198,8 @@ export interface Repo {
 export interface Wa {
   enviar(telefono: string, salida: Salida): Promise<void>
   descargar(mediaId: string): Promise<{ datos: Buffer; mime: string }>
+  /** Marca el mensaje como leído y muestra "escribiendo…" (hasta 25 s o hasta la respuesta) */
+  escribiendo?(mensajeId: string): Promise<void>
 }
 
 export interface Ia {

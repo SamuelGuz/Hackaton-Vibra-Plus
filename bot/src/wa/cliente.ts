@@ -13,6 +13,11 @@ export function recortar(texto: string, max: number): string {
 }
 
 /** Convierte una Salida en el cuerpo que espera la API de Meta. Una imagen necesita el id con que se subió. */
+/** Marca el mensaje como leído y muestra "escribiendo…" a la persona */
+export function cuerpoEscribiendo(mensajeId: string): Record<string, unknown> {
+  return { messaging_product: 'whatsapp', status: 'read', message_id: mensajeId, typing_indicator: { type: 'text' } }
+}
+
 export function cuerpoMensaje(telefono: string, s: Salida, mediaId?: string): Record<string, unknown> {
   const base = { messaging_product: 'whatsapp', recipient_type: 'individual', to: telefono }
   switch (s.tipo) {
@@ -81,6 +86,15 @@ export function crearWa(c: ConfigWa): Wa {
         body: JSON.stringify(cuerpoMensaje(telefono, salida, mediaId)),
       })
       if (!r.ok) throw new Error(`WhatsApp respondió ${r.status}: ${await r.text()}`)
+    },
+
+    async escribiendo(mensajeId) {
+      const r = await fetch(`${api}/${c.phoneId}/messages`, {
+        method: 'POST',
+        headers: { ...auth, 'Content-Type': 'application/json' },
+        body: JSON.stringify(cuerpoEscribiendo(mensajeId)),
+      })
+      if (!r.ok) throw new Error(`WhatsApp no mostró "escribiendo" (${r.status}): ${await r.text()}`)
     },
 
     async descargar(mediaId) {

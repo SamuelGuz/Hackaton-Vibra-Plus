@@ -114,6 +114,8 @@ export interface ContextoExterno {
   respuestas?: ServicioRespuestas
   /** Voz del agente para la página (adopciones-agente/voz.ts); sin ella no hay audio, solo texto */
   voz?: Voz
+  /** Espera antes de responder por WhatsApp, como una persona que escribe (adopciones-agente/humano.ts); sin ella, de una vez */
+  pausaHumana?: (ms: number) => Promise<void>
 }
 
 // ---------- Ampliaciones (T-RAG2): perfil más rico y motor de preguntas ----------

@@ -22,7 +22,7 @@ beforeEach(() => {
 function app(env: Record<string, string | undefined> = ENV) {
   return crearApp({
     deps: t.deps,
-    externo: armarExterno(env, t.deps, { llm }),
+    externo: armarExterno(env, t.deps, { llm, pausaHumana: async () => {} }),
     usuarioPorSesion: async () => null,
     eventos: async () => ({ dosis: [], inventario: [], movimientos: [], notas: [] }),
     leerArchivo: async () => null,
@@ -53,6 +53,7 @@ describe('armar el frente externo', () => {
     expect(e.llm).toBe(llm)
     expect(e.whatsappPublico).toBe('573001112233')
     expect(e.correo.config.urlBase).toBe(PANEL)
+    expect(typeof e.pausaHumana).toBe('function')
     // La voz de la página se arma con la misma llave (no se llama a Gemini al armarla)
     expect(typeof e.voz?.hablar).toBe('function')
   })

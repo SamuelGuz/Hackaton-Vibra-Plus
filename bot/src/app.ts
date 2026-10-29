@@ -54,7 +54,7 @@ export function crearApp(cfg: ConfigApp) {
     if (!usuario) {
       await deps.repo.anotarSolicitud(m.de, m.nombre ?? null)
       // Alguien de afuera (posible adoptante o padrino): lo atiende el agente emocional en vez del aviso de siempre
-      if (cfg.externo) return atenderInteresadoExterno(deps, m.de, m.entrada, cfg.externo)
+      if (cfg.externo) return atenderInteresadoExterno(deps, m.de, m.entrada, cfg.externo, { mensajeId: m.id })
       const ultimo = avisadosDesconocidos.get(m.de) ?? 0
       if (Date.now() - ultimo > HORAS_AVISO_DESCONOCIDO * 3_600_000) {
         avisadosDesconocidos.set(m.de, Date.now())

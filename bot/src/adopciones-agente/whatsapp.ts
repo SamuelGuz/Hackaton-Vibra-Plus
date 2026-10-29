@@ -2,6 +2,7 @@
 import type { ContextoExterno } from '../rag/tipos.js'
 import type { Deps, Entrada } from '../tipos.js'
 import { MAX_AUDIO_BYTES, MAX_TEXTO, obtenerAgente, responderConversacion } from './agente.js'
+import { pausaParaEscribir } from './humano.js'
 import { textosAgente } from './textos.js'
 
 const HORA_MS = 3_600_000
@@ -14,8 +15,24 @@ export function mimeLimpio(mime: string): string {
 /**
  * Atiende un mensaje de una persona externa (posible adoptante). Nunca lanza: si algo falla, le habla con cariño y lo deja en el log.
  */
-export async function atenderInteresadoExterno(deps: Deps, telefono: string, entrada: Entrada, ctx: ContextoExterno): Promise<void> {
+export async function atenderInteresadoExterno(
+  deps: Deps,
+  telefono: string,
+  entrada: Entrada,
+  ctx: ContextoExterno,
+  opciones: { mensajeId?: string } = {},
+): Promise<void> {
+  // Como una persona: marca leído y sale "escribiendo…" apenas llega; responde después de lo que tardaría en escribir
+  const inicio = deps.ahora().getTime()
+  if (opciones.mensajeId && deps.wa.escribiendo) {
+    await deps.wa.escribiendo(opciones.mensajeId).catch((e) => console.error(`No se pudo mostrar "escribiendo" a ${telefono}:`, e))
+  }
+  let yaEspero = false
   const decir = async (texto: string) => {
+    if (ctx.pausaHumana && !yaEspero) {
+      yaEspero = true
+      await ctx.pausaHumana(pausaParaEscribir(texto, deps.ahora().getTime() - inicio))
+    }
     try {
       await deps.wa.enviar(telefono, { tipo: 'texto', texto })
     } catch (e) {

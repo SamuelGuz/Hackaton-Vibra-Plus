@@ -15,7 +15,7 @@ ALTER TABLE solicitudes_adopcion
   -- Lo que decide la coordinación; gana sobre el montón sugerido (color)
   ADD COLUMN IF NOT EXISTS monton_manual     text CHECK (monton_manual IN ('verde', 'amarillo', 'rojo')),
   ADD COLUMN IF NOT EXISTS nota              text NOT NULL DEFAULT '',
-  -- Texto libre: "jueves 3 p. m."
+  -- Fecha y hora ISO de la llamada (la API rechaza otro formato)
   ADD COLUMN IF NOT EXISTS llamada_agendada  text,
   -- La visita que propuso el agente. No es una reserva: queda por confirmar con la coordinación
   ADD COLUMN IF NOT EXISTS visita_propuesta  timestamptz,

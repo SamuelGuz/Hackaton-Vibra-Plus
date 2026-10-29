@@ -82,7 +82,6 @@ function conTiempoLimite<T>(p: Promise<T>, ms: number): Promise<T> {
   })
 }
 
-/** El RAG es un apoyo: si falla, la charla sigue sin esos datos en vez de caerse */
 /** La solicitud de esta conversación (una por clave: 'wa:<teléfono>' o 'web:<sesión>'). Si la base falla, la charla sigue. */
 async function guardarSolicitud(
   deps: Deps,
@@ -111,6 +110,7 @@ async function guardarSolicitud(
   }
 }
 
+/** El RAG es un apoyo: si falla, la charla sigue sin esos datos en vez de caerse */
 async function opcional<T>(que: string, f: () => Promise<T>): Promise<T | null> {
   try {
     return await f()

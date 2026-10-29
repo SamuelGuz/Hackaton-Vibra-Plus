@@ -318,7 +318,7 @@ export function crearRepoPg(pool: Pool): RepoPg {
       const r = await pool.query(
         `SELECT s.*, p.nombre AS persona_nombre, p.telefono AS persona_telefono
          FROM solicitudes_adopcion s JOIN personas p ON p.id = s.persona_id
-         WHERE s.respuestas_json IS NOT NULL
+         WHERE s.respuestas_json IS NOT NULL AND s.clave_origen IS NOT NULL  -- solo las guardadas por el bot (forma conocida)
          ORDER BY s.creado_en, s.id`,
       )
       return r.rows.map((f): SolicitudGuardada => ({

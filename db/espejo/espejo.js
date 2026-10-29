@@ -19,7 +19,8 @@ const PAUSA_REINTENTO_MS = 5000
 
 // Tablas internas del bot (db/sql/003_bot.sql y 004_equipo.sql). sesiones_panel guarda tokens de entrada
 // y solicitudes_equipo, números de gente que no es del equipo. solicitudes_adopcion lleva cédula, dirección
-// y teléfono de quien quiere adoptar (006): se ve solo en el panel, con rol de adopciones o administración.
+// y las respuestas de quien quiere adoptar (006): no va a la hoja. OJO: el nombre y el teléfono de esa persona
+// también quedan en personas (es_adoptante), y personas SÍ se copia. Pendiente de decidir si se excluye.
 const NO_COPIAR = new Set(['conversaciones', 'mensajes_wa', 'sesiones_panel', 'solicitudes_equipo', 'solicitudes_adopcion'])
 
 // Fechas, horas y números llegan como texto para escribirlos tal cual (hora de Bogotá).

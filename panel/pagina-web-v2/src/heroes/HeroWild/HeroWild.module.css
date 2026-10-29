@@ -12,14 +12,8 @@
 .hero .copy .statement { margin: 0 0 var(--esp-3); max-width: 25ch; font-size: clamp(1.75rem, 1.2rem + 1.8vw, 3rem); font-weight: 750; line-height: 1.08; letter-spacing: -0.035em; color: var(--wild-ink); text-wrap: balance; }
 .hero .copy .lead { max-width: 45ch; margin: 0; font-size: clamp(1rem, 0.9rem + 0.4vw, 1.25rem); line-height: 1.5; font-weight: 500; color: var(--wild-secondary); }
 .copy > span { display: block; margin-top: var(--esp-3); font-size: var(--texto-xs); color: var(--wild-secondary); }
-.hero .scrollCue { display: inline-flex; flex: none; align-items: center; gap: var(--esp-4); min-height: 3rem; color: var(--wild-ink); font-size: var(--texto-base); font-weight: 650; text-decoration: none; }
-.scrollArrow { display: grid; place-items: center; width: 3rem; height: 3rem; border: 1px solid var(--wild-rule); border-radius: var(--radio-pill); transition: background-color 180ms ease-out; }
-.scrollArrow svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.scrollCue:focus-visible { outline: 3px solid var(--marca-verde); outline-offset: var(--esp-2); border-radius: var(--radio-md); }
-@media (hover: hover) and (pointer: fine) { .scrollCue:hover .scrollArrow { background: var(--wild-white); } }
 @media (max-width: 56.25em) and (min-width: 45.01em) {
   .footer { gap: var(--esp-5); }
-  .hero .scrollCue { max-width: 12rem; font-size: var(--texto-sm); }
 }
 @media (max-width: 45em) {
   .hero { --fs: min(30vw, 14svh); min-height: max(100svh, 48rem); }
@@ -30,10 +24,8 @@
   .hero .copy .statement { font-size: var(--movil-titulo); max-width: 21ch; }
   .hero .copy .lead { font-size: var(--texto-base); line-height: 1.45; }
   .copy > span { margin-top: var(--esp-2); font-size: var(--texto-xs); }
-  .hero .scrollCue { justify-content: space-between; width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
   .pill { clip-path: none; }
   .hairline { display: none; }
-  .scrollArrow { transition: none; }
 }

@@ -15,12 +15,20 @@ function subscribeDataPreference(onChange: () => void) {
   return () => connection?.removeEventListener('change', onChange)
 }
 const readDataPreference = () => dataConnection()?.saveData === true
+// Safari y todo navegador de iPhone no pintan la transparencia del WebM VP9 y el MP4 trae fondo:
+// ahí se muestra la imagen fija, que sí es transparente
+const sinCambios = () => () => {}
+const sinVideoTransparente = () => {
+  const ua = navigator.userAgent
+  return /iPad|iPhone|iPod/.test(ua) || (/Safari\//.test(ua) && !/Chrome|Chromium|Edg|Android|Firefox/.test(ua))
+}
 const serverDataPreference = () => false
 
-export default function HeroWild({ siguiente = '#ella' }: { siguiente?: string }) {
+export default function HeroWild(_props: { siguiente?: string }) {
   const reduce = useReducedMotion() === true
   // Server rendering has no navigator; the server snapshot also keeps hydration stable.
   const saveData = useSyncExternalStore(subscribeDataPreference, readDataPreference, serverDataPreference)
+  const soloImagen = useSyncExternalStore(sinCambios, sinVideoTransparente, () => false)
   const sectionRef = useRef<HTMLElement>(null)
   const rowRef = useRef<HTMLDivElement>(null)
   const pillRef = useRef<HTMLDivElement>(null)
@@ -120,10 +128,10 @@ export default function HeroWild({ siguiente = '#ella' }: { siguiente?: string }
         <span className={styles.half} aria-hidden="true">AD</span>
         <div ref={pillRef} className={styles.pill}>
           <div className={styles.media}>
-            {reduce || saveData ? <img src="/media/video/perro-2-poster.webp" alt="Cachorro atigrado mirando a la cámara. Imagen de referencia." width="490" height="660" /> :
-              <video ref={videoRef} autoPlay muted playsInline loop preload="metadata" poster="/media/video/perro-2-poster.webp" aria-label="Un cachorro atigrado mira a la cámara. Video de referencia." disablePictureInPicture>
-                <source src="/media/video/perro-2.webm" type="video/webm; codecs=vp9" />
-                <source src="/media/video/perro-2.mp4" type="video/mp4" />
+            {reduce || saveData || soloImagen ? <img src="/media/video/perro-2-poster.webp?v=3" alt="Cachorro atigrado mirando a la cámara. Imagen de referencia." width="490" height="660" /> :
+              <video ref={videoRef} autoPlay muted playsInline loop preload="metadata" poster="/media/video/perro-2-poster.webp?v=3" aria-label="Un cachorro atigrado mira a la cámara. Video de referencia." disablePictureInPicture>
+                <source src="/media/video/perro-2.webm?v=3" type="video/webm; codecs=vp9" />
+                <source src="/media/video/perro-2.mp4?v=3" type="video/mp4" />
               </video>}
           </div>
           <span ref={lineRef} className={styles.hairline} aria-hidden="true" />
@@ -136,7 +144,6 @@ export default function HeroWild({ siguiente = '#ella' }: { siguiente?: string }
           <p className={styles.lead}>{copy.lead}</p>
           <span>Video de referencia. No es una ficha de adopción.</span>
         </div>
-        <a className={styles.scrollCue} href={siguiente}><span>{copy.cta}</span><span className={styles.scrollArrow} aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v16m-6-6 6 6 6-6" /></svg></span></a>
       </div>
     </section>
   )

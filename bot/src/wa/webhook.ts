@@ -13,7 +13,7 @@ export function firmaValida(cuerpo: string, cabecera: string | undefined, secret
 export interface MensajeWa {
   /** id de Meta, para no atender dos veces el mismo mensaje */
   id: string
-  /** Número de quien escribe, solo dígitos con indicativo */
+  /** Número de quien escribe (solo dígitos con indicativo) o, si Meta no lo comparte, su id de usuario ('CO.159…') */
   de: string
   /** Nombre de perfil de WhatsApp */
   nombre: string | null
@@ -50,9 +50,12 @@ export function leerMensajes(cuerpo: Json): MensajeWa[] {
       const v = change?.value
       if (!v?.messages) continue
       const nombres = new Map<string, string>()
-      for (const c of v.contacts ?? []) nombres.set(c.wa_id, c.profile?.name)
+      for (const c of v.contacts ?? []) nombres.set(c.wa_id ?? c.user_id, c.profile?.name)
       for (const m of v.messages) {
-        lista.push({ id: m.id, de: m.from, nombre: nombres.get(m.from) ?? null, entrada: entradaDe(m) })
+        // Con nombre de usuario, Meta puede no mandar el número (`from`): llega su id de usuario (`from_user_id`)
+        const de: string | undefined = m.from ?? m.from_user_id
+        if (!de || !m.id) continue
+        lista.push({ id: m.id, de, nombre: nombres.get(de) ?? null, entrada: entradaDe(m) })
       }
     }
   }

@@ -1,5 +1,6 @@
 // Cliente mínimo de la WhatsApp Cloud API (Graph API de Meta).
 import type { Salida, Wa } from '../tipos.js'
+import { esUsuarioWa } from './telefono.js'
 
 export interface ConfigWa {
   token: string
@@ -19,7 +20,8 @@ export function cuerpoEscribiendo(mensajeId: string): Record<string, unknown> {
 }
 
 export function cuerpoMensaje(telefono: string, s: Salida, mediaId?: string): Record<string, unknown> {
-  const base = { messaging_product: 'whatsapp', recipient_type: 'individual', to: telefono }
+  // A quien no comparte su número se le escribe por su id de usuario: Meta pide `recipient` en vez de `to`
+  const base = { messaging_product: 'whatsapp', recipient_type: 'individual', ...(esUsuarioWa(telefono) ? { recipient: telefono } : { to: telefono }) }
   switch (s.tipo) {
     case 'imagen':
       if (!mediaId) throw new Error('La imagen se sube primero a Meta')

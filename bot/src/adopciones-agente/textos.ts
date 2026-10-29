@@ -1,5 +1,6 @@
 // Mensajes fijos del agente (los que no los escribe Gemini). Voz cálida, español de Colombia.
 import { describirFecha, HORA_VISITA } from './decisiones.js'
+import { esUsuarioWa } from '../wa/telefono.js'
 import type { CanalAgente } from './tipos.js'
 
 export const PADRINAZGO_DESDE = '$20.000 COP'
@@ -56,6 +57,8 @@ export const textosAgente = {
 
 /** 573001234567 → +573001234567 */
 export function telefonoBonito(digitos: string): string {
+  // Un id de usuario de WhatsApp no es un número: no se inventa uno
+  if (esUsuarioWa(digitos)) return 'usuario de WhatsApp sin número visible (respóndele por este mismo chat)'
   return `+${digitos.replace(/\D/g, '')}`
 }
 

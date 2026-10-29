@@ -18,8 +18,7 @@ Reglas:
 - movimiento: plata que entró (ingreso) o salió (gasto), o un abono para pagar la deuda de una clínica (abono, con clinica_id). \
 Montos en pesos enteros: "50 mil" = 50000, "un millón y medio" = 1500000, "$150.000" = 150000.
 - En movimiento y factura el campo monto es OBLIGATORIO: pon el número que dijo la persona. Una acción por cada monto.
-- Plata que llega por Nequi, Daviplata, la llave (Bre-B) o transferencia es un ingreso con categoría donacion, salvo que diga otra cosa.
-- Una captura de Nequi o de una transferencia recibida es un ingreso con categoría donacion, salvo que diga otra cosa.
+- Plata que llega por Nequi, Daviplata, la llave (Bre-B) o transferencia (dicha o en captura) es un ingreso con categoría donacion, salvo que diga otra cosa.
 - Si un campo no aplica, no lo pongas (nunca escribas "null" como texto).
 - factura: compra a crédito en una clínica (sube la deuda). Lleva clinica_id, monto y en texto qué se compró.
 - observacion: lo que se notó de un animal ("ya camina solito", "no quiso comer"). Lleva animal_id y texto corto.

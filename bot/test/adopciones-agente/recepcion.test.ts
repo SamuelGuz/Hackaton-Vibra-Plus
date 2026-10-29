@@ -173,6 +173,24 @@ describe('donar e información', () => {
     expect(sin.donaciones).toBeUndefined()
   })
 
+  it('a la IA le llegan los datos reales de la fundación y las preguntas frecuentes que tienen que ver; por WhatsApp sin guion de voz', async () => {
+    t.llm.responder(crudo({ respuesta: 'Los sábados a las 10 🐾' }))
+    await escribir('¿cuándo puedo ir a visitar?')
+    const { sistema, esquema } = t.llm.llamadas[0]
+    expect(sistema).toContain('Nequi para donar: 3001234567')
+    expect(sistema).toContain(`Página web: ${WEB}`)
+    expect(sistema).toMatch(/PREGUNTAS FRECUENTES[\s\S]*sábados a las 10:00/)
+    const props = (esquema as { properties: Record<string, unknown> }).properties
+    expect(props).not.toHaveProperty('guion_voz')
+    expect(props).toHaveProperty('respuesta')
+  })
+
+  it('un mensaje sin relación con la base no le pasa preguntas frecuentes de relleno', async () => {
+    t.llm.responder(crudo())
+    await escribir('me encantan los atardeceres')
+    expect(t.llm.llamadas[0].sistema).not.toContain('PREGUNTAS FRECUENTES (respuestas oficiales)')
+  })
+
   it('un botón viejo o inventado no rompe nada: muestra el menú', async () => {
     await escribir(boton('ext:a:999'))
     expect(ids(ultimo())).toEqual(['ext:adoptar', 'ext:donar', 'ext:info'])

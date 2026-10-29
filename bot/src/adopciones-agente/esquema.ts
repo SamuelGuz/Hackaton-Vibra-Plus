@@ -41,7 +41,6 @@ export const ESQUEMA_AGENTE: Schema = {
         ninos: { type: Type.STRING, description: 'Texto corto (p. ej. "dos niños de 5 y 8 años") o "desconocido"' },
         otras_mascotas: { type: Type.STRING, description: 'Texto corto o "desconocido"' },
         nombre_interesado: { type: Type.STRING, description: 'Su nombre si lo dijo; si no, cadena vacía' },
-        datos_faltantes: { type: Type.ARRAY, items: { type: Type.STRING } },
       },
       required: [
         'suitability_score',
@@ -52,7 +51,6 @@ export const ESQUEMA_AGENTE: Schema = {
         'ninos',
         'otras_mascotas',
         'nombre_interesado',
-        'datos_faltantes',
       ],
     },
   },
@@ -67,4 +65,11 @@ export const ESQUEMA_AGENTE: Schema = {
     'alerta_bienestar',
     'evaluacion',
   ],
+}
+
+/** Por WhatsApp no hay voz: sin guion_voz el modelo escribe menos (se arma de la respuesta si hiciera falta) */
+export const ESQUEMA_AGENTE_WHATSAPP: Schema = {
+  ...ESQUEMA_AGENTE,
+  properties: Object.fromEntries(Object.entries(ESQUEMA_AGENTE.properties ?? {}).filter(([k]) => k !== 'guion_voz')),
+  required: (ESQUEMA_AGENTE.required ?? []).filter((k) => k !== 'guion_voz'),
 }

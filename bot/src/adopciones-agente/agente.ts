@@ -13,7 +13,9 @@ import {
   proximoSabado10,
   puedeAgendarVisita,
 } from './decisiones.js'
-import { ESQUEMA_AGENTE } from './esquema.js'
+import { CONOCIMIENTO } from '../rag/conocimiento-data.js'
+import { indexarConocimiento, puntuarConocimiento } from '../rag/intenciones.js'
+import { ESQUEMA_AGENTE, ESQUEMA_AGENTE_WHATSAPP } from './esquema.js'
 import { construirSistema } from './prompt.js'
 import { crearAlmacenSesiones, MAX_MENSAJES_HISTORIAL, type AlmacenSesiones } from './sesiones.js'
 import { confirmacionVisita, ofertaPadrinazgo, textosAgente } from './textos.js'
@@ -25,6 +27,43 @@ export const MAX_AUDIO_BYTES = 2 * 1024 * 1024
 const ESPERA_MAXIMA_GEMINI_MS = 25_000
 const CONSULTA_POR_DEFECTO = 'perrito para adoptar'
 const TEMPERATURA = 0.7
+/** Preguntas frecuentes que se le pasan al modelo: solo las que de verdad tienen que ver (0 a 1) */
+const PUNTAJE_PREGUNTA_FRECUENTE = 0.6
+const MAX_PREGUNTAS_FRECUENTES = 2
+
+let indice: ReturnType<typeof indexarConocimiento> | null = null
+/** Puntuar la base cuesta ~15 ms: los mensajes repetidos ("hola", "gracias") no se vuelven a calcular */
+const yaPuntuadas = new Map<string, { pregunta: string; respuesta: string }[]>()
+const MAX_CACHE = 300
+
+function preguntasFrecuentes(texto: string) {
+  if (!texto) return []
+  const clave = texto.toLowerCase().trim()
+  const guardada = yaPuntuadas.get(clave)
+  if (guardada) return guardada
+  indice ??= indexarConocimiento(CONOCIMIENTO)
+  const lista = puntuarConocimiento(texto, indice)
+    .filter((x) => x.puntaje >= PUNTAJE_PREGUNTA_FRECUENTE)
+    .sort((a, b) => b.puntaje - a.puntaje)
+    .slice(0, MAX_PREGUNTAS_FRECUENTES)
+    .map((x) => ({ pregunta: x.entrada.preguntas[0], respuesta: x.entrada.respuesta }))
+  if (yaPuntuadas.size >= MAX_CACHE) yaPuntuadas.delete(yaPuntuadas.keys().next().value as string)
+  yaPuntuadas.set(clave, lista)
+  return lista
+}
+
+/** Lo que el modelo puede decir de la fundación, tal cual está configurado (nada inventado) */
+function datosFundacion(ctx: ContextoExterno): string[] {
+  const d = ctx.donaciones ?? {}
+  return [
+    ctx.sitioWeb && `Página web: ${ctx.sitioWeb}`,
+    d.nequi && `Nequi para donar: ${d.nequi}`,
+    d.llave && `Llave Bre-B: ${d.llave}`,
+    d.cuenta && `Cuenta: ${d.cuenta}`,
+    d.titular && `Titular: ${d.titular}`,
+    d.telefono && `Teléfono para donar comida o insumos: ${d.telefono}`,
+  ].filter((x): x is string => Boolean(x))
+}
 
 /** Límites y sesiones de un arranque del bot. Se guardan por `deps` para que WhatsApp y la web compartan memoria. */
 export interface Agente {
@@ -181,11 +220,19 @@ async function atenderTurno(p: PeticionConversacion, sesion: Sesion): Promise<Re
     turnos: sesion.turnos + 1,
     canal: p.canal.tipo,
     whatsappPublico: ctx.whatsappPublico,
+    fundacion: datosFundacion(ctx),
+    preguntasFrecuentes: preguntasFrecuentes(textoPersona),
   })
   const mensajes = [...sesion.historial, { rol: 'user' as const, texto: textoPersona || textosAgente.marcadorAudio }]
 
   const crudo = await conTiempoLimite(
-    ctx.llm.json<unknown>({ sistema, mensajes, esquema: ESQUEMA_AGENTE, media: p.media, temperatura: TEMPERATURA }),
+    ctx.llm.json<unknown>({
+      sistema,
+      mensajes,
+      esquema: p.canal.tipo === 'whatsapp' ? ESQUEMA_AGENTE_WHATSAPP : ESQUEMA_AGENTE,
+      media: p.media,
+      temperatura: TEMPERATURA,
+    }),
     ESPERA_MAXIMA_GEMINI_MS,
   )
   const r = normalizarRespuesta(crudo)

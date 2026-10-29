@@ -2,7 +2,7 @@
 
 import { Bone, FirstAidKit, HandHeart, Package, PawPrint, Receipt, ShoppingCart } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
-import { Capitulo, estilosHome as h } from '../../home2/Infografia'
+import { Capitulo, Icono, estilosHome as h } from '../../home2/Infografia'
 import { pesos, useProgreso, type TipoCompra } from '../../home/progreso'
 import s from './Aportar.module.css'
 
@@ -27,7 +27,8 @@ function Momento({ iso }: { iso: string }) {
 
 const masReciente = (a: { fecha: string }, b: { fecha: string }) => Date.parse(b.fecha) - Date.parse(a.fecha)
 
-export default function Actividad() {
+/** `inicio`: en la portada, antes del capítulo 1, sin número y con un título que no repite el capítulo Confianza. */
+export default function Actividad({ inicio = false }: { inicio?: boolean }) {
   const { datos } = useProgreso()
   const meta = datos.metas[0]
   const pct = meta && meta.meta > 0 ? Math.min(100, Math.round((meta.recaudado / meta.meta) * 100)) : 0
@@ -36,11 +37,15 @@ export default function Actividad() {
   const donaciones = [...(datos.donaciones ?? [])].sort(masReciente).slice(0, 8)
 
   return (
-    <section className={h.seccion} aria-labelledby="llega-titulo">
+    <section id={inicio ? 'esta-semana' : undefined} className={`${h.seccion} ${s.ap} ${inicio ? s.actividadInicio : ''}`} aria-labelledby="llega-titulo">
       <div className={h.contenedor}>
-        <Capitulo n="2">Confianza</Capitulo>
-        <h2 id="llega-titulo" className={h.titulo}>Así sabes que llega.</h2>
+        {inicio
+          ? <p className={h.capitulo}><span><Icono nombre="corazon" /></span>Esta semana</p>
+          : <Capitulo n="2">Confianza</Capitulo>}
+        <h2 id="llega-titulo" className={h.titulo}>{inicio ? 'Lo que pasó esta semana.' : 'Así sabes que llega.'}</h2>
+        {inicio && <p className={h.lead}>Cada aporte y cada compra de Yesenia, con su fecha y hora.</p>}
 
+        <div className={s.tablero}>
         {meta && (
           <div className={s.avance}>
             <p className={s.avanceTitulo}>{meta.titulo}</p>
@@ -89,6 +94,7 @@ export default function Actividad() {
                 </ul>
               )}
           </div>
+        </div>
         </div>
         {datos.ejemplo && <p className={h.nota}>Datos de ejemplo mientras se conecta el registro real de Yesenia.</p>}
       </div>

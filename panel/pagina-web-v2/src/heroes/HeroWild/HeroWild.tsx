@@ -32,7 +32,6 @@ export default function HeroWild(_props: { siguiente?: string }) {
   const sectionRef = useRef<HTMLElement>(null)
   const rowRef = useRef<HTMLDivElement>(null)
   const pillRef = useRef<HTMLDivElement>(null)
-  const footerRef = useRef<HTMLDivElement>(null)
   const paperRef = useRef<HTMLDivElement>(null)
   const lineRef = useRef<HTMLSpanElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -74,7 +73,6 @@ export default function HeroWild(_props: { siguiente?: string }) {
       animate(row, [{ gap: `${fs * 0.026}px`, offset: 0 }, { gap: `${fs * 0.026}px`, offset: 0.14 }, { gap: `${fs * 0.05}px`, offset: 0.58 }, { gap: `${fs * (mobile ? 0.1 : 0.085)}px`, offset: 1 }])
       animate(lineRef.current, [{ opacity: 1, offset: 0 }, { opacity: 1, offset: 0.14 }, { opacity: 0, offset: 0.3 }, { opacity: 0, offset: 1 }])
       animate(paperRef.current, [{ opacity: 0, offset: 0 }, { opacity: 0, offset: 0.45 }, { opacity: 1, offset: 0.78 }, { opacity: 1, offset: 1 }])
-      animate(footerRef.current, [{ transform: 'translateY(160%)', opacity: 0, offset: 0 }, { transform: 'translateY(160%)', opacity: 0, offset: 0.52, easing: 'cubic-bezier(.2,.8,.2,1)' }, { transform: 'none', opacity: 1, offset: 0.9 }, { transform: 'none', opacity: 1, offset: 1 }])
       return animations.current
     }
     createTimeline()
@@ -137,13 +135,6 @@ export default function HeroWild(_props: { siguiente?: string }) {
           <span ref={lineRef} className={styles.hairline} aria-hidden="true" />
         </div>
         <span className={styles.half} aria-hidden="true">PTA</span>
-      </div>
-      <div ref={footerRef} className={styles.footer}>
-        <div className={styles.copy}>
-          <p className={styles.statement}>{copy.statement}</p>
-          <p className={styles.lead}>{copy.lead}</p>
-          <span>Video de referencia. No es una ficha de adopción.</span>
-        </div>
       </div>
     </section>
   )

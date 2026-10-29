@@ -234,3 +234,25 @@
   .ap .linea p, .ap .linea b { font-size: var(--movil-texto); }
   .ap .linea time { font-size: var(--texto-xs); }
 }
+
+/* Tablero: panel gris con tarjetas blancas encima, como los bloques de la portada (profundidad sin sombras) */
+section.ap.actividadInicio { scroll-margin-top: 5rem; padding-top: clamp(2.5rem, 1.5rem + 3vw, 4.5rem); }
+.ap .tablero { display: grid; gap: 1rem; margin-top: 2.5rem; padding: clamp(1rem, 0.6rem + 1.6vw, 1.75rem); border-radius: 28px; background: var(--superficie); }
+.ap .tablero .avance { max-width: none; margin: 0; padding: 1.5rem; border-radius: 24px; background: #ffffff; }
+.ap .tablero .avancePista { background: var(--superficie); border-color: transparent; }
+.ap .tablero .prueba { margin-top: 0; }
+.ap .tablero .tarjeta { border: 0; }
+.ap .tablero .lineaIcono { background: var(--superficie-verde); }
+.ap .tablero .linea li + li { padding-top: 1rem; border-top: 1px solid var(--regla); }
+@media (min-width: 62em) {
+  .ap .tablero .avance { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'titulo titulo' 'cifras pista' 'cifras nota'; column-gap: 2.5rem; align-items: center; }
+  .ap .tablero .avanceTitulo { grid-area: titulo; }
+  .ap .tablero .avanceCifras { grid-area: cifras; margin: 0; }
+  .ap .tablero .avancePista { grid-area: pista; }
+  .ap .tablero .avanceNota { grid-area: nota; }
+}
+@media (max-width: 40em) {
+  .ap .tablero { margin-top: var(--esp-4); padding: var(--esp-2); border-radius: 22px; gap: var(--movil-hueco); }
+  .ap .tablero .avance { padding: var(--esp-3); border-radius: 18px; }
+  .ap .tablero .linea li + li { padding-top: var(--esp-2); }
+}

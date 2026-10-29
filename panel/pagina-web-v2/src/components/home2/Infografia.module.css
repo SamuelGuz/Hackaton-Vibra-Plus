@@ -309,3 +309,6 @@
   .home .capaPalabra, .home .escenaRecorte, .home .linea li, .home .chip { opacity: 1; }
   .home .relleno { transition: none; }
 }
+
+.home .ultimaEnlace { display: inline-flex; align-items: center; min-height: 3rem; margin-top: 0.5rem; font-weight: 650; color: var(--verde); text-decoration: underline; text-underline-offset: 0.2em; }
+.home .ultimaEnlace:hover { color: var(--verde-hover); }

@@ -41,4 +41,15 @@ export function useProgreso() {
   return { datos, cargado }
 }
 
+const ZONA = 'America/Bogota'
+const DIA = new Intl.DateTimeFormat('es-CO', { day: 'numeric', month: 'short', timeZone: ZONA })
+const HORA = new Intl.DateTimeFormat('es-CO', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: ZONA })
+/** "28 oct · 5:27 p. m." (sin hora si la fecha no la trae); si no se entiende, la deja como llegó */
+export function cuando(iso: string): string {
+  const t = Date.parse(iso)
+  if (!Number.isFinite(t)) return iso
+  const d = new Date(t)
+  return iso.includes('T') ? `${DIA.format(d)} · ${HORA.format(d)}` : DIA.format(d)
+}
+
 export const pesos = (n: number) => `$${new Intl.NumberFormat('es-CO').format(n)}`

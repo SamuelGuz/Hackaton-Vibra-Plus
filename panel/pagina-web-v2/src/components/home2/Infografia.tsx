@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { useProgreso, pesos } from '../home/progreso'
+import { cuando, useProgreso, pesos } from '../home/progreso'
 import { useVisto } from '../home/Reveal'
 import { lanzarDesde } from '../efectos/Corazones'
 import { fotoBanco, recorteBanco, type SlugBanco } from './banco'
@@ -300,7 +300,7 @@ function DaleUnHogar() {
 
 function Confianza() {
   const { datos } = useProgreso()
-  const ultima = datos.compras[0]
+  const ultima = [...datos.compras].sort((a, b) => Date.parse(b.fecha) - Date.parse(a.fecha))[0]
   return (
     <section id="confianza" className={s.seccion} aria-labelledby="confianza-titulo">
       <div className={s.contenedor}>
@@ -314,7 +314,8 @@ function Confianza() {
         <div className={s.confianzaGrid}>
           <div className={s.ultima}>
             <p className={s.ultimaEtiqueta}>Lo último que se compró</p>
-            <p className={s.ultimaTexto}>{ultima ? `${ultima.fecha} · ${ultima.texto}` : 'Todavía nada esta semana. La primera compra aparecerá aquí.'}</p>
+            <p className={s.ultimaTexto}>{ultima ? `${cuando(ultima.fecha)} · ${ultima.texto}` : 'Todavía nada esta semana. La primera compra aparecerá aquí.'}</p>
+            <a href="#esta-semana" className={s.ultimaEnlace}>Ver todo lo de esta semana</a>
           </div>
           <div className={s.antecedentes}>
             <p className={s.ultimaEtiqueta}>Antecedentes públicos del Refugio Yesenia</p>

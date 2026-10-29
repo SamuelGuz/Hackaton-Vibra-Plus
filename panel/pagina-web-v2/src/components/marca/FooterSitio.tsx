@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useId } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
+import { WHATSAPP_NUMERO, whatsappBonito } from '../paginas/config'
 import s from './Identidad.module.css'
 
 export default function FooterSitio() {
@@ -24,7 +25,7 @@ export default function FooterSitio() {
           </div>
           <nav className={s.directorio} aria-label="El refugio"><h2>El refugio</h2><Link href="/">Inicio</Link><Link href="/historia">Su historia</Link><Link href="/adoptar">Adoptar</Link></nav>
           <nav className={s.directorio} aria-label="Cómo ayudar"><h2>Tu ayuda</h2><Link href="/aportar">Donar por Nequi</Link><Link href="/como-ayudar">Cómo ayudar</Link><Link href="/aportar#llega-titulo">Ver actividad</Link></nav>
-          <div className={s.directorio}><h2>Contacto</h2><p>WhatsApp<br /><span>Por confirmar</span></p><p>Correo<br /><span>Por confirmar</span></p></div>
+          <div className={s.directorio}><h2>Contacto</h2><p>WhatsApp<br />{WHATSAPP_NUMERO ? <a href={`https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent('Hola')}`} target="_blank" rel="noopener noreferrer">{whatsappBonito()}</a> : <span>Por confirmar</span>}</p><p>Correo<br /><span>Por confirmar</span></p></div>
         </div>
         <div className={s.legal}><p>Yesenia Refugio · Cuidar empieza con un gesto.</p><p>Privacidad y términos: por confirmar</p></div>
       </div>

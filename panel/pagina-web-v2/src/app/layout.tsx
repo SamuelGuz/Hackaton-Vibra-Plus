@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import './globals.css'
 import '../estilos/tokens.css'
 import '../estilos/base.css'
+import '../components/sites/babet/fonts.css'
+import HeaderSitio from '../components/marca/HeaderSitio'
+import FooterSitio from '../components/marca/FooterSitio'
 
 export const metadata: Metadata = {
   title: 'Huellitas · Un hogar para los que rescata Yesenia',
@@ -10,5 +13,5 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="es" data-hero="5"><body>{children}</body></html>
+  return <html lang="es" data-hero="5"><body><HeaderSitio />{children}<FooterSitio /></body></html>
 }

@@ -1,5 +1,18 @@
 # Entrega actual: pagina-web-final
 
+Último ajuste solicitado: el hero agrupa un mensaje más legible, una frase breve sobre
+Yesenia y la única acción «Baja para conocer más». Se retiran los controles de pausa,
+repetición y el enlace suelto a donar. Conserva el video, el reveal y el póster para
+movimiento reducido/ahorro de datos. La continuación apunta a `#ella` en inicio y
+`#historia` en `/huellitas-v5`. El video limita su ancho móvil para evitar solapamientos
+en 600–720 px. Build y lint de archivos tocados pasan; revisado de 360 a 1440 px.
+
+Actualización: header flotante, footer de tarjetas en capas y logo transparente de Yesenia
+compartidos desde el layout raíz en todas las rutas. Véase `docs/IDENTIDAD-COMPARTIDA.md`
+para implementación y validación. La navegación anterior del hero se sustituye por la global;
+se conserva su video y animación. Estos cambios responden a los dos componentes adjuntos
+por el usuario después de la entrega móvil.
+
 La petición directa más reciente autoriza commit y push del sitio actual y luego ajustes
 de columnas móviles. Rama de entrega: `pagina-web-final`. El primer respaldo publicado
 es `31d2cb1`, antes de los ajustes móviles. No se borran otras ramas ni se modifica el backend.

@@ -211,8 +211,8 @@ export const historia: Historia = {
   heroWild: {
     title: "Adopta. Su próximo hogar puedes ser tú.",
     statement: "Su próximo hogar puedes ser tú.",
-    lead: "En el refugio de Yesenia hay perros y gatos esperando una casa. Si hoy no puedes adoptar, también puedes ayudar a que coman.",
-    cta: "Conoce su historia",
+    lead: "Conoce a Yesenia, la mujer que los cuida, y descubre cómo puedes acompañarla.",
+    cta: "Baja para conocer más",
   },
 
   secciones: [

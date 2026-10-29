@@ -1,0 +1,70 @@
+/* Chapter 2: the single caramelo field of the page. Ink text (6.2:1). */
+
+.seccion {
+  position: relative;
+  overflow: clip; /* the dogs rise from behind the bottom seam */
+  padding-top: var(--esp-seccion);
+  background: var(--color-caramelo);
+  color: var(--color-caramelo-tinta);
+}
+
+/* The default focus ring is too faint on caramelo; ink keeps 6.2:1. */
+.seccion :focus-visible {
+  outline-color: var(--color-tinta);
+}
+
+.rejilla {
+  display: grid;
+  gap: var(--esp-7);
+}
+
+.texto {
+  position: relative;
+  z-index: var(--z-contenido);
+}
+
+/* A statement is a paragraph: <= 36px, about three lines. */
+.declaracion {
+  margin-top: var(--esp-5);
+  max-width: 30ch;
+  font-family: var(--fuente-display);
+  font-size: var(--texto-xl);
+  font-weight: var(--peso-semi);
+  line-height: var(--interlineado-ajustado);
+  letter-spacing: -0.01em;
+}
+
+.lugarRecorte {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+/* Anchored on the seam: the source is cut at the bottom, so it never crosses below. */
+.recorte {
+  width: min(70vw, 22rem);
+  pointer-events: none;
+  z-index: var(--z-recorte);
+}
+
+@media (min-width: 56.25em) {
+  .rejilla {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--hueco);
+    align-items: end;
+  }
+
+  .texto {
+    grid-column: 1 / span 6;
+    align-self: center;
+    padding-bottom: var(--esp-seccion);
+  }
+
+  .lugarRecorte {
+    grid-column: 7 / span 6;
+  }
+
+  .recorte {
+    width: clamp(20rem, 34vw, 30rem);
+  }
+}

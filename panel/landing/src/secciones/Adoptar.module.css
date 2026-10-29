@@ -1,0 +1,181 @@
+/* Chapter 5 on bone: the promise left, the four steps right, then a wide photo and the demo note. */
+
+.seccion {
+  background: var(--color-fondo);
+}
+
+.rejilla {
+  display: grid;
+  gap: var(--esp-8) var(--hueco);
+}
+
+.texto {
+  position: relative;
+  z-index: var(--z-contenido);
+}
+
+.subtitulo {
+  margin-top: var(--esp-6);
+  font-size: var(--texto-sm);
+  font-family: var(--fuente-texto);
+  font-weight: var(--peso-semi);
+  letter-spacing: 0;
+}
+
+.preguntas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  margin-top: var(--esp-3);
+}
+
+.preguntas li {
+  padding: var(--esp-2) var(--esp-4);
+  border-radius: var(--radio-pill);
+  background: var(--color-superficie);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-semi);
+}
+
+.pasos {
+  display: grid;
+  gap: var(--esp-3);
+  padding: 0;
+  list-style: none;
+}
+
+.paso {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--esp-4);
+  align-items: start;
+  padding: var(--esp-5);
+  border-radius: var(--radio-lg);
+  background: var(--color-superficie);
+}
+
+.numero {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radio-pill);
+  background: var(--color-tinta);
+  color: var(--color-crema);
+  font-family: var(--fuente-display);
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-max);
+  line-height: 1;
+}
+
+/* The last step is the visit: the one marker of this screen. */
+.paso:last-child .numero {
+  background: var(--color-acento);
+  color: var(--color-acento-tinta);
+}
+
+.pasoTitulo {
+  font-size: var(--texto-xl);
+}
+
+.pasoDetalle {
+  margin-top: var(--esp-1);
+}
+
+.alterno {
+  font-size: var(--texto-base);
+  font-weight: var(--peso-medio);
+}
+
+.figura {
+  margin: 0;
+}
+
+.marco {
+  overflow: hidden;
+  border-radius: var(--radio-lg);
+  background: var(--color-crema);
+  aspect-ratio: 4 / 3;
+}
+
+.foto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.demos {
+  align-self: end;
+  padding: var(--esp-6);
+  border-radius: var(--radio-lg);
+  background: var(--color-superficie);
+}
+
+.demosTitulo {
+  font-size: var(--texto-xl);
+}
+
+.demosNota {
+  margin-top: var(--esp-2);
+  font-size: var(--texto-sm);
+}
+
+.demosLista {
+  display: grid;
+  gap: var(--esp-2);
+  margin-top: var(--esp-5);
+}
+
+.demo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-1) var(--esp-4);
+  padding: var(--esp-3) var(--esp-4);
+  border-radius: calc(var(--radio-lg) - var(--esp-3));
+  background: var(--color-crema);
+}
+
+.demoNombre {
+  font-family: var(--fuente-display);
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-display);
+}
+
+.demoEtiqueta {
+  font-size: var(--texto-sm);
+  color: var(--color-tinta-suave);
+}
+
+@media (min-width: 37.5em) {
+  .marco {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (min-width: 56.25em) {
+  .rejilla {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .texto {
+    grid-column: 1 / span 5;
+  }
+
+  .pasos {
+    grid-column: 7 / span 6;
+  }
+
+  .alterno {
+    grid-column: 1 / -1;
+  }
+
+  .figura {
+    grid-column: 1 / span 8;
+  }
+
+  .demos {
+    grid-column: 9 / span 4;
+  }
+}

@@ -1,0 +1,166 @@
+/* Hero variant 3 — two cut-out dog videos + centred text (docs/DESIGN.md §5).
+   The ground is --fondo-hero and nothing else: the MP4 fallback is composited on that colour,
+   so no other background, shadow or blend mode may sit behind or on the videos. */
+
+.hero {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: calc(100svh - var(--alto-nav));
+  padding-block: var(--esp-6) var(--esp-7);
+  background: var(--fondo-hero);
+  color: var(--fondo-hero-tinta);
+  overflow: clip;
+}
+
+/* Mobile first: text on top, the two dogs side by side below it, standing on one line. */
+.rejilla {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--esp-2);
+  row-gap: var(--esp-6);
+  align-items: end;
+}
+
+.texto {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  container-type: inline-size;
+  position: relative;
+  z-index: var(--z-contenido);
+}
+
+.titulo {
+  max-width: var(--medida-titulo);
+  font-family: var(--fuente-display);
+  font-weight: var(--peso-max);
+  /* Sized by the text column, not the viewport: the centre column is narrow on desktop. */
+  font-size: clamp(var(--texto-2xl), 14cqi, var(--texto-display));
+  line-height: var(--interlineado-display);
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+}
+
+.linea {
+  max-width: 30ch;
+  margin-inline: auto;
+  margin-top: var(--esp-5);
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-medio);
+  line-height: 1.45;
+  text-wrap: balance;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-3) var(--esp-5);
+  margin-top: var(--esp-6);
+}
+
+/* Secondary action is a text link (DESIGN.md §5: one primary + at most one text link). */
+.enlace {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  padding-inline: var(--esp-2);
+  color: var(--color-tinta);
+  font: var(--peso-semi) var(--texto-base) / 1 var(--fuente-texto);
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+  transition: text-decoration-thickness var(--dur-hover) var(--ease-salida);
+}
+
+.enlace:hover {
+  text-decoration-thickness: 0.14em;
+}
+
+/* ---------- The dogs ---------- */
+
+.perro {
+  min-width: 0;
+  pointer-events: none;
+}
+
+.perroUno {
+  justify-self: end;
+  width: 100%;
+}
+
+.perroDos {
+  justify-self: start;
+  width: 80%;
+}
+
+/* Boxes reserve the video size before any byte arrives (no layout shift). */
+.marcoUno,
+.marcoDos {
+  width: 100%;
+  will-change: transform;
+}
+
+.marcoUno {
+  aspect-ratio: 700 / 684;
+}
+
+.marcoDos {
+  aspect-ratio: 490 / 660;
+}
+
+.medio {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+}
+
+/* ---------- Desktop: dog top-left, dog top-right, text in the middle ---------- */
+
+@media (min-width: 56.25em) {
+  .hero {
+    padding-block: var(--esp-6);
+  }
+
+  .rejilla {
+    grid-template-columns: 1fr minmax(0, 1.1fr) 1fr;
+    column-gap: var(--hueco);
+    align-items: start;
+    min-height: calc(100svh - var(--alto-nav) - 2 * var(--esp-6));
+  }
+
+  .texto {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+  }
+
+  .titulo {
+    max-width: none;
+  }
+
+  .perro {
+    grid-row: 1;
+    align-self: start;
+  }
+
+  .perroUno {
+    grid-column: 1;
+    justify-self: start;
+    /* Reserve the full silhouette, including ears, tail and paws. */
+    width: min(100%, 54svh);
+  }
+
+  .perroDos {
+    grid-column: 3;
+    justify-self: end;
+    /* Standing puppy: about 62% of the screen height. */
+    width: min(100%, 45svh);
+  }
+}

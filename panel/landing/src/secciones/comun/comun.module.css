@@ -1,0 +1,87 @@
+/* Shared section pieces: header recipe (DESIGN.md §8), pending CTA, captions, anchors. */
+
+.seccion {
+  position: relative;
+  padding-block: var(--esp-seccion);
+}
+
+/* Secondary anchors (ids other CTAs may point at) sit at the top of their section. */
+.ancla {
+  position: absolute;
+  inset-block-start: 0;
+}
+
+.titulo {
+  max-width: var(--medida-titulo);
+}
+
+.tituloLargo {
+  max-width: 24ch;
+}
+
+.entrada {
+  margin-top: var(--esp-4);
+  font-size: var(--texto-lg);
+  line-height: 1.45;
+  font-weight: var(--peso-texto);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-3) var(--esp-5);
+  margin-top: var(--esp-6);
+}
+
+.ctaInactivo {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-4);
+}
+
+.botonInactivo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  padding: var(--esp-3) var(--esp-5);
+  border-radius: var(--radio-pill);
+  background: var(--color-superficie);
+  color: var(--color-tinta-suave);
+  font: var(--peso-semi) var(--texto-base) / 1 var(--fuente-texto);
+  letter-spacing: var(--tracking-boton);
+}
+
+.notaInactivo {
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-medio);
+  color: var(--color-tinta-suave);
+}
+
+[data-campo='oscuro'] .notaInactivo {
+  color: var(--color-secundario-tinta);
+}
+
+.leyenda {
+  margin-top: var(--esp-3);
+  font-size: var(--texto-xs);
+  line-height: 1.4;
+  color: var(--color-tinta-suave);
+}
+
+[data-campo='oscuro'] .leyenda {
+  color: var(--color-secundario-tinta);
+}
+
+.enlaceTexto {
+  font-weight: var(--peso-semi);
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+  transition: text-decoration-thickness var(--dur-hover) var(--ease-salida);
+}
+
+.enlaceTexto:hover {
+  text-decoration-thickness: 0.14em;
+}

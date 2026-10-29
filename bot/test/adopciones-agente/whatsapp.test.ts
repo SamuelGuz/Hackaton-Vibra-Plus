@@ -112,8 +112,8 @@ describe('conversación por WhatsApp', () => {
     })
   })
 
-  it('imágenes, stickers y demás: pide texto o nota de voz sin gastar Gemini', async () => {
-    await escribir({ tipo: 'imagen', mediaId: 'img1', mime: 'image/jpeg' })
+  it('stickers, ubicaciones y demás: pide texto o nota de voz sin gastar Gemini (las fotos se leen: comprobantes.test.ts)', async () => {
+    await escribir({ tipo: 'otro' })
     await escribir({ tipo: 'otro' })
     expect(t.llm.llamadas).toHaveLength(0)
     expect(alTelefono(TEL)).toEqual([textosAgente.soloTextoOVoz, textosAgente.soloTextoOVoz])

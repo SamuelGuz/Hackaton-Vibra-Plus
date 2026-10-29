@@ -1,4 +1,5 @@
 // Aviso por WhatsApp a las administradoras cuando se agenda una visita.
+import type { Rol } from '../panel-tipos.js'
 import type { Deps } from '../tipos.js'
 import { describirFecha, HORA_VISITA } from './decisiones.js'
 import { telefonoBonito } from './textos.js'
@@ -14,10 +15,12 @@ export interface DatosAviso {
 export interface Administradora {
   nombre: string
   telefono: string
+  rol: Rol
 }
 
 function resumen(e: Evaluacion): string {
-  const vivienda = e.viviendaTipo === 'desconocido' ? 'vivienda' : e.viviendaTipo
+  // 'otro' es lo que deja el formulario por botones: solo se sabe si es propia o en arriendo
+  const vivienda = e.viviendaTipo === 'desconocido' || e.viviendaTipo === 'otro' ? 'vivienda' : e.viviendaTipo
   const arriendo = e.permisoArriendo === 'si' ? 'arrienda, con permiso para mascotas' : e.permisoArriendo === 'no_aplica' ? 'no arrienda' : null
   const presupuesto = e.presupuestoVeterinario === 'si' ? 'sí' : e.presupuestoVeterinario === 'no' ? 'no' : 'sin confirmar'
   const tiempo = e.tiempoDisponible === 'desconocido' ? 'sin confirmar' : e.tiempoDisponible
@@ -57,7 +60,7 @@ export async function buscarAdministradoras(deps: Deps): Promise<Administradora[
     const digitos = u?.telefono.replace(/\D/g, '')
     if (!u || !digitos || vistos.has(digitos)) continue
     vistos.add(digitos)
-    lista.push({ nombre: u.nombre, telefono: u.telefono })
+    lista.push({ nombre: u.nombre, telefono: u.telefono, rol: u.rol })
   }
   return lista
 }

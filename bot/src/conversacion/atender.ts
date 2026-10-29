@@ -9,6 +9,7 @@ import type { Accion, Deps, Entendido, Entrada, Estado, Registro, Usuario } from
 import { elegirAnimal, guardarNota, nombreEscrito } from './animal.js'
 import { cantidadEscrita, elegirCantidad, elegirEspecie, empezarComida, especieDeTexto } from './comida.js'
 import { responder, type Respuesta } from './confirmar.js'
+import { decidirComprobante } from './comprobante.js'
 import { crearCtx, type Ctx } from './ctx.js'
 import { respuestaAConfirmar } from './elegir.js'
 import { enviarInforme, informePedido } from './informe.js'
@@ -139,6 +140,8 @@ async function boton(c: Ctx, estado: Estado, id: string): Promise<Estado> {
       return enviarInforme(c, id.slice(2))
     case 'sg':
       return anotarSeguimiento(c, id)
+    case 'cpb':
+      return decidirComprobante(c, id)
   }
 
   // Botones que dependen del paso en que va la persona

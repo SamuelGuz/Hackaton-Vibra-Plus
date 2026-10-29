@@ -41,6 +41,16 @@ export const textosAgente = {
   mandaComprobante: '🧾 Cuando dones, mándame aquí la foto del comprobante y le aviso al equipo para que lo confirme.',
   infoDudas: 'Si tienes cualquier duda, escríbemela aquí y te respondo 💬',
   escribeDuda: '¡Claro! Escríbeme tu pregunta o mándame una nota de voz 💬',
+  // ---------- Comprobantes (comprobantes.ts) ----------
+  fotoNoLlego: 'No me llegó bien la foto 🙈 ¿Me la mandas otra vez?',
+  fotoNoComprobante:
+    '¡Gracias por la foto! 🐾 Por aquí con fotos solo puedo leer comprobantes de donación. Si quieres contarme o preguntarme algo, escríbeme o mándame una nota de voz.',
+  graciasComprobante: (monto: string) => `¡Mil gracias por tu donación de ${monto}! 💛 Ya le avisé al equipo para que confirme que llegó. Los peluditos te lo agradecen 🐾`,
+  graciasComprobanteRevisar: '¡Mil gracias! 💛 No alcancé a leer bien tu foto, así que se la pasé al equipo para que la revise. Si es un comprobante, ellos confirman que llegó 🐾',
+  comprobanteLlego: (admin: string, de: string, monto: string, detalle: string) =>
+    `💸 ${admin}, llegó un comprobante de donación de ${de}: *${monto}*${detalle ? `\n${detalle}` : ''}\n\n¿Te llegó la plata? Si dices que sí, la registro como donación.`,
+  comprobanteSinValor: (de: string) => `🧾 ${de} mandó un comprobante, pero no alcancé a leer el valor. Revísalo y, si te llegó, regístralo en el panel o cuéntamelo.`,
+  comprobanteSinLeer: (de: string) => `🧾 ${de} mandó una foto que parece un comprobante, pero no la pude leer. Revísala y, si te llegó la plata, regístrala en el panel o cuéntamelo.`,
   mandaFotoComprobante: '¡Gracias! 💛 Mándame la foto o el pantallazo del comprobante y le aviso al equipo para que lo confirme 🧾',
 } as const
 

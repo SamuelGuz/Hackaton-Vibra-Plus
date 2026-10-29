@@ -166,6 +166,19 @@ describe.skipIf(!URL_PRUEBA)('repositorio sobre Postgres', () => {
     expect(JSON.stringify(metaDelDia(d, ahora))).not.toMatch(/Don Luis|Andrea|Carolina/)
   })
 
+  it('el comprobante de un donante se guarda sin persona del equipo y, al confirmarlo, entra a la caja', async () => {
+    const caja = (d: Awaited<ReturnType<typeof repo.hoy>>) => d.movimientos.filter((m) => m.nota.includes('S17273100')).length
+    const id = await repo.crearRegistro({
+      usuarioId: null, canal: 'whatsapp', tipoEntrada: 'imagen', mediaUrl: '/archivos/cpb.jpg', estado: 'por_confirmar',
+      transcripcion: 'Comprobante de donación de +573115550000: $1.000',
+      acciones: [{ tipo: 'movimiento', movimiento: { tipo: 'ingreso', monto: 1000, categoria: 'donacion', clinicaId: null, abonoDeuda: false, foto: '/archivos/cpb.jpg', nota: 'Comprobante de +573115550000 · ref. S17273100' } }],
+    })
+    expect(await repo.leerRegistro(id)).toMatchObject({ usuarioId: null, estado: 'por_confirmar' })
+    expect(caja(await repo.hoy(ahora))).toBe(0)
+    await repo.cambiarEstado([id], 'confirmado')
+    expect(caja(await repo.hoy(ahora))).toBe(1)
+  })
+
   it('el resumen de la mañana se reclama una sola vez por día', async () => {
     expect(await repo.reclamarDia('prueba_dia', '2026-10-27')).toBe(true)
     expect(await repo.reclamarDia('prueba_dia', '2026-10-27')).toBe(false)

@@ -67,11 +67,11 @@ export function crearWa(c: ConfigWa): Wa {
   const api = `https://graph.facebook.com/${c.version}`
   const auth = { Authorization: `Bearer ${c.token}` }
 
-  async function subir(png: Buffer): Promise<string> {
+  async function subir(datos: Buffer, mime = 'image/png'): Promise<string> {
     const form = new FormData()
     form.append('messaging_product', 'whatsapp')
-    form.append('type', 'image/png')
-    form.append('file', new Blob([new Uint8Array(png)], { type: 'image/png' }), 'informe.png')
+    form.append('type', mime)
+    form.append('file', new Blob([new Uint8Array(datos)], { type: mime }), mime === 'image/png' ? 'informe.png' : 'foto.jpg')
     const r = await fetch(`${api}/${c.phoneId}/media`, { method: 'POST', headers: auth, body: form })
     if (!r.ok) throw new Error(`WhatsApp no aceptó la imagen (${r.status}): ${await r.text()}`)
     return ((await r.json()) as { id: string }).id
@@ -79,7 +79,7 @@ export function crearWa(c: ConfigWa): Wa {
 
   return {
     async enviar(telefono, salida) {
-      const mediaId = salida.tipo === 'imagen' ? await subir(salida.png) : undefined
+      const mediaId = salida.tipo === 'imagen' ? await subir(salida.png, salida.mime) : undefined
       const r = await fetch(`${api}/${c.phoneId}/messages`, {
         method: 'POST',
         headers: { ...auth, 'Content-Type': 'application/json' },

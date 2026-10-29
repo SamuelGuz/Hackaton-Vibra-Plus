@@ -54,8 +54,8 @@ export type Salida =
   | { tipo: 'botones'; texto: string; botones: Boton[] }
   /** Máximo 10 filas. `boton` es el texto del botón que abre la lista (máximo 20) */
   | { tipo: 'lista'; texto: string; boton: string; filas: Fila[] }
-  /** Imagen PNG con un pie de foto corto (máximo 1024) */
-  | { tipo: 'imagen'; png: Buffer; texto: string }
+  /** Imagen con un pie de foto corto (máximo 1024). PNG salvo que diga otro `mime` (p. ej. la foto de un comprobante). */
+  | { tipo: 'imagen'; png: Buffer; mime?: string; texto: string }
 
 // ---------- Estado de la conversación ----------
 
@@ -120,7 +120,8 @@ export interface Entendido {
 // ---------- Dependencias (reales o falsas en las pruebas) ----------
 
 export interface NuevoRegistro {
-  usuarioId: number
+  /** null: no lo registró nadie del equipo (p. ej. el comprobante que manda un donante) */
+  usuarioId: number | null
   canal: 'whatsapp' | 'panel'
   tipoEntrada: 'texto' | 'audio' | 'imagen' | 'boton'
   mediaUrl?: string | null

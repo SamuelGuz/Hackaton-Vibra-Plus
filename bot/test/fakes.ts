@@ -252,7 +252,7 @@ export class RepoFalso implements Repo {
   }
 
   /** Lo confirmado pasa a los datos, como lo haría la base */
-  private aplicar(acciones: Accion[], usuarioId: number, fechaHora: string, registroId: string) {
+  private aplicar(acciones: Accion[], usuarioId: number | null, fechaHora: string, registroId: string) {
     const quien = String(usuarioId)
     for (const [i, a] of acciones.entries()) {
       const id = `r${registroId}-${i}`

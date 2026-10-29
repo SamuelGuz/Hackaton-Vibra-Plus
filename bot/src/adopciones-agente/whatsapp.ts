@@ -3,6 +3,7 @@
 import type { ContextoExterno } from '../rag/tipos.js'
 import type { Deps, Entrada, Salida } from '../tipos.js'
 import { MAX_AUDIO_BYTES, MAX_TEXTO, obtenerAgente, responderConversacion } from './agente.js'
+import { atenderFoto } from './comprobantes.js'
 import { pausaParaEscribir } from './humano.js'
 import { enviarDonacion, enviarMenu, esperaNombre, esSoloSaludo, leerNombre, pideMenu, recibirNombre, tocarBoton, webSiFalta, type Recepcion } from './recepcion.js'
 import { textosAgente } from './textos.js'
@@ -59,8 +60,21 @@ export async function atenderInteresadoExterno(
     const sesion = agente.sesiones.obtener(clave)
     const r: Recepcion = { deps, ctx, sesion, clave, telefono, enviar }
 
+    /** Lo que la persona dice con sus palabras lo responde la IA */
+    const conversar = async (texto?: string, media?: { datos: Buffer; mime: string }) => {
+      const respuesta = await responderConversacion({ deps, ctx, clave, canal: { tipo: 'whatsapp', telefono }, texto: texto?.trim().slice(0, MAX_TEXTO), media })
+      await decir(respuesta.respuesta)
+      // Si quiere donar o apadrinar, los datos van a la vista (los reales, nunca los que diga la IA)
+      const quiereAyudar = respuesta.accion === 'padrinazgo' || respuesta.intencion === 'donar' || respuesta.intencion === 'apadrinar'
+      if (quiereAyudar && !sesion.donacionMostrada && ctx.donaciones) await enviarDonacion(r)
+      await webSiFalta(r)
+    }
+
     // Botones de la recepción (menú, lista de animales, formulario, donar)
     if (entrada.tipo === 'boton' && entrada.id.startsWith('ext:')) return await tocarBoton(r, entrada.id)
+
+    // Una foto: comprobante de donación, o una pregunta escrita en el pie
+    if (entrada.tipo === 'imagen') return await atenderFoto(r, entrada, (pie) => conversar(pie))
 
     let texto: string | undefined
     let media: { datos: Buffer; mime: string } | undefined
@@ -88,12 +102,7 @@ export async function atenderInteresadoExterno(
       }
     }
 
-    const respuesta = await responderConversacion({ deps, ctx, clave, canal: { tipo: 'whatsapp', telefono }, texto: texto?.trim().slice(0, MAX_TEXTO), media })
-    await decir(respuesta.respuesta)
-    // Si quiere donar o apadrinar, los datos van a la vista (los reales, nunca los que diga la IA)
-    const quiereAyudar = respuesta.accion === 'padrinazgo' || respuesta.intencion === 'donar' || respuesta.intencion === 'apadrinar'
-    if (quiereAyudar && !sesion.donacionMostrada && ctx.donaciones) await enviarDonacion(r)
-    await webSiFalta(r)
+    await conversar(texto, media)
   } catch (e) {
     console.error('El agente de adopciones falló con un mensaje de WhatsApp:', e)
     await decir(textosAgente.falla)

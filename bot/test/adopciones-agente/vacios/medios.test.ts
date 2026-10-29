@@ -106,19 +106,20 @@ describe('imágenes, stickers y ubicaciones', () => {
     expect(e.alTelefono(TEL)).toEqual([textosAgente.soloTextoOVoz])
   })
 
-  it('[M-16] una imagen sola no gasta Gemini', async () => {
+  it('[M-16] una foto sola se lee una sola vez (para ver si es un comprobante de donación)', async () => {
+    e.t.llm.responder({ es_comprobante: false, monto: 0, fecha: '', referencia: '', medio: '', descripcion: 'un perro' })
     await e.escribir({ tipo: 'imagen', mediaId: 'img1', mime: 'image/jpeg' })
-    expect(e.t.llm.llamadas).toHaveLength(0)
+    expect(e.t.llm.llamadas).toHaveLength(1)
   })
 
-  brecha('[M-17] el pie de foto de una imagen ("así es mi patio, ¿puedo adoptar a Toby?") se lee como texto', async () => {
+  it('[M-17] el pie de foto de una imagen ("así es mi patio, ¿puedo adoptar a Toby?") se lee como texto', async () => {
     e.t.llm.responder(crudo())
     await e.escribir({ tipo: 'imagen', mediaId: 'img1', mime: 'image/jpeg', texto: 'Así es mi patio, ¿puedo adoptar a Toby?' })
     expect(e.t.llm.llamadas).toHaveLength(1)
     expect(e.t.llm.llamadas[0].mensajes.at(-1)!.texto).toContain('mi patio')
   })
 
-  brecha('[M-18] a quien manda solo una foto se le dice con claridad que la imagen no se puede ver (hoy el mensaje genérico no menciona fotos)', async () => {
+  it('[M-18] a quien manda solo una foto se le dice con claridad que la imagen no se puede ver (hoy el mensaje genérico no menciona fotos)', async () => {
     await e.escribir({ tipo: 'imagen', mediaId: 'img1', mime: 'image/jpeg' })
     expect(e.alTelefono(TEL).join('\n')).toMatch(/foto|imagen/i)
   })

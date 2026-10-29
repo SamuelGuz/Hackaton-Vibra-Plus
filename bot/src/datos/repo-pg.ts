@@ -438,7 +438,7 @@ async function personaAdoptante(c: pg.PoolClient, nombre: string, telefono: stri
 interface Contexto {
   registroId: number
   estado: 'por_confirmar' | 'confirmado'
-  usuarioId: number
+  usuarioId: number | null
   origen: 'bot' | 'panel'
   /** Foto de la factura o del comprobante, si llegó con el registro */
   soporte: string | null

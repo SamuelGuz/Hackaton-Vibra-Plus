@@ -26,7 +26,7 @@ Supuestos:
 |---|---|---|---|---|
 | T1 | S5 | La IA del equipo responde preguntas y charla con los datos del refugio; aviso sin "Doña" y con el nombre | inline | hecha: RED 5 → GREEN; cierra la brecha [N-10]; suite 743 |
 | T2 | S1, S3, S4 | Recepción por botones para quien escribe de afuera: menú, web una vez, adoptar con lista y 3 toques, donar con datos | inline | hecha: RED 13 → GREEN 15; 57 pruebas viejas usaban "hola" de relleno y ahora usan otro mensaje; suite 758 |
-| T3 | S2 | Comprobantes de donación: leer, avisar a la administración con botones, registrar o anular | inline | pendiente |
+| T3 | S2 | Comprobantes de donación: leer, avisar a la administración con botones, registrar o anular | inline | hecha: RED 9 → GREEN; cierra [M-17] y [M-18]; [M-16] cambia por S2; Postgres 19/19; suite 769 |
 | T4 | S6 | Prompts más livianos y esquema por canal | inline | pendiente |
 | T5 | S7 | Recordatorio de la mañana (lista de tareas) y de la tarde (mandar la actualización) | inline | pendiente |
 | T6 | todas | Simulaciones como Yesenia y como interesados de afuera; suite completa | inline | pendiente |

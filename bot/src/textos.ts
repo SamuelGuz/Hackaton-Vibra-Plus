@@ -118,6 +118,13 @@ export const textos = {
   buenosDias: (nombre: string) => `🌅 Buenos días, ${nombre}. Esto es lo de hoy 👆`,
   vacunasTitulo: '💉 Vacunas que vencen esta semana:',
 
+  // Comprobantes de donación que manda alguien de afuera
+  comprobanteSoloAdmin: 'Los comprobantes de donación los confirma la administración 🔒',
+  comprobanteRegistrado: (monto: string) => `✅ Listo, registré la donación de *${monto}* 💛`,
+  comprobanteNoRegistrado: 'Listo, no lo registré 👍 Si la plata llega después, me cuentas o lo registras en el panel.',
+  comprobanteYaRegistrado: 'Ese comprobante ya estaba registrado ✅',
+  comprobanteYaDescartado: 'Ese comprobante ya lo habían marcado como que no llegó 👍',
+
   // Seguimientos de adopción (días 2, 5, 15, 30 y 90)
   seguimientosTitulo: '📞 Hoy toca llamar a los adoptantes de:',
   seguimientosToca: 'Cuando llames, toca cómo te fue 👇',

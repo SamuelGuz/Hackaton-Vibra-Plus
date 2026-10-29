@@ -147,7 +147,7 @@ export interface DatosAlbergue {
   configComida: ConfigComida
   vidasCambiadas: number
   /** Solo la manda el bot: la meta de donaciones del día para la página pública (config meta_dia_kg y meta_dia_pesos) */
-  metaDelDia?: { kg: number; pesos: number }
+  metaDelDia?: { kg: number; pesos: number; semanaPesos?: number }
   /** Solo la manda el bot: la última de cada vacuna por animal */
   vacunas?: Vacuna[]
 }

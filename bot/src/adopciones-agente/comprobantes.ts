@@ -3,7 +3,8 @@
 // (conversacion/comprobante.ts). La plata la confirma siempre una persona: la IA solo lee.
 import { Type, type Schema } from '@google/genai'
 import { pesos } from '../formato.js'
-import type { Accion, Entrada } from '../tipos.js'
+import type { Entrada } from '../tipos.js'
+import { avisarDonacion } from '../api/donaciones.js'
 import { buscarAdministradoras } from './avisos.js'
 import type { Recepcion } from './recepcion.js'
 import { telefonoBonito, textosAgente } from './textos.js'
@@ -131,39 +132,6 @@ export async function atenderFoto(
   }
 
   const detalle = [lectura.medio, lectura.fecha, lectura.referencia && `ref. ${lectura.referencia}`].filter(Boolean).join(' · ')
-  const accion: Accion = {
-    tipo: 'movimiento',
-    movimiento: {
-      tipo: 'ingreso',
-      monto: lectura.monto,
-      categoria: 'donacion',
-      clinicaId: null,
-      abonoDeuda: false,
-      foto: url,
-      nota: `Comprobante de ${de}${detalle ? ` · ${detalle}` : ''}`.slice(0, 200),
-    },
-  }
-  // Queda por confirmar (también se ve en la bandeja del panel) hasta que la administración diga si llegó
-  const id = await r.deps.repo.crearRegistro({
-    usuarioId: null,
-    canal: 'whatsapp',
-    tipoEntrada: 'imagen',
-    mediaUrl: url,
-    transcripcion: `Comprobante de donación de ${de}: ${pesos(lectura.monto)}${detalle ? ` · ${detalle}` : ''}`,
-    acciones: [accion],
-    confianza: null,
-    estado: 'por_confirmar',
-  })
-  await aCadaAdmin((nombre) => [
-    imagen,
-    {
-      tipo: 'botones',
-      texto: textosAgente.comprobanteLlego(nombre, de, pesos(lectura!.monto!), detalle),
-      botones: [
-        { id: `cpb:si:${id}`, titulo: '✅ Sí, me llegó' },
-        { id: `cpb:no:${id}`, titulo: '❌ No me llegó' },
-      ],
-    },
-  ])
+  await avisarDonacion(r.deps, { monto: lectura.monto, de, detalle, foto: { datos: foto.datos, mime, url } })
   return r.enviar({ tipo: 'texto', texto: textosAgente.graciasComprobante(pesos(lectura.monto)) })
 }

@@ -6,6 +6,7 @@ import { validarMiembro } from './api/equipo.js'
 import { validarCambioEstado, validarEvento } from './api/eventos.js'
 import { datosParaRol, esDePlata, manejaPlata, veraPlata } from './api/permisos.js'
 import { montarRutaMetaDelDia } from './api/publico.js'
+import { montarRutasProgreso } from './api/progreso.js'
 import { pendientesDeHoy, veAdoptantes } from './adopcion/seguimientos.js'
 import { sugerencia, validarCambioSolicitud, validarSolicitudFormulario } from './adopcion/solicitudes.js'
 import { atenderInteresadoExterno, montarRutasAgente } from './adopciones-agente/index.js'
@@ -150,6 +151,7 @@ export function crearApp(cfg: ConfigApp) {
 
   // La barra de meta y el muro de la página de las tiendas: siempre prendida, no gasta IA
   montarRutaMetaDelDia(app, deps)
+  montarRutasProgreso(app, deps)
 
   if (cfg.externo) {
     montarRutasRag(app, cfg.externo)

@@ -19,9 +19,14 @@ const PAUSA_REINTENTO_MS = 5000
 
 // Tablas internas del bot (db/sql/003_bot.sql y 004_equipo.sql). sesiones_panel guarda tokens de entrada
 // y solicitudes_equipo, números de gente que no es del equipo. solicitudes_adopcion lleva cédula, dirección
-// y las respuestas de quien quiere adoptar (006): no va a la hoja. OJO: el nombre y el teléfono de esa persona
-// también quedan en personas (es_adoptante), y personas SÍ se copia. Pendiente de decidir si se excluye.
+// y las respuestas de quien quiere adoptar (006): no va a la hoja.
 const NO_COPIAR = new Set(['conversaciones', 'mensajes_wa', 'sesiones_panel', 'solicitudes_equipo', 'solicitudes_adopcion'])
+
+// Filas que no van a la hoja. Quien SOLO quiere adoptar no aparece en personas (nombre y teléfono se quedan en el
+// panel); si además es donante, padrino, voluntario u hogar temporal, sí aparece, porque ya estaba por eso.
+const SIN_FILAS = {
+  personas: 'es_adoptante AND NOT (es_donante OR es_padrino OR es_voluntario OR es_hogar_temporal)',
+}
 
 // Fechas, horas y números llegan como texto para escribirlos tal cual (hora de Bogotá).
 pg.types.setTypeParser(1082, (v) => v)                       // date
@@ -51,7 +56,8 @@ let temporizador = null
 let escribiendo = false
 
 async function leerTabla(tabla) {
-  const r = await db.query(`SELECT * FROM ${pg.escapeIdentifier(tabla)} ORDER BY 1`)
+  const sin = SIN_FILAS[tabla]
+  const r = await db.query(`SELECT * FROM ${pg.escapeIdentifier(tabla)}${sin ? ` WHERE NOT (${sin})` : ''} ORDER BY 1`)
   const encabezado = r.fields.map((f) => f.name)
   return [encabezado, ...r.rows.map((fila) => encabezado.map((c) => aCelda(fila[c])))]
 }

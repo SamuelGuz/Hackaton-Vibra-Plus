@@ -97,18 +97,18 @@
 
 /* Mobile: one 4-column grid; blocks span 4, 2 or 1 columns so nothing collides. */
 @media (max-width: 40em) {
-  .adoptar .fichas, .adoptar .despues { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; }
+  .adoptar .fichas, .adoptar .despues { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--movil-hueco); }
   .adoptar .fichas { row-gap: 2rem; }
-  .adoptar .ficha { grid-column: span 4; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: auto auto; gap: 0.75rem; align-items: center; }
-  .adoptar .fichaMedia { grid-column: span 2; }
-  .adoptar .fichaTexto { grid-column: span 2; }
-  .adoptar .ficha .botonFicha { grid-column: span 4; }
+  .adoptar .ficha { grid-column: auto; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr auto; gap: var(--movil-hueco); align-items: start; min-width: 0; }
+  .adoptar .fichaMedia, .adoptar .fichaTexto { grid-column: auto; min-width: 0; }
+  .adoptar .ficha .botonFicha { grid-column: auto; padding-inline: var(--esp-2); font-size: var(--movil-texto); }
   .adoptar .fichaEscena, .adoptar .fichaFoto { aspect-ratio: 1; border-radius: 22px; }
   .adoptar .fichaMedia .chipFicha, .adoptar .chipQuieto { left: 6%; top: auto; bottom: 6%; font-size: 0.6875rem; padding: 0.35rem 0.6rem; }
   .adoptar .fav { width: 2.5rem; height: 2.5rem; }
-  .adoptar .fichaTexto h3 { font-size: 1.25rem; }
-  .adoptar .fichaRasgo { font-size: 0.9375rem; }
-  .adoptar .despues li { grid-column: span 2; padding: 1.1rem; }
+  .adoptar .fichaTexto h3 { font-size: var(--texto-lg); }
+  .adoptar .fichaRasgo, .adoptar .fichaDatos { font-size: var(--movil-texto); }
+  .adoptar .fichaEspecie { font-size: var(--texto-xs); }
+  .adoptar .despues li { grid-column: auto; padding: var(--esp-2); }
   .adoptar .despuesIcono { width: 2.5rem; height: 2.5rem; }
   .adoptar .despues strong { font-size: 1.0625rem; }
   .adoptar .despues span:not(.despuesIcono) { font-size: 0.875rem; }

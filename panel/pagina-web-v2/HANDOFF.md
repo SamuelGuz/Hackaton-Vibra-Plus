@@ -1,3 +1,21 @@
+# Entrega actual: pagina-web-final
+
+La petición directa más reciente autoriza commit y push del sitio actual y luego ajustes
+de columnas móviles. Rama de entrega: `pagina-web-final`. El primer respaldo publicado
+es `31d2cb1`, antes de los ajustes móviles. No se borran otras ramas ni se modifica el backend.
+
+La raíz actual ya es Huellitas con fondo blanco y pepitas, HeroWild y la infografía de
+Yesenia; `/aportar`, `/adoptar`, `/historia` y `/como-ayudar` son páginas locales existentes.
+La instrucción histórica de mantener Babet en inglés ya no describe esta entrega.
+
+Los ajustes móviles usan 4 columnas para momentos y montos breves, 3 para necesidades y
+explicaciones, y 2 para fichas, actividad y bloques amplios. `/aportar` incluye un plato
+ilustrativo que cambia con el monto elegido, sin atribuirle una equivalencia alimentaria.
+El único canal de pago es Nequi. Número, titular y WhatsApp siguen por confirmar;
+no se inventaron datos ni se conectó una pasarela. Los datos de actividad siguen siendo ejemplos.
+
+## Historial anterior
+
 # Babet reference clone — page V2
 
 The user requested a faithful recreation of https://html.themehour.net/babet/demo/index.html

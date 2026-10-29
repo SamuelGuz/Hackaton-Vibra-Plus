@@ -234,6 +234,13 @@ html[data-hero='5'] {
 }
 
 /* Reduced motion: keep opacity and colour, drop travel, scale and long durations. */
+:root {
+  --movil-hueco: 0.625rem;
+  --movil-texto: 0.875rem;
+  --movil-titulo: 1.75rem;
+  --movil-seccion: 2.5rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root {
     --dur-revelar: 1ms;

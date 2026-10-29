@@ -5,6 +5,12 @@
 
 .ap { --verde-suave: #a9cbb5; --error: #9b2c2c; }
 
+.ap .pasosNequi { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--movil-hueco); list-style: none; padding: 0; margin-block: var(--esp-4); }
+.ap .pasosNequi li { display: grid; align-content: start; gap: var(--esp-1); min-width: 0; }
+.ap .pasosNequi b { display: grid; place-items: center; width: 2rem; height: 2rem; background: var(--verde); color: var(--fondo); border-radius: var(--radio-lg); }
+.ap .pasosNequi strong { font-size: var(--movil-texto); }
+.ap .pasosNequi span { font-size: var(--movil-texto); color: var(--tinta-2); }
+
 /* ---------- top: one screen ---------- */
 /* The fixed site header is ~79px on phones and ~85px on desktop. */
 .ap section.tope { padding-block: calc(79px + 1.25rem) 3rem; }
@@ -166,7 +172,7 @@
 @media (max-width: 40em) {
   .ap h1.h1 { max-width: none; font-size: clamp(2rem, 1.1rem + 4.2vw, 2.4rem) !important; }
   .ap fieldset.montos { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.6rem; }
-  .ap fieldset.montos label { grid-column: span 2; min-height: 3rem; }
+  .ap fieldset.montos label { grid-column: auto; min-height: 3rem; padding-inline: var(--esp-1); font-size: var(--movil-texto); }
   .ap .acciones > * { width: 100%; }
   .ap .acciones > div > button { width: 100%; }
   .ap .corazon { width: 2.5rem; height: 2.5rem; }
@@ -174,14 +180,16 @@
   .ap .origen { justify-content: flex-start; margin-top: 1.5rem; }
   .ap .destinos { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; padding: 1.25rem 0 0 1.25rem; }
   .ap .destinos::before { left: 0.25rem; right: auto; top: 0; bottom: 4.85rem; width: 2px; height: auto; }
-  .ap .destino { grid-column: span 4; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; align-items: center; }
+  .ap .destino { grid-column: auto; grid-template-columns: minmax(0, 1fr); gap: var(--movil-hueco); align-content: start; }
   .ap .destino::before { top: calc(50% - 1px); left: -1rem; width: 1rem; height: 2px; }
   .ap .origen + .destinos > .destino:nth-child(2)::after { display: none; }
-  .ap div.destinoEscena { grid-column: span 2; aspect-ratio: 1; }
-  .ap .destinoTexto { grid-column: span 2; grid-template-columns: 1fr; row-gap: 0.35rem; }
+  .ap .destinos { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--movil-hueco); padding: 0; }
+  .ap .destinos::before, .ap .destino::before, .ap .destino::after { display: none; }
+  .ap div.destinoEscena { grid-column: auto; aspect-ratio: 1; }
+  .ap .destinoTexto { grid-column: auto; grid-template-columns: 1fr; row-gap: 0.35rem; }
   .ap .destinoIcono { grid-row: auto; width: 2.5rem; height: 2.5rem; }
-  .ap .destinoTexto h3 { font-size: 1.25rem !important; }
-  .ap .destinoTexto p { font-size: 0.9375rem; }
+  .ap .destinoTexto h3 { font-size: var(--texto-base) !important; }
+  .ap .destinoTexto p { font-size: var(--movil-texto); }
 
   .ap .prueba { grid-template-columns: minmax(0, 1fr); }
   .ap .compras li { grid-template-columns: 3.75rem 1fr; }
@@ -216,3 +224,13 @@
 .ap .linea b { font-variant-numeric: tabular-nums; font-weight: 800; color: var(--verde); }
 .ap .lineaIcono { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 999px; background: var(--superficie); color: var(--verde); }
 @media (prefers-reduced-motion: reduce) { .ap .avanceRelleno { transition: none; } }
+
+@media (max-width: 40em) {
+  .ap .prueba { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--movil-hueco); }
+  .ap .tarjeta { padding: var(--esp-2); min-width: 0; }
+  .ap .etiqueta { font-size: var(--movil-texto); overflow-wrap: anywhere; }
+  .ap .linea li { grid-template-columns: minmax(0, 1fr); gap: var(--esp-1); }
+  .ap .lineaIcono { display: none; }
+  .ap .linea p, .ap .linea b { font-size: var(--movil-texto); }
+  .ap .linea time { font-size: var(--texto-xs); }
+}

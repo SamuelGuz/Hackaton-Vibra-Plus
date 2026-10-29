@@ -1,4 +1,5 @@
 // Núcleo de la conversación: lo comparten WhatsApp y la llamada de voz de la web.
+import { respuestasDelAgente } from '../adopcion/solicitudes.js'
 import { crearLimitador, type Limitador } from '../rag/limitador.js'
 import type { ContextoExterno, PerritoPublico } from '../rag/tipos.js'
 import type { Deps } from '../tipos.js'
@@ -82,6 +83,34 @@ function conTiempoLimite<T>(p: Promise<T>, ms: number): Promise<T> {
 }
 
 /** El RAG es un apoyo: si falla, la charla sigue sin esos datos en vez de caerse */
+/** La solicitud de esta conversación (una por clave: 'wa:<teléfono>' o 'web:<sesión>'). Si la base falla, la charla sigue. */
+async function guardarSolicitud(
+  deps: Deps,
+  p: PeticionConversacion,
+  d: { animalId: string; evaluacion: Sesion['evaluacion']; fecha: Date },
+): Promise<void> {
+  try {
+    await deps.repo.guardarSolicitudAdopcion(
+      {
+        origen: 'agente',
+        claveOrigen: p.clave,
+        respuestas: respuestasDelAgente({
+          nombre: d.evaluacion.nombre,
+          telefono: p.canal.tipo === 'whatsapp' ? p.canal.telefono : null,
+          animalId: d.animalId,
+          vivienda: d.evaluacion.viviendaTipo,
+        }),
+        visitaPropuesta: d.fecha,
+        puntajeIdoneidad: Math.round(d.evaluacion.suitability),
+        puntajeRiesgo: Math.round(d.evaluacion.risk),
+      },
+      deps.ahora(),
+    )
+  } catch (e) {
+    console.error('No se pudo guardar la solicitud de adopción:', e)
+  }
+}
+
 async function opcional<T>(que: string, f: () => Promise<T>): Promise<T | null> {
   try {
     return await f()
@@ -161,6 +190,8 @@ async function atenderTurno(p: PeticionConversacion, sesion: Sesion): Promise<Re
     puedeAgendarVisita({ evaluacion, intencion: r.intencion, alertaBienestar: sesion.alertaBienestar, perroAdoptable: enFoco.adoptable })
   ) {
     const fecha = proximoSabado10(deps.ahora())
+    // Queda en la base como visita PROPUESTA (falta que la coordinación la confirme), aunque el aviso no salga
+    await guardarSolicitud(deps, p, { animalId: enFoco.id, evaluacion, fecha })
     const aviso = await avisarAdministradoras(deps, {
       perro: enFoco.nombre,
       evaluacion,

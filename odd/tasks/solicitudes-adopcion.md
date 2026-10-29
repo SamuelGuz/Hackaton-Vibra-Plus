@@ -44,8 +44,8 @@ Tomado de [plan para esta noche.md](../../plan%20para%20esta%20noche.md).
 | T1 | S1, S2, S6 | Migración 006 + excluir la tabla del espejo | inline | hecha: aplica sobre base nueva y dos veces seguidas |
 | T2 | S2, S3, S4 | Copia de tipos y clasificación; métodos de Repo (pg y fake): guardar o actualizar por `clave_origen`, listar, cambiar | inline | hecha: prueba contra Postgres real (12/12) |
 | T3 | S2, S3, S6 | Rutas `/api/adopciones/solicitudes` con guardia de rol; pruebas de 401, 403, lista con sugerencia, importación idempotente y cambio | inline | hecha: RED 11 fallos → GREEN 12/12; suite 633 |
-| T4 | S1, S5 | El agente guarda la solicitud con visita propuesta; prueba con fakes | inline | pendiente |
-| T5 | — | Aplicar la 006 en el Postgres local y probar en vivo | inline | pendiente |
+| T4 | S1, S5 | El agente guarda la solicitud con visita propuesta; prueba con fakes | inline | hecha: RED 2 fallos → GREEN 4/4; suite 637 |
+| T5 | — | Aplicar la 006 en el Postgres local y probar en vivo | inline | hecha: respaldo previo, 006 aplicada; en vivo 401 / 403 cuidador / 200 adopciones / 404 |
 
 Sin escritor delegado: es una sola unidad (cada paso depende del anterior). Pronóstico: unas 600 líneas, más de las 400 de referencia; por decisión de Samuel todo va en esta rama, en commits por tarea.
 
@@ -55,3 +55,4 @@ Risk: item 2 (rutas con datos personales y control por rol) e item 1 (cambio de 
 
 - L1 (2026-10-28) Samuel, literal: "Sube estos cambiso a la rama sin conectarla aun a master, por ahora todo en esta rama, y sigue con el siguiente paso del plan".
 - L2 (2026-10-28) Mapa del explorador: la tabla existe y el bot no la usa; no hay rutas ni Repo; el panel de MONOGA (rama `origin/MONOGA`) solo edita `montonManual`, `nota` y `llamadaAgendada`, y está en modo demo; el bot no importa `shared/`. Verificado a mano: el espejo sí copiaba `solicitudes_adopcion`.
+- L3 (2026-10-28) T1-T3 en dcba939. T4: el agente guarda la solicitud antes del aviso, así queda aunque el aviso por WhatsApp falle; si la base falla, la charla sigue. T5: respaldo `huellitas-antes-006.sql` en el scratchpad de la sesión, 006 aplicada a `huellitas`; prueba en vivo solo de lectura (no se metieron solicitudes de prueba en la base de verdad).

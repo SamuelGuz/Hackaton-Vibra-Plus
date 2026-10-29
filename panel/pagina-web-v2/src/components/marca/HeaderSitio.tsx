@@ -68,7 +68,7 @@ export default function HeaderSitio() {
         ) : (
           <>
             <Link href="/" className={s.logo} aria-label="Yesenia Refugio, inicio" onClick={() => setMenu(false)}>
-              <Image src="/marca/yesenia-refugio.png" alt="Yesenia Refugio" width={500} height={200} priority />
+              <Image src="/marca/yesenia-refugio.png" alt="Yesenia Refugio" width={500} height={200} priority unoptimized />
             </Link>
             <nav className={s.desktop} aria-label="Navegación principal">
               {rutas.map(r => <Link key={r.href} href={r.href} className={r.href === '/aportar' ? s.donar : ''} aria-current={pathname === r.href ? 'page' : undefined}>{r.label}</Link>)}

@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
+import { leerProgreso } from '../home/backend'
 
 export interface Meta { id: string; titulo: string; detalle: string; meta: number; recaudado: number; estado?: string; ejemplo?: boolean }
 export interface Compra { id?: string; fecha: string; texto: string; monto?: number | null; metaId?: string }
@@ -92,8 +93,7 @@ function useCarga(activo: boolean): Valor {
     if (!activo) return
     let vivo = true
     setCarga('cargando')
-    fetch('/data/progreso.json', { cache: 'no-store' })
-      .then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json() })
+    leerProgreso()
       .then(j => {
         const p = normalizar(j)
         if (!p) throw new Error('formato')

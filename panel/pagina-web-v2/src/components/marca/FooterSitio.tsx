@@ -14,7 +14,7 @@ export default function FooterSitio() {
       <div className={s.footerCard}>
         <div className={s.footerInterior}>
           <div className={s.brand}>
-            <Link href="/" aria-label="Yesenia Refugio, inicio"><Image src="/marca/yesenia-refugio.png" alt="Yesenia Refugio" width={500} height={200} className={s.footerLogo} /></Link>
+            <Link href="/" aria-label="Yesenia Refugio, inicio"><Image src="/marca/yesenia-refugio.png" alt="Yesenia Refugio" width={500} height={200} unoptimized className={s.footerLogo} /></Link>
             <p>Un plato lleno o una casa nueva. Cualquiera de las dos cambia el día de alguien.</p>
             <div className={s.atajos}>
               <Link href="/aportar" aria-label="Llenar un plato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10h18l-3 9H6ZM5 6h2m4 0h2m4 0h2" /></svg></Link>

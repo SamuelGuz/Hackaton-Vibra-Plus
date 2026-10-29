@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { leerProgreso } from './backend'
 
 export interface Meta { id: string; titulo: string; detalle: string; meta: number; recaudado: number; ejemplo?: boolean }
 export type TipoCompra = 'bulto' | 'carne' | 'salud' | 'recibo' | 'entrega' | 'otro'
@@ -23,9 +24,8 @@ const RESPALDO: Progreso = {
 
 let cache: Promise<Progreso> | null = null
 function cargar(): Promise<Progreso> {
-  cache ??= fetch('/data/progreso.json', { cache: 'no-store' })
-    .then(r => (r.ok ? (r.json() as Promise<Progreso>) : RESPALDO))
-    .then(d => (Array.isArray(d.metas) ? d : RESPALDO))
+  cache ??= leerProgreso()
+    .then(d => (d && Array.isArray((d as Progreso).metas) ? (d as Progreso) : RESPALDO))
     .catch(() => RESPALDO)
   return cache
 }

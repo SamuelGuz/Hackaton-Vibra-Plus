@@ -8,6 +8,7 @@ import { pesos, useProgreso } from '../../home/progreso'
 import { lanzarDesde } from '../../efectos/Corazones'
 import { useAcciones } from '../../paginas/acciones'
 import { DATOS_PAGO, waUrl } from '../../paginas/config'
+import { avisarDonacion } from '../../home/backend'
 import { copiarTexto } from '../../paginas/ui'
 import Abajo from './Abajo'
 import { PlatoAporte } from '../../home2/PlatoAporte'
@@ -215,6 +216,14 @@ function Pagar({ monto, titulo, onVolver, onListo }: {
     ? `Hola Yesenia, te envié ${pesos(monto)} para la misión de la semana${meta ? ` (${meta.titulo.toLowerCase()})` : ''}. ¿Me confirmas cuando te llegue?`
     : `Hola Yesenia, quiero donar ${pesos(monto)} para la misión de la semana${meta ? ` (${meta.titulo.toLowerCase()})` : ''}. ¿Me dices cómo te lo envío?`
   const wa = waUrl(mensaje)
+  // "Ya doné" le llega a Yesenia por WhatsApp para que confirme; si el aviso falla, la persona igual sigue
+  const [avisando, setAvisando] = useState(false)
+  const yaDone = async () => {
+    setAvisando(true)
+    await avisarDonacion(monto)
+    setAvisando(false)
+    onListo()
+  }
   return (
     <>
       <button type="button" className={s.volver} onClick={onVolver}>Cambiar valor</button>
@@ -240,7 +249,7 @@ function Pagar({ monto, titulo, onVolver, onListo }: {
               <p className={s.nota}>El número de WhatsApp de Yesenia está por confirmar, por eso este botón aún no funciona.</p>
             </div>
           )}
-        <button type="button" className={h.botonLinea} onClick={onListo}>Ya doné</button>
+        <button type="button" className={h.botonLinea} disabled={avisando} onClick={yaDone}>{avisando ? 'Avisando a Yesenia…' : 'Ya doné'}</button>
       </div>
       <p className={s.micro}>Esta página no cobra ni ve tu pago. Cuando Yesenia lo confirme por WhatsApp, la barra de la misión sube.</p>
     </>

@@ -84,3 +84,62 @@ describe('el bot le responde al equipo', () => {
     expect(t.wa.ultimo().tipo).toBe('lista')
   })
 })
+
+// Encontrado en vivo (29 oct): con la cuota gratis de Gemini agotada, "¿cuánta comida de perro nos queda?" abría
+// "¿Abriste un bulto?" y "mil gracias" recibía "No te entendí". Sin IA, lo común se responde con los datos del panel.
+describe('sin IA (sin cupo o caída), igual responde lo común', () => {
+  beforeEach(() => {
+    t.ia.respuesta = new Error('429 RESOURCE_EXHAUSTED')
+  })
+
+  it('"¿cuánta comida de perro nos queda?" responde los días, no abre "¿Abriste un bulto?"', async () => {
+    await decir(texto('¿cuánta comida de perro nos queda?'))
+    // 3 bultos × 25 kg = 75 kg ÷ 16,875 kg al día ≈ 4 días
+    expect(t.wa.ultimoTexto()).toContain('Comida de perro: 75 kg, alcanza para *4 días*')
+    expect(t.wa.ultimoTexto()).not.toContain('¿Abriste un bulto')
+  })
+
+  it('"¿qué medicinas faltan?" lista las de hoy con su hora', async () => {
+    await decir(texto('¿qué medicinas faltan?'))
+    expect(t.wa.ultimoTexto()).toContain('2:00 p. m. Tobías')
+    expect(t.wa.ultimoTexto()).toContain('8:00 p. m. Mateo')
+  })
+
+  it('"¿cómo vamos de plata?" a administración le dice la caja; a un cuidador no', async () => {
+    await decir(texto('¿cuánta plata hay en caja?'))
+    expect(t.wa.ultimoTexto()).toContain('$1.000.000')
+    await decir(texto('¿cuánta plata hay en caja?'), LUIS)
+    expect(t.wa.ultimoTexto()).not.toContain('$1.000.000')
+  })
+
+  it('"¿cómo se llama la persona?" le dice las solicitudes recientes a administración', async () => {
+    await decir(texto('como se llama la persona que quiere adoptar?'))
+    expect(t.wa.ultimoTexto()).toContain('Laura')
+    expect(t.wa.ultimoTexto()).toContain('Luna')
+    expect(t.wa.ultimoTexto()).not.toContain('3175274709')
+  })
+
+  it('"mil gracias" recibe "con gusto", no "No te entendí"', async () => {
+    await decir(texto('mil gracias'))
+    expect(t.wa.ultimoTexto()).toMatch(/con (mucho )?gusto/i)
+    expect(t.wa.ultimoTexto()).not.toContain('No te entendí')
+  })
+
+  it('una pregunta que no sabe responder sin IA lo dice con honestidad', async () => {
+    await decir(texto('¿qué opinas del clima de mañana?'))
+    expect(t.wa.ultimoTexto()).toMatch(/no puedo pensar/i)
+  })
+
+  it('"a quién me toca llamar hoy" abre los seguimientos sin pasar por la IA', async () => {
+    await decir(texto('¿a quién me toca llamar hoy?'))
+    expect(t.ia.llamadas).toHaveLength(0)
+  })
+})
+
+describe('después de lo de sin IA', () => {
+  it('lo de siempre sigue igual cuando la IA sí responde', async () => {
+    t.ia.responder({ transcripcion: 'eh', acciones: [], respuesta: '' })
+    await decir(texto('eh'))
+    expect(t.wa.ultimo().tipo).toBe('lista')
+  })
+})

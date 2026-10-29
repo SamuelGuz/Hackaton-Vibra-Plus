@@ -12,7 +12,7 @@ import { sinTildes } from './numeros.js'
 /** Más mensajes con botones que esto en un solo pedido ya es mucho: el resto se anota escribiendo "seguimientos" otra vez */
 const MAX_CON_BOTONES = 5
 
-const PIDE_SEGUIMIENTOS = /\b(seguimientos?|a quien (le )?(llamo|toca llamar|tengo que llamar|hay que llamar)|llamadas? (de|para) hoy)\b/
+const PIDE_SEGUIMIENTOS = /\b(seguimientos?|a quien (le |me )?(llamo|toca llamar|tengo que llamar|hay que llamar)|llamadas? (de|para) hoy)\b/
 
 /** Si el texto pide la lista de seguimientos */
 export function pideSeguimientos(texto: string): boolean {

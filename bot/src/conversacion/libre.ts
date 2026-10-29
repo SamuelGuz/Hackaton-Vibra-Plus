@@ -8,6 +8,7 @@ import { guardarDirecto, guardarYPreguntar, preguntarAlgoMas } from './confirmar
 import { enviarInforme } from './informe.js'
 import { bajarYGuardar, entenderSeguro } from './medios.js'
 import { conKilos } from './kilos.js'
+import { responderSinIa } from './sin-ia.js'
 import { yaReportada } from './medicina.js'
 import { mostrarMenu } from './menu.js'
 import { opcionDelMenu, temaDeTexto } from './intencion.js'
@@ -56,7 +57,9 @@ export async function registrarEntendido(
   }
   if (e) e = { ...e, acciones: conKilosLeidos }
   if (!e) {
-    // Sin IA igual se intenta con lo escrito
+    // Sin IA igual se intenta con lo escrito: una pregunta o un "gracias" se responden con los datos del panel
+    const sinIa = origen.escrito ? await responderSinIa(c, origen.escrito) : null
+    if (sinIa) return sinIa
     const tema = origen.escrito ? temaDeTexto(origen.escrito) : null
     if (tema) return opcionDelMenu(c, tema, origen.escrito)
     return mostrarMenu(c, esAudio ? textos.noPudeEscuchar : textos.noEntendi)

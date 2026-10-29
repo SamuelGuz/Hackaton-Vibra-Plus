@@ -43,6 +43,8 @@ export const textos = {
   informeSinPlata: 'El informe de la plata solo lo ve la administración 🔒',
   futura: 'Entendí que todavía no se lo has dado. Cuando se lo des, me cuentas y lo anoto 👍',
   noPuedePlata: 'Lo de la plata lo registra la administradora 🙏 Cuéntale a ella.',
+  conGusto: (nombre: string) => `¡Con mucho gusto, ${nombre}! 🐾`,
+  sinIaNoSe: 'Ahora mismo no puedo pensar bien la respuesta 🙈 (la inteligencia artificial está sin cupo por un rato). Mira el panel o pregúntame en un ratico. Lo que me cuentes que hiciste sí lo anoto.',
   soloRescateKilos: '⚠️ No alcancé a entender el resto del mensaje: solo saqué los kilos. Lo demás cuéntamelo otra vez, o por partes.',
   panelSinPlata: 'Los voluntarios no registran plata: lo hace alguien del equipo o la administradora',
 

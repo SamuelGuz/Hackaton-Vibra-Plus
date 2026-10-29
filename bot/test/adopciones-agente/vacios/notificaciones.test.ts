@@ -16,7 +16,7 @@ afterEach(() => vi.restoreAllMocks())
 const PROMESA_EQUIPO = /equipo|fundaci[oó]n[^.]{0,60}(escrib|contact|comunic)|te (contact|escrib)/i
 
 describe('cuando el aviso no llega a todas', () => {
-  brecha('[N-01] si una administradora falla (p. ej. ventana de 24 h cerrada) y otra no, a la que falló se le reintenta en el siguiente turno', async () => {
+  it('[N-01] si una administradora falla (p. ej. ventana de 24 h cerrada) y otra no, a la que falló se le reintenta en el siguiente turno', async () => {
     e.agregarAdmin(MARIA)
     const original = e.t.wa.enviar.bind(e.t.wa)
     let caida = true
@@ -41,20 +41,23 @@ describe('cuando el aviso no llega a todas', () => {
     }
     e.t.llm.responder(excelente({ nombre: 'Ana', respuesta: 'Qué hermoso hogar' }))
     await e.escribir('listo')
-    expect(e.alTelefono(TEL)).toEqual(['Qué hermoso hogar'])
+    expect(e.alTelefono(TEL).join('\n')).toContain('Qué hermoso hogar')
+    expect(e.alTelefono(TEL).join('\n')).not.toMatch(/visita propuesta|te (?:escribe|contacta) el equipo/i)
     caida = false
     await e.escribir('sigo aquí')
     expect(e.avisos()).toHaveLength(1)
-    expect(e.alTelefono(TEL).at(-1)).toMatch(/visita/i)
+    expect(e.alTelefono(TEL).join(' ')).toMatch(/visita/i)
   })
 
   for (const caso of ['sin administradoras registradas', 'todas las administradoras inactivas']) {
-    brecha(`[N-03] ${caso}: la persona igual recibe un "el equipo te contactará" (hoy el lead se pierde solo con un console.warn)`, async () => {
+    it(`[N-03] ${caso}: no se promete contacto sin destinatario y la solicitud queda guardada`, async () => {
       if (caso.startsWith('sin')) e.t.repo.datos.personas = e.t.repo.datos.personas.filter((p) => p.rol !== 'admin' && p.rol !== 'adopciones')
       else e.t.repo.inactivos.add(CAROLINA.id)
       e.t.llm.responder(excelente({ nombre: 'Ana', respuesta: 'Qué hermoso hogar' }))
       await e.escribir('listo')
-      expect(e.alTelefono(TEL).join('\n')).toMatch(PROMESA_EQUIPO)
+      expect(e.alTelefono(TEL).join('\n')).not.toMatch(PROMESA_EQUIPO)
+      expect(e.t.repo.adopcion).toHaveLength(1)
+      expect(e.t.repo.adopcion[0].nombre).toBe('Ana')
     })
   }
 
@@ -62,8 +65,16 @@ describe('cuando el aviso no llega a todas', () => {
     e.t.repo.inactivos.add(CAROLINA.id)
     e.t.llm.responder(excelente({ nombre: 'Ana', respuesta: 'Qué hermoso hogar' }))
     await e.escribir('listo')
-    expect(e.alTelefono(TEL)).toEqual(['Qué hermoso hogar'])
+    expect(e.alTelefono(TEL).join('\n')).not.toMatch(PROMESA_EQUIPO)
+    expect(e.t.repo.adopcion).toHaveLength(1)
     expect(e.consola.warn).toHaveBeenCalled()
+  })
+
+  it('[N-14] sin destinatario, se bloquea también la promesa de visita que invente el modelo', async () => {
+    e.t.repo.inactivos.add(CAROLINA.id)
+    e.t.llm.responder(excelente({ nombre: 'Ana', respuesta: 'Tu visita quedó confirmada y el equipo te escribirá mañana' }))
+    await e.escribir('listo')
+    expect(e.alTelefono(TEL).join('\n')).not.toMatch(/visita[^\n]{0,50}(confirmada|agendada)|equipo[^\n]{0,50}escribir/i)
   })
 
   it.todo('[N-05] fuera de la ventana de 24 h de WhatsApp hace falta una PLANTILLA aprobada por Meta para avisar a la administradora: requiere la API real de Meta (Salida solo tiene texto/botones/lista/imagen)')
@@ -85,7 +96,8 @@ describe('quién entra al agente (app.ts)', () => {
     await webhook(app, TEL, 'wamid.dup', 'cuéntame de los peluditos')
     await app.ociosa()
     expect(e.t.llm.llamadas).toHaveLength(1)
-    expect(e.alTelefono(TEL)).toEqual(['Una sola vez'])
+    expect(e.alTelefono(TEL)).toHaveLength(1)
+    expect(e.alTelefono(TEL)[0]).toMatch(/^Una sola vez.*datos personales/s)
   })
 
   it('[N-08] dos wamid distintos casi a la vez del mismo número se atienden en orden y el aviso sale una sola vez', async () => {
@@ -116,11 +128,11 @@ describe('contenido del aviso', () => {
     expect(e.alTelefono(LUIS_ADMIN.telefono).join('')).not.toMatch(/Doña Luis/)
   })
 
-  it('[N-11] aviso + respuesta del modelo al máximo (3500) caben en un mensaje de WhatsApp (4096) sin perder la confirmación', async () => {
+  it('[N-11] una salida excesiva del modelo no elimina la confirmación operativa de visita', async () => {
     e.t.llm.responder(excelente({ nombre: 'Ana', respuesta: 'palabra '.repeat(900) }))
     await e.escribir('listo')
-    const enviado = e.alTelefono(TEL)[0]
-    expect(enviado.length).toBeLessThanOrEqual(4096)
+    const enviado = e.alTelefono(TEL).join(' ')
+    expect(e.alTelefono(TEL).every(m => m.length <= 600)).toBe(true)
     expect(enviado).toContain('la decisión de la adopción la toma el equipo')
   })
 

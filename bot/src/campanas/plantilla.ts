@@ -9,7 +9,7 @@ const COLOR = {
   terracota: '#c4623a',
   borde: '#ead9c4',
 }
-const NOMBRE_FUNDACION = 'Fundación Huellitas'
+const NOMBRE_FUNDACION = 'Refugio Yesenia'
 const POR_QUE = `Recibes este correo porque te interesa apoyar a los animales rescatados de ${NOMBRE_FUNDACION}.`
 const AVISO_BAJA = 'Responde BAJA a este correo para no recibir más.'
 

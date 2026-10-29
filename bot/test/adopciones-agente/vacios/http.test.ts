@@ -71,7 +71,7 @@ describe('cuerpo de la petición', () => {
     expect(r.status).toBe(404)
   })
 
-  brecha('[H-09] un POST con content-type text/plain (formulario cruzado, sin preflight) se rechaza con 415/400', async () => {
+  it('[H-09] un POST con content-type text/plain (formulario cruzado, sin preflight) se rechaza con 415/400', async () => {
     e.t.llm.responder(crudo())
     const r = await llamar({ texto: 'hola' }, { 'content-type': 'text/plain' })
     expect([400, 415]).toContain(r.status)
@@ -92,17 +92,17 @@ describe('sesionId', () => {
     })
   }
 
-  brecha('[H-12] solo se aceptan sesionId largos/adivinables-imposibles (>= 32): uno de 8 letras permite que dos personas compartan o envenenen una sesión', async () => {
+  it('[H-12] solo se aceptan sesionId largos/adivinables-imposibles (>= 32): uno de 8 letras permite que dos personas compartan o envenenen una sesión', async () => {
     e.t.llm.responder(crudo())
     expect((await llamar({ texto: 'hola', sesionId: 'abcdefgh' })).status).toBe(400)
   })
 
-  brecha('[H-13] solo se aceptan sesionId que el servidor emitió (uno inventado no crea sesiones nuevas)', async () => {
+  it('[H-13] solo se aceptan sesionId que el servidor emitió (uno inventado no crea sesiones nuevas)', async () => {
     e.t.llm.responder(crudo())
     expect((await llamar({ texto: 'hola', sesionId: 'inventado-por-el-cliente-0000000000000000' })).status).toBe(400)
   })
 
-  brecha('[H-14] quien inunda con sesionId nuevos (cada uno con su "IP") no expulsa la conversación de una persona real (tope 500)', async () => {
+  it('[H-14] quien inunda con sesionId nuevos (cada uno con su "IP") no expulsa la conversación de una persona real (tope 500)', async () => {
     e.t.llm.responder(crudo())
     const legit = await (await llamar({ texto: 'hola' }, { 'x-forwarded-for': '10.0.0.1' })).json()
     for (let i = 0; i < 520; i++) await llamar({ texto: 'x', sesionId: `ataque-${String(i).padStart(10, '0')}` }, { 'x-forwarded-for': `203.0.113.${i % 250}, 8.8.8.${i}` })
@@ -122,14 +122,14 @@ describe('límites y gasto de Gemini', () => {
     expect((await llamar({ texto: 'hola' }, { 'x-forwarded-for': '9.9.9.9' })).status).toBe(200)
   })
 
-  brecha('[H-16] inventar una IP en X-Forwarded-For no salta el límite: el primer valor lo controla el cliente, el último lo pone el proxy', async () => {
+  it('[H-16] inventar una IP en X-Forwarded-For no salta el límite: el primer valor lo controla el cliente, el último lo pone el proxy', async () => {
     e.t.llm.responder(crudo())
     const estados: number[] = []
     for (let i = 0; i < 30; i++) estados.push((await llamar({ texto: 'hola' }, { 'x-forwarded-for': `${i + 1}.7.7.7, 198.51.100.9` })).status)
     expect(estados).toContain(429)
   })
 
-  brecha('[H-17] hay un tope global (diario o por minuto) que protege el gasto de Gemini aunque lleguen miles de IPs distintas', async () => {
+  it('[H-17] hay un tope global (diario o por minuto) que protege el gasto de Gemini aunque lleguen miles de IPs distintas', async () => {
     e.t.llm.responder(crudo())
     const estados = new Set<number>()
     for (let i = 0; i < 400; i++) estados.add((await llamar({ texto: 'hola' }, { 'x-forwarded-for': `10.${i % 250}.${Math.floor(i / 250)}.1` })).status)
@@ -165,13 +165,13 @@ describe('integración con la app completa (CORS y cabeceras)', () => {
     expect(r.headers.get('access-control-allow-origin')).toBe('*')
   })
 
-  brecha('[H-21] la respuesta (con la conversación) lleva Cache-Control: no-store', async () => {
+  it('[H-21] la respuesta (con la conversación) lleva Cache-Control: no-store', async () => {
     e.t.llm.responder(crudo())
     const r = await llamar({ texto: 'hola' })
     expect(r.headers.get('cache-control') ?? '').toMatch(/no-store/)
   })
 
-  brecha('[H-22] las rutas del agente traen su propio CORS (hoy dependen de que montarRutasRag se monte antes)', async () => {
+  it('[H-22] las rutas del agente traen su propio CORS (hoy dependen de que montarRutasRag se monte antes)', async () => {
     e.t.llm.responder(crudo())
     const r = await llamar({ texto: 'hola' }, { origin: 'https://huellitas.test' })
     expect(r.headers.get('access-control-allow-origin')).toBeTruthy()
@@ -202,26 +202,26 @@ describe('guion de voz', () => {
     expect(aGuionVoz('Mira:\n- Toby\n2) Luna')).toBe('Mira: Toby. Luna.')
   })
 
-  brecha('[H-27] el teléfono de la fundación en la confirmación de visita se dice en grupos de dígitos, no como un número de 12 cifras', async () => {
+  it('[H-27] el teléfono de la fundación en la confirmación de visita se dice en grupos de dígitos, no como un número de 12 cifras', async () => {
     e.t.llm.responder(excelente({ nombre: 'Ana' }))
     const j = await (await llamar({ texto: 'listo' })).json()
     expect(j.accion).toBe('visita_agendada')
     expect(j.guionVoz).not.toMatch(/\+?\d{10,}/)
   })
 
-  brecha('[H-28] los enlaces markdown [texto](url) se leen solo con el texto', () => {
+  it('[H-28] los enlaces markdown [texto](url) se leen solo con el texto', () => {
     expect(aGuionVoz('Mira [nuestra web](https://huellitas.org) hoy')).not.toMatch(/https?:|huellitas\.org|\(|\]/)
   })
 
-  brecha('[H-29] las banderas emoji (🇨🇴) no se dejan para que el sintetizador las lea', () => {
+  it('[H-29] las banderas emoji (🇨🇴) no se dejan para que el sintetizador las lea', () => {
     expect(aGuionVoz('Desde Colombia 🇨🇴 con amor')).not.toMatch(/[\u{1F1E6}-\u{1F1FF}]/u)
   })
 
-  brecha('[H-30] "10:00 a. m." se dice "10 de la mañana" (el sintetizador deletrea "a punto m punto")', () => {
+  it('[H-30] "10:00 a. m." se dice "10 de la mañana" (el sintetizador deletrea "a punto m punto")', () => {
     expect(aGuionVoz('Te espero a las 10:00 a. m. en la fundación')).toMatch(/de la mañana/)
   })
 
-  brecha('[H-31] emojis con tono de piel (👍🏽) se quitan completos: hoy queda el modificador suelto', () => {
+  it('[H-31] emojis con tono de piel (👍🏽) se quitan completos: hoy queda el modificador suelto', () => {
     expect(aGuionVoz('Hola 👨‍👩‍👧 amigos 👍🏽 felices')).toBe('Hola amigos felices.')
   })
 })

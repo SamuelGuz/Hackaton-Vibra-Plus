@@ -27,7 +27,7 @@ export function armarExterno(
     ? crearLlmConRespaldo(gemini, { apiKey: env.OPENROUTER_API_KEY, modelo: env.OPENROUTER_MODEL || 'google/gemini-2.5-flash', fetch: opciones.fetchRespaldo })
     : gemini
   const datos = () => deps.repo.hoy(deps.ahora())
-  const rag = crearRag({ datos, llm, ahora: deps.ahora })
+  const rag = crearRag({ datos, llm, ahora: deps.ahora, catalogoDemo: env.CATALOGO_DEMO !== 'apagado', basePublica: env.PUBLICO_API_URL ?? env.BOT_PUBLIC_URL ?? env.API_PUBLICA_URL })
   const whatsappPublico = soloDigitos(env.WA_NUMERO_BOT)
   // Las campañas solo se envían si hay Resend o SMTP configurado; si no, se generan y se ven, pero no salen
   const config = leerConfigCorreo(env as NodeJS.ProcessEnv, env.PANEL_URL ?? '', whatsappPublico)

@@ -22,31 +22,31 @@ describe('texto vacío, emojis y texto enorme', () => {
     it(`[M-01] el mensaje en blanco ${JSON.stringify(vacio)} no gasta Gemini y pide texto o nota de voz`, async () => {
       await e.escribir(vacio)
       expect(e.t.llm.llamadas).toHaveLength(0)
-      expect(e.alTelefono(TEL)).toEqual([textosAgente.soloTextoOVoz])
+      expect(e.alTelefono(TEL)[0]).toMatch(/^Gracias por escribirme.*datos personales/s)
     })
   }
 
   it('[M-02] un botón con título vacío se trata como mensaje vacío (no llama a Gemini)', async () => {
     await e.escribir({ tipo: 'boton', id: 'x', titulo: '' })
     expect(e.t.llm.llamadas).toHaveLength(0)
-    expect(e.alTelefono(TEL)).toEqual([textosAgente.soloTextoOVoz])
+    expect(e.alTelefono(TEL)[0]).toMatch(/^Gracias por escribirme.*datos personales/s)
   })
 
   it('[M-03] solo emojis (🐶🐶💛) llegan al modelo como un mensaje normal y se responde', async () => {
     e.t.llm.responder(crudo({ respuesta: 'Qué ternura 🐶' }))
     await e.escribir('🐶🐶💛')
     expect(e.t.llm.llamadas[0].mensajes.at(-1)!.texto).toBe('🐶🐶💛')
-    expect(e.alTelefono(TEL)).toEqual(['Qué ternura 🐶'])
+    expect(e.alTelefono(TEL)[0]).toMatch(/^Qué ternura 🐶.*datos personales/s)
   })
 
   it('[M-04] un texto de 10.000 caracteres no rompe nada: Gemini recibe 1000 y la respuesta se manda', async () => {
     e.t.llm.responder(crudo({ respuesta: 'Te leo' }))
     await e.escribir('x'.repeat(10_000))
     expect(e.t.llm.llamadas[0].mensajes.at(-1)!.texto.length).toBe(1000)
-    expect(e.alTelefono(TEL)).toEqual(['Te leo'])
+    expect(e.alTelefono(TEL)[0]).toMatch(/^Te leo.*datos personales/s)
   })
 
-  brecha('[M-05] si el texto se recortó a 1000 caracteres, la persona se entera (hoy se pierde en silencio)', async () => {
+  it('[M-05] si el texto se recortó a 1000 caracteres, la persona se entera', async () => {
     e.t.llm.responder(crudo({ respuesta: 'Te leo' }))
     await e.escribir('x'.repeat(5_000))
     expect(e.alTelefono(TEL).join('\n')).toMatch(/largo|resum|cort/i)
@@ -65,22 +65,23 @@ describe('audio', () => {
     expect(e.alTelefono(TEL).at(-1)).toBe(textosAgente.audioLargo)
   })
 
-  brecha('[M-07] un audio de 0 bytes se rechaza con "no alcancé a escuchar" sin gastar Gemini', async () => {
+  it('[M-07] un audio de 0 bytes se rechaza con "no alcancé a escuchar" sin gastar Gemini', async () => {
     e.t.llm.responder(crudo())
     e.t.wa.descargar = async () => ({ datos: Buffer.alloc(0), mime: 'audio/ogg' })
     await e.escribir(audio)
     expect(e.t.llm.llamadas).toHaveLength(0)
-    expect(e.alTelefono(TEL)).toEqual([textosAgente.audioNoLlego])
+    expect(e.alTelefono(TEL)[0]).toMatch(/^No alcancé a escuchar.*datos personales/s)
   })
 
-  brecha('[M-08] si Meta devuelve un tipo que no es audio (pdf/video), no se manda a Gemini como si lo fuera', async () => {
+  it('[M-08] si Meta devuelve un tipo que no es audio (pdf/video), no se manda a Gemini como si lo fuera', async () => {
     e.t.llm.responder(crudo())
     e.t.wa.descargar = async () => ({ datos: Buffer.from('%PDF-1.4'), mime: 'application/pdf' })
     await e.escribir(audio)
     expect(e.t.llm.llamadas).toHaveLength(0)
+    expect(e.alTelefono(TEL).join('\n')).toMatch(/audio|escuchar/i)
   })
 
-  brecha('[M-09] si la descarga del audio se cuelga (Meta no responde), la persona recibe algo antes de 2 minutos', async () => {
+  it('[M-09] si la descarga del audio se cuelga (Meta no responde), la persona recibe algo antes de 2 minutos', async () => {
     vi.useFakeTimers()
     e.t.wa.descargar = () => new Promise(() => {})
     void e.escribir(audio)
@@ -103,7 +104,7 @@ describe('imágenes, stickers y ubicaciones', () => {
   it('[M-15] ubicación, sticker o contacto (tipo "otro") piden texto o nota de voz', async () => {
     await e.escribir({ tipo: 'otro' })
     expect(e.t.llm.llamadas).toHaveLength(0)
-    expect(e.alTelefono(TEL)).toEqual([textosAgente.soloTextoOVoz])
+    expect(e.alTelefono(TEL)[0]).toMatch(/^Gracias por escribirme.*datos personales/s)
   })
 
   it('[M-16] una foto sola se lee una sola vez (para ver si es un comprobante de donación)', async () => {

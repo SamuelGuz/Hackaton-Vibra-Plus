@@ -1,6 +1,7 @@
 // Recepción por botones para quien escribe de afuera: menú (adoptar, donar, saber más), la web una sola vez,
 // adoptar en 3 toques y el nombre, y los datos de donación a la vista. Lo que la persona escribe con sus palabras
 // lo sigue respondiendo la IA (agente.ts). Solo WhatsApp: la llamada de la web no tiene botones.
+import { crearSalidaCatalogo } from '../catalogo/index.js'
 import { CONOCIMIENTO } from '../rag/conocimiento-data.js'
 import type { ContextoExterno, PerritoPublico } from '../rag/tipos.js'
 import type { Deps, Fila, Salida } from '../tipos.js'
@@ -8,8 +9,6 @@ import { proponerVisita } from './agente.js'
 import { combinarEvaluacion, puedeAgendarVisita } from './decisiones.js'
 import { PADRINAZGO_DESDE, textosAgente } from './textos.js'
 import type { EvaluacionParcial, Formulario, Sesion } from './tipos.js'
-
-const MAX_ANIMALES_LISTA = 10
 
 /** Lo que necesita la recepción para contestar un mensaje */
 export interface Recepcion {
@@ -79,20 +78,37 @@ function recordar(r: Recepcion, persona: string, respuesta: string) {
 const tamano = { pequeno: 'pequeño', mediano: 'mediano', grande: 'grande' } as const
 const emoji = (p: PerritoPublico) => (p.especie === 'gato' ? '🐱' : '🐶')
 
-async function enviarLista(r: Recepcion): Promise<void> {
-  const animales = (await r.ctx.rag.listar({ limite: 30 })).filter((p) => p.adoptable).slice(0, MAX_ANIMALES_LISTA)
+export function pideCatalogo(texto: string): boolean {
+  return /(?:interesad[oa].*(?:animalitos|animales|peluditos)|(?:ver|mostrar|muestrame|conocer|catalogo).*(?:animales|perritos|gatos|peluditos)|^(?:ver otros|otros|mas animales|mas perritos|quiero adoptar)$)/.test(normal(texto))
+}
+
+const mostrados = new WeakMap<Sesion, Set<string>>()
+
+export async function enviarLista(r: Recepcion, consulta?: string): Promise<void> {
+  const mas = consulta && /\b(otros|otras|mas)\b/.test(normal(consulta))
+  const consultaReal = mas ? undefined : consulta
+  const candidatos = consultaReal ? (await r.ctx.rag.buscar(consultaReal, 5)).resultados.map(x => x.perrito) : await r.ctx.rag.listar({ limite: 5 })
+  const vistos = mostrados.get(r.sesion) ?? new Set<string>()
+  if (!mas) vistos.clear()
+  const animales = candidatos.filter(p => !vistos.has(p.id)).slice(0, 3)
   if (!animales.length) {
-    await r.enviar({ tipo: 'botones', texto: textosAgente.sinAnimales, botones: [BOTONES_MENU[1], { id: 'ext:duda', titulo: '❓ Tengo una duda' }] })
+    await r.enviar({ tipo: 'texto', texto: mas ? 'Ya viste los animalitos que tengo disponibles por aquí. ¿De cuál quieres saber más?' : 'Ahora mismo no tengo peluditos para mostrarte por aquí. ¿Quieres que revisemos otras formas de ayudar?' })
     return
   }
-  const filas: Fila[] = animales.map((p) => ({
-    id: `ext:a:${p.id}`,
-    titulo: `${emoji(p)} ${p.nombre}`.slice(0, 24),
-    descripcion: [p.edadTexto, tamano[p.tamano], ...p.personalidad.slice(0, 2)].join(' · ').slice(0, 72),
-  }))
-  const texto = [textosAgente.lista, lineaWeb(r)].filter(Boolean).join('\n\n')
-  await r.enviar({ tipo: 'lista', texto, boton: 'Ver peluditos', filas })
-  recordar(r, '(quiere adoptar)', texto)
+  let imagen: Salida
+  try {
+    imagen = await crearSalidaCatalogo(animales, html => r.deps.dibujar(html))
+  } catch (error) {
+    console.error('No se pudo dibujar el catálogo; se ofrece alternativa de texto:', error)
+    imagen = { tipo: 'texto', texto: `No pude cargar la imagen ahora, pero puedes conocer a ${animales.map(p => p.nombre).join(', ')}` }
+  }
+  const presentacion = 'Te presento algunos peluditos que puedes conocer 🐾 Cada uno tiene su propia historia'
+  await r.enviar({ tipo: 'texto', texto: presentacion })
+  await r.enviar(imagen)
+  await r.enviar({ tipo: 'texto', texto: '¿Cuál te gustaría conocer mejor?' })
+  animales.forEach(p => vistos.add(p.id))
+  mostrados.set(r.sesion, vistos)
+  recordar(r, '(quiere conocer animales)', presentacion + ' ' + animales.map(p => p.nombre).join(', '))
 }
 
 function ficha(p: PerritoPublico): string {
@@ -131,35 +147,15 @@ export function enviarDonacion(r: Recepcion, perro?: PerritoPublico | null): Pro
   return enviarDonar(r, perro)
 }
 
-function enviarDonar(r: Recepcion, perro?: PerritoPublico | null): Promise<void> {
-  r.sesion.donacionMostrada = true
+async function enviarDonar(r: Recepcion, perro?: PerritoPublico | null): Promise<void> {
   const d = r.ctx.donaciones ?? {}
-  const plata = [
-    d.nequi && `• Nequi: ${d.nequi}`,
-    d.llave && `• Llave Bre-B: ${d.llave}`,
-    d.cuenta && `• ${d.cuenta}`,
-  ].filter(Boolean) as string[]
-  const partes = [
-    perro ? textosAgente.apadrinarA(perro.nombre) : textosAgente.graciasDonar,
-    plata.length
-      ? `*Para donar plata:*\n${plata.join('\n')}${d.titular ? `\nA nombre de: ${d.titular}` : ''}`
-      : textosAgente.plataPorChat,
-    d.telefono ? `*Para donar comida o insumos:* escríbenos o llama al ${d.telefono} y coordinamos la entrega.` : textosAgente.comidaPorChat,
-    `🐾 *Apadrinar* a un peludito cuesta desde ${PADRINAZGO_DESDE} al mes.`,
-    textosAgente.mandaComprobante,
-    lineaWeb(r) ?? (r.ctx.sitioWeb ? `🌐 ${r.ctx.sitioWeb}` : null),
-  ].filter(Boolean)
-  const texto = partes.join('\n\n')
-  recordar(r, perro ? `(quiere apadrinar a ${perro.nombre})` : '(quiere donar)', texto)
-  return r.enviar({
-    tipo: 'botones',
-    texto,
-    botones: [
-      { id: 'ext:comprobante', titulo: '🧾 Ya doné' },
-      { id: 'ext:adoptar', titulo: '🐶 Adoptar' },
-      { id: 'ext:duda', titulo: '❓ Tengo una duda' },
-    ],
-  })
+  const cuentas = [d.nequi && 'Nequi: ' + d.nequi, d.llave && 'Llave Bre-B: ' + d.llave, d.cuenta, d.titular && 'Titular: ' + d.titular].filter(Boolean).join('; ')
+  await r.enviar({ tipo: 'texto', texto: perro ? 'Puedes apadrinar a ' + perro.nombre + ' desde ' + PADRINAZGO_DESDE + ' al mes. El equipo te ayuda con el proceso' : 'Tu ayuda puede convertirse en comida y cuidados para los peluditos. Puedes donar dinero o insumos' })
+  await r.enviar({ tipo: 'texto', texto: cuentas || 'No tengo datos de pago confirmados por aquí. El equipo debe compartirlos antes de que hagas la donación' })
+  const contacto = d.telefono ? 'Para comida o insumos puedes coordinar al ' + d.telefono + '. ' : ''
+  await r.enviar({ tipo: 'botones', texto: contacto + 'Si ya donaste, envía la foto del comprobante para revisión del equipo. La donación queda pendiente de confirmación humana', botones: [{ id: 'ext:comprobante', titulo: 'Ya doné' }, { id: 'ext:adoptar', titulo: 'Adoptar' }, { id: 'ext:duda', titulo: 'Tengo una duda' }] })
+  r.sesion.donacionMostrada = true
+  recordar(r, '(quiere ayudar)', cuentas || 'Datos pendientes del equipo')
 }
 
 /** "Saber más": qué es el refugio, horarios y visitas, tomado de la base de conocimiento (no se inventa nada) */
@@ -180,7 +176,7 @@ function enviarInfo(r: Recepcion): Promise<void> {
 
 const PREGUNTAS = {
   vivienda: {
-    texto: (perro: string) => `¡Qué bonito! ${perro} se pondría feliz 💛 Son solo 3 preguntas rapiditas.\n\n¿Dónde viviría ${perro}?`,
+    texto: (perro: string) => `Vamos a revisar algunos cuidados para ${perro}. ¿Dónde viviría?`,
     botones: [
       { id: 'ext:f:v:propia', titulo: '🏠 Vivienda propia' },
       { id: 'ext:f:v:arriendo', titulo: '🔑 Arriendo, me dejan' },

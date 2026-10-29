@@ -10,7 +10,7 @@ export interface SolicitudGuardada extends Solicitud {
   origen: OrigenSolicitud
   /** ISO. Es una propuesta del agente: falta que la coordinación la confirme */
   visitaPropuesta: string | null
-  visitaEstado: 'propuesta' | null
+  visitaEstado: 'propuesta' | 'retractada' | 'cancelada' | 'cambio_solicitado' | null
   puntajeIdoneidad: number | null
   puntajeRiesgo: number | null
 }

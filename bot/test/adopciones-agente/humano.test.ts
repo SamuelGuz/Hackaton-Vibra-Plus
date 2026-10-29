@@ -35,8 +35,11 @@ const texto = (s: string) => ({ tipo: 'texto' as const, texto: s })
 describe('agente con quien quiere adoptar', () => {
   it('marca leído y muestra "escribiendo…" apenas llega, espera y después responde', async () => {
     await atenderInteresadoExterno(t.deps, TEL, texto('cuéntame de los peluditos'), t.ctx, { mensajeId: 'wamid.ABC' })
-    const respuesta = 'Mira, te cuento la historia de Toby. Lo encontraron bajo un puente 🐶'
-    expect(pasos).toEqual(['escribiendo wamid.ABC', `pausa ${pausaParaEscribir(respuesta, 0)}`, 'enviar'])
+    // El primer envío a una persona nueva lleva el aviso de privacidad; la pausa se calcula sobre el texto que realmente sale
+    const enviado = t.wa.enviados[0].salida
+    const textoEnviado = enviado.tipo === 'texto' ? enviado.texto : ''
+    expect(textoEnviado).toContain('Mira, te cuento la historia de Toby')
+    expect(pasos).toEqual(['escribiendo wamid.ABC', `pausa ${pausaParaEscribir(textoEnviado, 0)}`, 'enviar'])
   })
 
   it('la pausa depende del largo y descuenta lo que ya tardó en pensar', () => {

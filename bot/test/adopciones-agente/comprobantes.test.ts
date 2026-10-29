@@ -6,7 +6,7 @@ import { atenderInteresadoExterno } from '../../src/adopciones-agente/index.js'
 import { atender } from '../../src/conversacion/atender.js'
 import type { Entrada, Usuario } from '../../src/tipos.js'
 import { CAROLINA, LUIS } from '../fakes.js'
-import { crudo, montar, silenciarConsola, TEL } from './ayudas.js'
+import { crudo, enviadosSinAviso, montar, silenciarConsola, TEL } from './ayudas.js'
 
 const MARIA: Usuario = { id: 4, nombre: 'María', rol: 'adopciones', telefono: '573000000004' }
 const foto = (texto?: string): Entrada => ({ tipo: 'imagen', mediaId: 'img-cpb', mime: 'image/jpeg', ...(texto ? { texto } : {}) })
@@ -26,9 +26,22 @@ beforeEach(async () => {
 afterEach(() => vi.restoreAllMocks())
 
 const mandar = (e: Entrada) => atenderInteresadoExterno(t.deps, TEL, e, t.ctx)
-const a = (tel: string) => t.wa.enviados.filter((x) => x.telefono === tel).map((x) => x.salida)
+const a = (tel: string) => enviadosSinAviso(t.wa.enviados).filter((x) => x.telefono === tel).map((x) => x.salida)
 
 describe('llega un comprobante de alguien de afuera', () => {
+  it('si falla el aviso a administración no afirma que lo entregó ni que la donación llegó', async () => {
+    t.llm.responder(NEQUI)
+    const enviar = t.wa.enviar.bind(t.wa)
+    t.wa.enviar = async (tel, salida) => {
+      if (tel === CAROLINA.telefono) throw new Error('fuera de ventana')
+      return enviar(tel, salida)
+    }
+    await mandar(foto())
+    const respuesta = a(TEL).map(s => s.texto).join(' ')
+    expect(respuesta).not.toMatch(/ya le avis[eé]|se la pas[eé]/i)
+    expect(respuesta).toMatch(/pendiente|no pude/i)
+    expect(t.repo.registros[0].estadoActual).toBe('por_confirmar')
+  })
   it('se lee, se le agradece con el valor y la administración recibe la foto con "¿Te llegó?"', async () => {
     t.llm.responder(NEQUI)
     await mandar(foto())

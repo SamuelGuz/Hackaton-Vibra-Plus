@@ -2,7 +2,8 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { citasDeHoy, enviarResumenMatutino } from '../src/conversacion/informe.js'
 import { vacunasPorVencer } from '../src/datos/calculos.js'
-import { revisarDespertador, telefonosDelResumen, tocaResumen } from '../src/scheduler.js'
+import { atender } from '../src/conversacion/atender.js'
+import { revisarDespertador, revisarRecordatorioTarde, telefonosDelResumen, tocaResumen } from '../src/scheduler.js'
 import { AHORA, ANDREA, CAROLINA, crearDeps, datosDePrueba, LUIS } from './fakes.js'
 
 /** Martes 27 de octubre, a la hora que se pida (Bogotá) */
@@ -108,6 +109,65 @@ describe('enviarResumenMatutino(deps, telefono)', () => {
     expect(todo).not.toContain('311 555')
     expect(todo).not.toContain('caja')
     expect(todo).toContain('Un interesado')
+  })
+})
+
+describe('la lista "Para hoy" de la mañana', () => {
+  it('le recuerda dar de comer a los animales que hay, las medicinas con su hora y mandar audios', async () => {
+    const t = crearDeps()
+    t.repo.ahora = a('07:00')
+    await enviarResumenMatutino(t.deps, CAROLINA.telefono)
+    const lista = t.wa.enviados.map((x) => x.salida.texto).find((x) => x.includes('Para hoy')) ?? ''
+    // En los datos de prueba: Tobías y Mateo (perros) y Luna (gata) están a cargo del refugio
+    expect(lista).toContain('Servir la comida: 2 perros y 1 gato')
+    expect(lista).toContain('8:00 a. m. Mateo · Amoxicilina 3 ml')
+    expect(lista).toContain('2:00 p. m. Tobías · Fenobarbital 1 pastilla')
+    // Perro: 3 bultos × 25 kg / 16,875 kg al día ≈ 4 días: toca pedir
+    expect(lista).toMatch(/comida de perro alcanza para \*4 días\*.*toca pedir/i)
+    expect(lista).toMatch(/mándame un audio/i)
+  })
+})
+
+describe('el recordatorio de la tarde', () => {
+  it('a las 7:00 p. m., a quien no ha contado nada hoy le pide la actualización y le dice qué medicinas faltan', async () => {
+    const t = crearDeps()
+    t.repo.ahora = a('18:59')
+    expect(await revisarRecordatorioTarde(t.deps, async () => [CAROLINA.telefono])).toBe(0)
+    t.repo.ahora = a('19:05')
+    expect(await revisarRecordatorioTarde(t.deps, async () => [CAROLINA.telefono])).toBe(1)
+    const m = t.wa.ultimoTexto()
+    expect(m).toMatch(/hoy no me has contado nada/i)
+    expect(m).toContain('8:00 p. m. Mateo · Amoxicilina')
+    expect(t.wa.opciones()).toEqual(['menu'])
+    // Una sola vez por día
+    t.repo.ahora = a('19:30')
+    expect(await revisarRecordatorioTarde(t.deps, async () => [CAROLINA.telefono])).toBe(0)
+  })
+
+  it('si ya contó cosas hoy pero faltan medicinas, solo le recuerda esas', async () => {
+    const t = crearDeps()
+    t.repo.ahora = a('14:05')
+    await atender(t.deps, CAROLINA, { tipo: 'boton', id: 'd:100:14:00', titulo: '' })
+    await atender(t.deps, CAROLINA, { tipo: 'boton', id: 'si:1', titulo: '' })
+    t.repo.ahora = a('19:05')
+    t.wa.limpiar()
+    await revisarRecordatorioTarde(t.deps, async () => [CAROLINA.telefono])
+    const m = t.wa.ultimoTexto()
+    expect(m).not.toMatch(/no me has contado nada/i)
+    expect(m).toMatch(/faltan estas medicinas/i)
+    expect(m).not.toContain('Tobías')
+  })
+
+  it('si ya contó cosas y no falta nada, no la molesta', async () => {
+    const t = crearDeps()
+    t.repo.datos.tratamientos = []
+    t.repo.ahora = a('10:00')
+    t.ia.responder({ transcripcion: 'Luna comió bien', acciones: [{ tipo: 'nota', animalId: '12', texto: 'Comió bien' }], confianza: 0.95 })
+    await atender(t.deps, CAROLINA, { tipo: 'audio', mediaId: 'a1', mime: 'audio/ogg' })
+    t.repo.ahora = a('19:05')
+    t.wa.limpiar()
+    expect(await revisarRecordatorioTarde(t.deps, async () => [CAROLINA.telefono])).toBe(0)
+    expect(t.wa.enviados).toHaveLength(0)
   })
 })
 

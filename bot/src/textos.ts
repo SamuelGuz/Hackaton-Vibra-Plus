@@ -117,6 +117,11 @@ export const textos = {
   // Resumen de la mañana (7:00)
   buenosDias: (nombre: string) => `🌅 Buenos días, ${nombre}. Esto es lo de hoy 👆`,
   vacunasTitulo: '💉 Vacunas que vencen esta semana:',
+  recordatorioAudios: '📲 Cada vez que hagas algo, mándame un audio cortico y lo anoto. En la tarde te recuerdo mandar la actualización del día 🐾',
+  tardeSinNoticias: (nombre: string) =>
+    `🌙 ${nombre}, hoy no me has contado nada. ¿Me mandas un audio con lo que pasó hoy? Medicinas, comida y cómo están los peluditos 🐾`,
+  tardeFaltanMedicinas: (nombre: string, dosis: string) =>
+    `🌙 ${nombre}, antes de cerrar el día: faltan estas medicinas:\n${dosis}\n\nSi ya las diste, mándame un audio y las anoto 🐾`,
 
   // Comprobantes de donación que manda alguien de afuera
   comprobanteSoloAdmin: 'Los comprobantes de donación los confirma la administración 🔒',

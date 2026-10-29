@@ -40,6 +40,8 @@ A las **7:00 a. m.** (hora de Bogotá) el bot manda, sin que nadie lo pida, una 
 - Si el bot estaba apagado a las 7, lo manda al prender, hasta las 11. Sale una vez por día aunque haya dos copias del bot (el día queda en `config`).
 - WhatsApp solo deja escribirle primero a quien le escribió al bot en las últimas 24 horas. Si no, Meta lo rechaza y queda en el registro del bot.
 - Una vacuna es un `eventos_salud` de tipo `vacuna`, con la fecha del refuerzo en `valor` (AAAA-MM-DD).
+- Con la foto llega la lista **Para hoy**: servir la comida (cuántos perros y gatos hay), las medicinas con su hora, si toca pedir comida y lo pendiente en el panel.
+- A las **7:00 p. m.** (hasta las 9) llega un recordatorio a esas mismas personas: a quien no ha contado nada en el día le pide la actualización; a quien sí, le dice qué medicinas faltan. Si no falta nada, no escribe.
 
 Todas las frases están en [`src/textos.ts`](src/textos.ts), para ajustar el tono sin tocar la lógica.
 

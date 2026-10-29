@@ -18,6 +18,7 @@ import type { Deps, Estado, Salida } from '../tipos.js'
 import { preguntarAlgoMas } from './confirmar.js'
 import { puedeVerPlata, type Ctx } from './ctx.js'
 import { sinTildes } from './numeros.js'
+import { listaParaHoy } from './recordatorios.js'
 import { botonesDeSeguimiento, listaDeHoy, pendientes as pendientesSeguimiento } from './seguimientos.js'
 
 const DESCRIPCION: Record<TipoInforme, string> = {
@@ -135,6 +136,9 @@ export async function enviarResumenMatutino(deps: Deps, telefono: string): Promi
   })
   if (png) await enviar({ tipo: 'imagen', png, texto: saludo })
   else await enviar({ tipo: 'texto', texto: `${saludo}\n\n${textoDelDia(d, ahora, citas)}` })
+
+  // Lo que toca hacer hoy, como lista para leer de una
+  await enviar({ tipo: 'texto', texto: listaParaHoy(d, ahora) })
 
   const vacunas = vacunasPorVencer(d, ahora)
   if (vacunas.length) {

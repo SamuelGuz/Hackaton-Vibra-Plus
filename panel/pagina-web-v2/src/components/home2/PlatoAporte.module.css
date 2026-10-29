@@ -1,0 +1,13 @@
+.plato { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: var(--movil-hueco); margin-block: var(--esp-3); padding: var(--esp-3); background: var(--superficie-verde); border-radius: var(--radio-lg); }
+.plato svg { width: 100%; max-height: 9rem; }
+.plato p { display: grid; gap: var(--esp-1); margin: 0; color: var(--tinta); }
+.plato p span { font-size: var(--texto-xs); }
+.plato strong { font-size: var(--texto-xl); font-variant-numeric: tabular-nums; }
+.plato small { grid-column: 1 / -1; font-size: var(--texto-xs); color: var(--tinta-2); }
+.base { fill: var(--regla); }
+.cuenco { fill: var(--verde); }
+.borde { fill: var(--verde-hover); }
+.interior { fill: var(--fondo); }
+.comida, .grano { fill: var(--verde); transition: y 240ms ease-out, height 240ms ease-out, cy 240ms ease-out; }
+.marca { stroke: var(--fondo); stroke-width: 4; stroke-linecap: round; }
+@media (prefers-reduced-motion: reduce) { .comida, .grano { transition: none; } }

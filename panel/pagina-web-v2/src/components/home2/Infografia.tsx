@@ -260,7 +260,7 @@ function LlenaUnPlato() {
               ))}
             </fieldset>
             <Link ref={boton} href={`/aportar?monto=${monto}`} className={s.botonGrande} onClick={() => lanzarDesde(boton.current, 4)}>Aportar {pesos(monto)}</Link>
-            <p className={s.microcopy}>Te llevamos a la página de aporte. Los canales de pago están por confirmar.</p>
+            <p className={s.microcopy}>Elige un valor y continúa para ver cómo donar por Nequi. Número y titular por confirmar.</p>
           </div>
         </div>
       </div>

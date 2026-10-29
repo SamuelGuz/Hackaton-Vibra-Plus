@@ -234,6 +234,27 @@ html[data-hero='5'] {
 }
 
 /* Reduced motion: keep opacity and colour, drop travel, scale and long durations. */
+:root {
+  --movil-hueco: 0.625rem;
+  --movil-texto: 0.875rem;
+  --movil-titulo: 1.75rem;
+  --movil-seccion: 2.5rem;
+  /* Shared identity: supplied floating navigation and layered footer. */
+  --marca-tinta: #14201a;
+  --marca-suave: #58655e;
+  --marca-verde: #1f5a3a;
+  --marca-blanco: #ffffff;
+  --marca-fondo: #f0f2f0;
+  --marca-superficie: #edf2ee;
+  --marca-exterior: #e5e9e5;
+  --marca-borde: #d9dfd9;
+  --marca-cristal: rgb(255 255 255 / 0.92);
+  --marca-relieve: #f5f7f5;
+  --marca-sombra-tinta: #14201a;
+  --marca-sombra: 0 8px 32px rgb(20 32 26 / 0.08);
+  --marca-sombra-corta: 0 1px 2px rgb(20 32 26 / 0.05);
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root {
     --dur-revelar: 1ms;

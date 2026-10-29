@@ -13,7 +13,5 @@ export function waUrl(texto: string): string | null {
 /** Datos de pago: todos por confirmar. Si `valor` llega a tener contenido, la UI ofrece copiarlo. */
 export const DATOS_PAGO: { etiqueta: string; valor: string | null }[] = [
   { etiqueta: 'Nequi', valor: null },
-  { etiqueta: 'Daviplata', valor: null },
-  { etiqueta: 'Cuenta', valor: null },
   { etiqueta: 'Titular', valor: null },
 ]

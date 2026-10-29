@@ -1,6 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useLayoutEffect, useRef, useSyncExternalStore } from 'react'
 import { useReducedMotion } from 'motion/react'
-import Boton from '../../componentes/Boton'
 import { historia } from '../../contenido/historia'
 import styles from './HeroWild.module.css'
 
@@ -18,21 +17,16 @@ function subscribeDataPreference(onChange: () => void) {
 const readDataPreference = () => dataConnection()?.saveData === true
 const serverDataPreference = () => false
 
-export default function HeroWild() {
+export default function HeroWild({ siguiente = '#ella' }: { siguiente?: string }) {
   const reduce = useReducedMotion() === true
   // Server rendering has no navigator; the server snapshot also keeps hydration stable.
   const saveData = useSyncExternalStore(subscribeDataPreference, readDataPreference, serverDataPreference)
-  const [paused, setPaused] = useState(false)
-  const [replaying, setReplaying] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
   const rowRef = useRef<HTMLDivElement>(null)
   const pillRef = useRef<HTMLDivElement>(null)
-  const navRef = useRef<HTMLElement>(null)
   const footerRef = useRef<HTMLDivElement>(null)
   const paperRef = useRef<HTMLDivElement>(null)
   const lineRef = useRef<HTMLSpanElement>(null)
-  const iconsRef = useRef<HTMLDivElement>(null)
-  const ruleRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const animations = useRef<Animation[]>([])
   const copy = historia.heroWild
@@ -47,7 +41,7 @@ export default function HeroWild() {
       animations.current.forEach(animation => animation.cancel())
       const mobile = matchMedia('(max-width: 45em)').matches
       const fs = parseFloat(getComputedStyle(row).fontSize)
-      const finalWidth = mobile ? section.getBoundingClientRect().width - 40 : fs * 3.62
+      const finalWidth = mobile ? row.getBoundingClientRect().width : fs * 3.62
       const finalHeight = mobile ? finalWidth / 1.85 : fs * 1.81
       const dimension = mobile ? 'height' : 'width'
       const final = mobile ? finalHeight : finalWidth
@@ -72,10 +66,7 @@ export default function HeroWild() {
       animate(row, [{ gap: `${fs * 0.026}px`, offset: 0 }, { gap: `${fs * 0.026}px`, offset: 0.14 }, { gap: `${fs * 0.05}px`, offset: 0.58 }, { gap: `${fs * (mobile ? 0.1 : 0.085)}px`, offset: 1 }])
       animate(lineRef.current, [{ opacity: 1, offset: 0 }, { opacity: 1, offset: 0.14 }, { opacity: 0, offset: 0.3 }, { opacity: 0, offset: 1 }])
       animate(paperRef.current, [{ opacity: 0, offset: 0 }, { opacity: 0, offset: 0.45 }, { opacity: 1, offset: 0.78 }, { opacity: 1, offset: 1 }])
-      animate(navRef.current, [{ transform: 'translateY(-140%)', opacity: 0, offset: 0 }, { transform: 'translateY(-140%)', opacity: 0, offset: 0.5, easing: 'cubic-bezier(.2,.8,.2,1)' }, { transform: 'none', opacity: 1, offset: 0.86 }, { transform: 'none', opacity: 1, offset: 1 }])
       animate(footerRef.current, [{ transform: 'translateY(160%)', opacity: 0, offset: 0 }, { transform: 'translateY(160%)', opacity: 0, offset: 0.52, easing: 'cubic-bezier(.2,.8,.2,1)' }, { transform: 'none', opacity: 1, offset: 0.9 }, { transform: 'none', opacity: 1, offset: 1 }])
-      animate(ruleRef.current, [{ transform: 'scaleX(0)', offset: 0 }, { transform: 'scaleX(0)', offset: 0.4 }, { transform: 'scaleX(1)', offset: 0.95 }, { transform: 'scaleX(1)', offset: 1 }])
-      animate(iconsRef.current, [{ opacity: 0, offset: 0 }, { opacity: 0, offset: 0.8 }, { opacity: 1, offset: 1 }])
       return animations.current
     }
     createTimeline()
@@ -107,7 +98,7 @@ export default function HeroWild() {
     if (!section || !video || reduce || saveData) return
     let visible = true
     const sync = () => {
-      if (visible && !document.hidden && !paused) void video.play().catch(() => {})
+      if (visible && !document.hidden) void video.play().catch(() => {})
       else video.pause()
     }
     const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync() }, { threshold: 0.05 })
@@ -115,20 +106,7 @@ export default function HeroWild() {
     document.addEventListener('visibilitychange', sync)
     sync()
     return () => { observer.disconnect(); document.removeEventListener('visibilitychange', sync); video.pause() }
-  }, [paused, reduce, saveData])
-
-  async function replay() {
-    if (reduce || replaying || !animations.current.length) return
-    setReplaying(true)
-    const timeline = animations.current
-    timeline.forEach(animation => { animation.currentTime = DURATION; animation.playbackRate = -1; animation.play() })
-    await Promise.all(timeline.map(animation => animation.finished.catch(() => {})))
-    if (animations.current === timeline) {
-      timeline.forEach(animation => { animation.currentTime = 0; animation.playbackRate = 1; animation.play() })
-      await Promise.all(timeline.map(animation => animation.finished.catch(() => {})))
-    }
-    setReplaying(false)
-  }
+  }, [reduce, saveData])
 
   return (
     <section ref={sectionRef} id="top" className={styles.hero} aria-labelledby="wild-title">
@@ -137,10 +115,6 @@ export default function HeroWild() {
           {Array.from({ length: 15 }, (_, index) => <path key={index} d={`M ${-500 + index * 75} 1020 C ${300 + index * 25} 980, ${150 + index * 60} 370, ${810 + index * 60} -120`} strokeWidth={1.2 + index * 0.19} opacity={0.55 + (index % 4) * 0.1} />)}
         </svg>
       </div>
-      <nav ref={navRef} className={styles.nav} aria-label="Principal">
-        <div className={styles.links}><a href="/">Huellitas</a><a href="/historia">Su historia</a><a href="/adoptar">Adoptar</a><a href="/aportar">Donar</a></div>
-        <span className={styles.location}>Rescate de perros y gatos · Colombia</span>
-      </nav>
       <h1 id="wild-title" className="visually-hidden">{copy.title}</h1>
       <div ref={rowRef} className={styles.word}>
         <span className={styles.half} aria-hidden="true">AD</span>
@@ -153,23 +127,16 @@ export default function HeroWild() {
               </video>}
           </div>
           <span ref={lineRef} className={styles.hairline} aria-hidden="true" />
-          <div ref={iconsRef} className={styles.icons}>
-            <svg className={styles.heart} viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 5.7a5 5 0 0 0-7.1 0L12 7.1l-1.4-1.4a5 5 0 0 0-7.1 7.1L12 21l8.5-8.2a5 5 0 0 0 0-7.1Z" /></svg>
-            {!reduce && !saveData && <button type="button" className={styles.pause} onClick={() => setPaused(value => !value)} aria-label={paused ? 'Reproducir video' : 'Pausar video'} aria-pressed={paused}>
-              <svg viewBox="0 0 24 24" aria-hidden="true">{paused ? <path d="m9 5 11 7-11 7Z" /> : <path d="M8 5v14M16 5v14" />}</svg>
-            </button>}
-          </div>
         </div>
         <span className={styles.half} aria-hidden="true">PTA</span>
       </div>
-      <p className={styles.statement}>{copy.statement}</p>
       <div ref={footerRef} className={styles.footer}>
-        <div className={styles.copy}><p>{copy.lead}</p><span>Video de referencia. No es una ficha de adopción.</span><a className={styles.secondaryLink} href="#dos-puertas">Si hoy no puedes adoptar, llena un plato</a></div>
-        <div ref={ruleRef} className={styles.rule} aria-hidden="true" />
-        <div className={styles.actions}>
-          {!reduce && <button type="button" className={styles.replay} onClick={() => void replay()} disabled={replaying} aria-busy={replaying}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6" /></svg><span>Volver a mirar</span></button>}
-          <Boton href="#ella">{copy.cta}</Boton>
+        <div className={styles.copy}>
+          <p className={styles.statement}>{copy.statement}</p>
+          <p className={styles.lead}>{copy.lead}</p>
+          <span>Video de referencia. No es una ficha de adopción.</span>
         </div>
+        <a className={styles.scrollCue} href={siguiente}><span>{copy.cta}</span><span className={styles.scrollArrow} aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v16m-6-6 6 6 6-6" /></svg></span></a>
       </div>
     </section>
   )

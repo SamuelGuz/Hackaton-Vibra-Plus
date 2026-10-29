@@ -88,7 +88,12 @@
 /* Mobile: one 4-column grid; blocks span 4 or 2 so nothing overlaps or clips at 375px. */
 @media (max-width: 40em) {
   .historia .columnas, .historia .tiempo { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; }
-  .historia .columnas > * { grid-column: span 4; }
+  .historia .columnas > * { grid-column: span 2; min-width: 0; padding: var(--esp-2); }
+  .historia .columnaTitulo { display: grid; justify-items: start; gap: var(--esp-2); font-size: var(--texto-base); }
+  .historia .lista li { grid-template-columns: minmax(0, 1fr); gap: var(--esp-1); }
+  .historia .lista strong { font-size: var(--texto-base); }
+  .historia .lista li > span:last-child > span { font-size: var(--movil-texto); }
+  .historia .aperturaTexto h1 { font-size: var(--movil-titulo) !important; }
   .historia .comunidadGrid { gap: 0.75rem; }
 
   /* Timeline turns vertical: dot on the left, rail running down. */

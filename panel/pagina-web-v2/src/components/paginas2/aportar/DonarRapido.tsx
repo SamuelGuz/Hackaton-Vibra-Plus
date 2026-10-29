@@ -10,6 +10,7 @@ import { useAcciones } from '../../paginas/acciones'
 import { DATOS_PAGO, waUrl } from '../../paginas/config'
 import { copiarTexto } from '../../paginas/ui'
 import Abajo from './Abajo'
+import { PlatoAporte } from '../../home2/PlatoAporte'
 import { MONTOS, MONTO_DEFECTO, MONTO_MAX, MONTO_MIN, esMontoFijo } from './monto'
 import s from './Aportar.module.css'
 
@@ -46,7 +47,7 @@ export default function DonarRapido({ montoInicial }: { montoInicial: number | n
   // Mobile bottom bar: appears only after scrolling past the main button, while still choosing.
   useEffect(() => {
     const el = boton.current
-    if (!el || paso !== 'elegir' || typeof IntersectionObserver === 'undefined') { setBarra(false); return }
+    if (!el || paso !== 'elegir' || typeof IntersectionObserver === 'undefined') return
     const io = new IntersectionObserver(([e]) => setBarra(!e.isIntersecting && e.boundingClientRect.top < 0))
     io.observe(el)
     return () => io.disconnect()
@@ -99,9 +100,9 @@ export default function DonarRapido({ montoInicial }: { montoInicial: number | n
 
         <Abajo monto={valido ? monto : MONTO_DEFECTO} onDonar={volverArriba} />
 
-        <div className={`${s.barra} ${barra ? s.barraVisible : ''}`} aria-hidden={!barra}>
+        <div className={`${s.barra} ${barra && paso === 'elegir' ? s.barraVisible : ''}`} aria-hidden={!barra || paso !== 'elegir'}>
           <span>{valido ? pesos(monto) : 'Elige un valor'}</span>
-          <button type="button" tabIndex={barra ? 0 : -1} onClick={volverArriba}>Donar</button>
+          <button type="button" tabIndex={barra && paso === 'elegir' ? 0 : -1} onClick={volverArriba}>Donar</button>
         </div>
       </div>
     </div>
@@ -126,7 +127,7 @@ function Elegir({ monto, valido, otro, otroTexto, onFijo, onOtro, onEscribir, on
         <span>Tu aporte le llega directo a <strong>Yesenia</strong>, que cuida a decenas de perros y gatos casi sola.</span>
       </p>
 
-      <MisionMini monto={valido ? monto : 0} />
+      <PlatoAporte monto={valido ? monto : 0} />
 
       <form onSubmit={e => { e.preventDefault(); onDonar() }}>
         <fieldset className={`${h.montos} ${s.montos}`}>
@@ -159,10 +160,16 @@ function Elegir({ monto, valido, otro, otroTexto, onFijo, onOtro, onEscribir, on
         )}
 
         <button ref={boton} type="submit" className={`${h.botonGrande} ${s.donar}`} disabled={!valido}>
-          {valido ? `Donar ${pesos(monto)}` : 'Escribe un valor'}
+          {valido ? `Donar ${pesos(monto)} por Nequi` : 'Escribe un valor'}
         </button>
       </form>
       <p className={s.micro}>Sin registro y sin datos tuyos. Esta página no cobra: le pagas directo a Yesenia.</p>
+      <ol className={s.pasosNequi} aria-label="Cómo donar por Nequi">
+        <li><b>1</b><strong>Elige</strong><span>El valor que puedas.</span></li>
+        <li><b>2</b><strong>Envía por Nequi</strong><span>Al número confirmado de Yesenia.</span></li>
+        <li><b>3</b><strong>Avísale</strong><span>Comparte tu comprobante.</span></li>
+      </ol>
+      <MisionMini monto={valido ? monto : 0} />
     </>
   )
 }
@@ -212,7 +219,7 @@ function Pagar({ monto, titulo, onVolver, onListo }: {
     <>
       <button type="button" className={s.volver} onClick={onVolver}>Cambiar valor</button>
       <h1 ref={titulo} tabIndex={-1} className={`${h.titulo} ${s.h1}`}>Vas a donar <span className={s.valor}>{pesos(monto)}</span></h1>
-      <p className={s.pagarLead}>Envíalo directo a Yesenia por uno de estos medios. Toma un minuto.</p>
+      <p className={s.pagarLead}>Envíalo por Nequi, directo a Yesenia. Revisa el número y el titular antes de confirmar en tu aplicación.</p>
 
       <dl className={s.datos}>
         {DATOS_PAGO.map(d => <DatoPago key={d.etiqueta} etiqueta={d.etiqueta} valor={d.valor} />)}
@@ -266,17 +273,16 @@ function Gracias({ monto, titulo, onOtra }: { monto: number; titulo: React.RefOb
   const corazon = useRef<HTMLSpanElement>(null)
   const [muro, setMuro] = useState(false)
   const [apodo, setApodo] = useState('')
-  const [enlace, setEnlace] = useState('')
   const idApodo = useId()
 
   useEffect(() => {
-    setEnlace(`${window.location.origin}/aportar`)
     const t = window.setTimeout(() => lanzarDesde(corazon.current, 6), 250)
     return () => window.clearTimeout(t)
   }, [])
 
-  const textoCompartir = `Esta semana el refugio de Yesenia necesita llenar el plato. Yo ya ayudé, ¿te sumas? ${enlace}`
+  const textoCompartir = 'Esta semana el refugio de Yesenia necesita llenar el plato. Yo ya ayudé, ¿te sumas?'
   const compartir = () => {
+    const enlace = `${window.location.origin}/aportar`
     if (typeof navigator.share === 'function') navigator.share({ text: textoCompartir, url: enlace }).catch(() => {})
     else acciones.compartir()
   }
@@ -309,7 +315,7 @@ function Gracias({ monto, titulo, onOtra }: { monto: number; titulo: React.RefOb
         <p className={s.pagarLead}>Compartir toma diez segundos y llega a quien sí puede.</p>
         <div className={s.acciones}>
           <button type="button" className={h.botonGrande} onClick={compartir}>Compartir la misión</button>
-          <a className={h.botonLinea} href={`https://wa.me/?text=${encodeURIComponent(textoCompartir)}`} target="_blank" rel="noopener noreferrer">Enviar por WhatsApp</a>
+          <button type="button" className={h.botonLinea} onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`${textoCompartir} ${window.location.origin}/aportar`)}`, '_blank', 'noopener,noreferrer')}>Enviar por WhatsApp</button>
         </div>
 
         <div className={s.muroOpcional}>

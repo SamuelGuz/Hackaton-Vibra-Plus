@@ -242,8 +242,10 @@
 
   .home .linea { margin-block: 2rem 2rem; row-gap: 1.5rem; }
   .home .linea::before, .home .linea::after { display: none; }
-  .home .linea li { grid-column: span 2; }
+  .home .linea li { grid-column: auto; min-width: 0; }
   .home .lineaPunto { width: 2.5rem; height: 2.5rem; }
+  .home .lineaHora { font-size: 0.6875rem; letter-spacing: 0; }
+  .home .lineaTexto { font-size: var(--texto-xs); overflow-wrap: normal; hyphens: auto; }
 
   .home .diaFoto { grid-column: span 4; aspect-ratio: 4 / 3; order: -1; }
   .home .diaFotos > .escena { grid-column: span 2; }
@@ -253,12 +255,29 @@
   .home .necesidadTexto { grid-column: span 2; grid-template-columns: 1fr; row-gap: 0.4rem; }
   .home .necesidadIcono { grid-row: auto; width: 2.5rem; height: 2.5rem; }
 
-  .home .puerta { grid-column: span 4; }
-  .home .fichas .ficha { grid-column: span 2; transform: none; }
-  .home .fichas .ficha:first-child { grid-column: span 4; }
-  .home .fichas .ficha:first-child .fichaEscena { aspect-ratio: 4 / 3; }
-  .home .flujo li { grid-column: span 4; }
-  .home .flujo li:not(:last-child)::after { content: '↓'; right: calc(50% - 0.875rem); top: auto; bottom: -1.2rem; }
+  .home .puertas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home .puerta { grid-column: auto; padding: var(--esp-2); gap: var(--movil-hueco); }
+  .home .puertaTexto { padding: var(--esp-1); }
+  .home .puertaTexto strong { font-size: var(--texto-lg); }
+  .home .puertaTexto span, .home .puertaTexto i { font-size: var(--movil-texto); }
+  .home .puertaTexto i { padding: var(--esp-2); min-height: 3rem; display: inline-flex; align-items: center; }
+  .home .puertaGrande { font-size: var(--movil-titulo); }
+  .home .fichas, .home .flujo, .home .necesidades, .home .datosRapidos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .home .datosRapidos li, .home .datosRapidos li:nth-child(-n+2) { grid-column: auto; grid-template-columns: 1fr; padding: var(--esp-2); }
+  .home .necesidad { grid-column: auto; grid-template-columns: minmax(0, 1fr); align-content: start; gap: var(--movil-hueco); }
+  .home .necesidadEscena, .home .necesidadTexto { grid-column: auto; }
+  .home .necesidadIcono { display: none; }
+  .home .necesidadTexto h3 { font-size: var(--texto-base) !important; }
+  .home .necesidadTexto p { font-size: var(--movil-texto); line-height: 1.45; }
+  .home .fichas .ficha, .home .fichas .ficha:first-child { grid-column: auto; min-width: 0; transform: none; }
+  .home .fichas .ficha:first-child .fichaEscena { aspect-ratio: 4 / 4.6; }
+  .home .fichaTexto strong { font-size: var(--texto-base); }
+  .home .fichaTexto span, .home .fichaBoton { font-size: var(--movil-texto); }
+  .home .fichaBoton { min-height: 3rem; display: inline-flex; align-items: center; }
+  .home .flujo li { grid-column: auto; min-width: 0; padding: var(--esp-2); }
+  .home .flujo li:not(:last-child)::after { display: none; }
+  .home .flujo strong { font-size: var(--texto-base); }
+  .home .flujo span:not(.flujoIcono) { font-size: var(--movil-texto); }
   .home .confianzaGrid > * { grid-column: span 4; }
   .home .confianzaFoto { aspect-ratio: 4 / 3; }
 
@@ -275,6 +294,13 @@
   .home .barraMovilVisible { transform: none; }
   .home .barraMovil a { min-height: 2.75rem; display: inline-flex; align-items: center; padding-inline: 1.1rem; border-radius: 999px; background: var(--verde); color: #ffffff !important; font-weight: 600; text-decoration: none; }
   .home .cierre { padding-bottom: 7rem; }
+  .home .seccion { padding-block: var(--movil-seccion); }
+  .home .titulo { font-size: var(--movil-titulo) !important; }
+  .home .lead { font-size: var(--texto-base); }
+  .home .pasos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--movil-hueco); }
+  .home .pasos span { display: grid; padding: var(--esp-2); font-size: var(--movil-texto); border-radius: var(--radio-md); }
+  .home .ellaGrid, .home .platoGrid, .home .cierreGrid { gap: var(--esp-4); }
+  .home .ellaFoto, .home .platoFoto, .home .cierreFoto { max-height: 19rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

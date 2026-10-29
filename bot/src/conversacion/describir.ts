@@ -24,6 +24,11 @@ export function describir(a: Accion, d: DatosAlbergue): string {
       return `💊 *${animal(a.animalId)}* · ${t?.medicamento ?? 'medicina'} *${t?.dosis ?? ''}* · la de las ${horaBonita(a.hora)}`
     }
     case 'inventario': {
+      if (a.unidad === 'kg') {
+        const kg = `${Math.abs(a.cambio).toLocaleString('es-CO', { maximumFractionDigits: 1 })} kg`
+        const de = `${a.producto ?? 'carne'} de ${a.especie}`
+        return a.cambio < 0 ? `🍖 Se gastaron *${kg}* de ${de}` : `🥩 Llegaron *${kg}* de ${de}`
+      }
       const n = Math.abs(a.cambio)
       const bultos = n === 1 ? '1 bulto' : `${n} bultos`
       return a.cambio < 0

@@ -188,6 +188,46 @@ describe('comida', () => {
     await decir(texto('llegaron 6'))
     expect(t.repo.registros[0].acciones).toEqual([{ tipo: 'inventario', especie: 'gato', cambio: 6 }])
   })
+
+  it('llegaron 15 kilos de carne de Don Carlos: botón "Kilos sueltos", confirmar y los kilos suman a los días', async () => {
+    await decir(boton('m:llego'))
+    await decir(boton('e:1:perro'))
+    expect(t.wa.opciones()).toEqual(['n:perro:1', 'n:perro:otro', 'n:perro:kg'])
+    await decir(boton('n:perro:kg'))
+    expect(t.wa.ultimoTexto()).toContain('¿Cuántos kilos')
+    await decir(texto('15'))
+    expect(t.repo.registros[0].acciones).toEqual([{ tipo: 'inventario', especie: 'perro', cambio: 15, unidad: 'kg', producto: 'carne' }])
+    expect(t.wa.ultimoTexto()).toContain('Llegaron *15 kg* de carne')
+    await decir(boton('si:1'))
+    // 3 bultos × 25 kg + 15 kg = 90 kg / 16,875 kg al día = 5,3 días
+    expect(t.wa.ultimoTexto()).toContain('Quedan *5 días* de comida de perro')
+  })
+
+  it('"llegaron 20 kilos de carne" escrito: se anota en kilos aunque la IA no lo entienda', async () => {
+    t.ia.respuesta = new Error('sin IA')
+    await decir(texto('llegaron 20 kilos de carne'))
+    expect(t.repo.registros[0].acciones).toEqual([{ tipo: 'inventario', especie: 'perro', cambio: 20, unidad: 'kg', producto: 'carne' }])
+    expect(paso()).toBe('confirmar')
+  })
+
+  it('"se gastaron 12 kilos de menudencia": si la IA lo toma como 12 bultos, se corrige a kilos', async () => {
+    t.ia.responder({
+      transcripcion: 'se gastaron 12 kilos de menudencia',
+      acciones: [{ tipo: 'inventario', especie: 'perro', cambio: -12 }],
+      confianza: 0.7,
+    })
+    await decir(texto('se gastaron 12 kilos de menudencia'))
+    expect(t.repo.registros[0].acciones).toEqual([{ tipo: 'inventario', especie: 'perro', cambio: -12, unidad: 'kg', producto: 'menudencia' }])
+    expect(t.wa.ultimoTexto()).toContain('Se gastaron *12 kg* de menudencia')
+  })
+
+  it('en el paso "¿cuántos bultos?", "15 kilos" se anota en kilos, no como 15 bultos', async () => {
+    await decir(boton('m:llego'))
+    await decir(boton('e:1:perro'))
+    await decir(boton('n:perro:otro'))
+    await decir(texto('15 kilos de carnaza'))
+    expect(t.repo.registros[0].acciones).toEqual([{ tipo: 'inventario', especie: 'perro', cambio: 15, unidad: 'kg', producto: 'carnaza' }])
+  })
 })
 
 describe('plata', () => {

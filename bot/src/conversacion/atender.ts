@@ -181,8 +181,11 @@ async function respuestaDelPaso(c: Ctx, estado: Estado, t: string, a?: DelAudio)
       return especie ? elegirEspecie(c, estado.llegada, especie) : null
     }
     case 'comida_cantidad': {
+      // Del audio sirve lo que anotó la IA: "15 kilos de carne" o el número de bultos
       const inv = a?.e.acciones.find((x) => x.tipo === 'inventario')
-      return cantidadEscrita(c, estado.especie, inv?.tipo === 'inventario' ? String(Math.abs(inv.cambio)) : t)
+      const dicho =
+        inv?.tipo !== 'inventario' ? t : inv.unidad === 'kg' ? `${Math.abs(inv.cambio)} kilos de ${inv.producto ?? 'carne'}` : String(Math.abs(inv.cambio))
+      return cantidadEscrita(c, estado.especie, dicho, estado.unidad)
     }
     case 'plata_monto':
       return montoEscrito(c, estado, montoDicho(t, a))

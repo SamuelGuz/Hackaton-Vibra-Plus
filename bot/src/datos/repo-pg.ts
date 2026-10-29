@@ -418,13 +418,15 @@ async function insertarAccion(c: pg.PoolClient, a: Accion, x: Contexto): Promise
       return exigir(r, 'la nota')
     }
     case 'inventario': {
+      // Bultos al concentrado; kilos sueltos al ítem en kilos (db/sql/007_kilos_sueltos.sql)
+      const enKilos = a.unidad === 'kg'
       const r = await c.query(
         `INSERT INTO inventario_movimientos (item_id, cantidad, origen, estado, creado_por, registro_id)
          SELECT id, $2, $3, $4, $5, $6 FROM catalogo_items
-         WHERE tipo = 'comida' AND especie_objetivo = $1 ORDER BY id LIMIT 1`,
-        [a.especie, a.cambio, x.origen, x.estado, x.usuarioId, x.registroId],
+         WHERE tipo = 'comida' AND especie_objetivo = $1 AND (unidad = 'kg') = $7 ORDER BY id LIMIT 1`,
+        [a.especie, a.cambio, x.origen, x.estado, x.usuarioId, x.registroId, enKilos],
       )
-      return exigir(r, `la comida de ${a.especie}`)
+      return exigir(r, enKilos ? `la comida de ${a.especie} en kilos` : `la comida de ${a.especie}`)
     }
     case 'movimiento': {
       const m = a.movimiento

@@ -65,7 +65,8 @@ export type Estado =
   | { paso: 'medicina' }
   | { paso: 'medicina_duplicada' }
   | { paso: 'comida_especie'; llegada: boolean }
-  | { paso: 'comida_cantidad'; especie: 'perro' | 'gato' }
+  /** `unidad: 'kg'`: se preguntó por kilos sueltos (carne, recortes) en vez de bultos */
+  | { paso: 'comida_cantidad'; especie: 'perro' | 'gato'; unidad?: 'kg' }
   | { paso: 'plata_monto'; tipo: TipoPlata }
   | { paso: 'plata_categoria'; tipo: TipoPlata; monto: number }
   | { paso: 'plata_clinica'; tipo: TipoPlata; monto: number; categoria: string; abono: boolean }

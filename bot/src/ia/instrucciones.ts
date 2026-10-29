@@ -14,6 +14,7 @@ Reglas:
 - dosis: usa el tratamiento_id de la lista DOSIS DE HOY que corresponda al animal y al medicamento. \
 "hora" es la hora programada de esa dosis (HH:MM), no la hora actual.
 - inventario: "abrí un bulto de perro" es especie perro, cantidad -1. "Llegaron 3 bultos de gato" es especie gato, cantidad 3.
+- Kilos sueltos (carne, carnaza, recortes, huesos, menudencia que regala el carnicero): unidad kilos y producto. "Llegaron 20 kilos de carne" es cantidad 20, unidad kilos, producto carne. "Se gastaron 12 kilos de menudencia" es cantidad -12. Nunca conviertas kilos en bultos. Si no dice la especie, es perro.
 - movimiento: plata que entró (ingreso) o salió (gasto), o un abono para pagar la deuda de una clínica (abono, con clinica_id). \
 Montos en pesos enteros: "50 mil" = 50000, "un millón y medio" = 1500000, "$150.000" = 150000.
 - En movimiento y factura el campo monto es OBLIGATORIO: pon el número que dijo la persona. Una acción por cada monto.

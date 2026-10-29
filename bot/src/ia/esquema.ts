@@ -3,6 +3,7 @@
 
 import { Type, type Schema } from '@google/genai'
 import type { CategoriaGasto, CategoriaIngreso, DatosAlbergue } from '../panel-tipos.js'
+import { MAX_KG } from '../conversacion/kilos.js'
 import { parsearMonto } from '../conversacion/numeros.js'
 import { TIPOS_INFORME, type TipoInforme } from '../informes/armar.js'
 import type { Accion, Entendido } from '../tipos.js'
@@ -26,7 +27,9 @@ export const ESQUEMA: Schema = {
           tratamiento_id: { type: Type.STRING },
           hora: { type: Type.STRING, description: 'Hora programada de la dosis, formato HH:MM' },
           especie: { type: Type.STRING, enum: ['perro', 'gato'] },
-          cantidad: { type: Type.NUMBER, description: 'Bultos: -1 si se abrió uno, positivo si llegaron' },
+          cantidad: { type: Type.NUMBER, description: 'Bultos o kilos: negativo si se abrió o se gastó, positivo si llegó' },
+          unidad: { type: Type.STRING, enum: ['bultos', 'kilos'], description: 'kilos si la persona habla de kilos sueltos (carne, recortes, menudencia)' },
+          producto: { type: Type.STRING, description: 'En kilos sueltos: qué llegó o se gastó (carne, menudencia, huesos…)' },
           movimiento: { type: Type.STRING, enum: ['ingreso', 'gasto', 'abono'] },
           monto: { type: Type.NUMBER, description: 'Pesos colombianos enteros' },
           categoria: { type: Type.STRING, enum: [...new Set([...CATEGORIAS_GASTO, ...CATEGORIAS_INGRESO])] },
@@ -53,6 +56,8 @@ export interface AccionCruda {
   hora?: string
   especie?: string
   cantidad?: number
+  unidad?: string
+  producto?: string
   movimiento?: string
   monto?: number
   categoria?: string
@@ -114,6 +119,15 @@ export function convertir(crudo: RespuestaCruda, datos: DatosAlbergue, ahora: Da
         break
       }
       case 'inventario': {
+        if (a.unidad === 'kilos') {
+          // Los kilos sueltos casi siempre son carne para los perros
+          const kg = Math.round((a.cantidad ?? 0) * 10) / 10
+          if (kg !== 0 && Math.abs(kg) <= MAX_KG) {
+            const especie = a.especie === 'gato' ? 'gato' : 'perro'
+            acciones.push({ tipo: 'inventario', especie, cambio: kg, unidad: 'kg', producto: a.producto?.trim().toLowerCase() || 'carne' })
+          }
+          break
+        }
         const cambio = Math.round(a.cantidad ?? 0)
         if ((a.especie === 'perro' || a.especie === 'gato') && cambio !== 0) {
           acciones.push({ tipo: 'inventario', especie: a.especie, cambio })

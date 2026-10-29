@@ -192,6 +192,11 @@ async function main() {
       `INSERT INTO catalogo_items (nombre, tipo, unidad, kg_por_unidad, especie_objetivo, consumo_diario_kg_por_animal, precio_ref, umbral_dias)
        VALUES ('Concentrado para gato', 'comida', 'bulto', 10, 'gato', 0.065, 70000, 4)`,
     )
+    // Kilos sueltos: carne y recortes del carnicero (db/sql/007_kilos_sueltos.sql)
+    await q(
+      `INSERT INTO catalogo_items (nombre, tipo, unidad, kg_por_unidad, especie_objetivo)
+       VALUES ('Carne y recortes para perro', 'comida', 'kg', 1, 'perro'), ('Carne y recortes para gato', 'comida', 'kg', 1, 'gato')`,
+    )
 
     // Clínicas con la deuda de la entrevista (≈ $4,15 M entre las dos)
     const clinicas: [string, number, number][] = [

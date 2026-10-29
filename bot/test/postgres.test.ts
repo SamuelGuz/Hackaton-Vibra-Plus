@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { crearPool, type Pool } from '../src/datos/db.js'
 import { crearRepoPg, type RepoPg } from '../src/datos/repo-pg.js'
-import { dosisDeHoy } from '../src/datos/calculos.js'
+import { diasDeComida, dosisDeHoy } from '../src/datos/calculos.js'
 
 const URL_PRUEBA = process.env.TEST_DATABASE_URL
 
@@ -102,6 +102,28 @@ describe.skipIf(!URL_PRUEBA)('repositorio sobre Postgres', () => {
     expect((await repo.hoy(ahora)).inventario).toHaveLength(antes)
     // Lo anulado no revive
     expect(await repo.cambiarEstado([id], 'confirmado')).toBe(0)
+  })
+
+  it('15 kilos de carne: se guardan en kilos, llegan también en bultos equivalentes y alargan los días de comida', async () => {
+    const antes = await repo.hoy(ahora)
+    const diasAntes = diasDeComida(antes, 'perro')
+    const kgPorBulto = antes.configComida.kgPorBulto.perro
+    // El ítem en kilos no cambia lo que pesa un bulto
+    expect(kgPorBulto).toBe(25)
+    const id = await repo.crearRegistro({
+      usuarioId: 1, canal: 'whatsapp', tipoEntrada: 'audio', transcripcion: 'llegaron 15 kilos de carne', estado: 'por_confirmar',
+      acciones: [{ tipo: 'inventario', especie: 'perro', cambio: 15, unidad: 'kg', producto: 'carne' }],
+    })
+    await repo.cambiarEstado([id], 'confirmado')
+    const d = await repo.hoy(ahora)
+    const carne = d.inventario.find((m) => m.unidad === 'kg')!
+    expect(carne).toMatchObject({ tipo: 'perro', kg: 15, unidad: 'kg', cambio: 15 / kgPorBulto })
+    expect(diasDeComida(d, 'perro') - diasAntes).toBeCloseTo(15 / d.configComida.consumoDiarioKg.perro, 5)
+    const fila = await pool.query(
+      `SELECT m.cantidad, c.unidad FROM inventario_movimientos m JOIN catalogo_items c ON c.id = m.item_id WHERE m.registro_id = $1`,
+      [id],
+    )
+    expect(fila.rows).toEqual([{ cantidad: 15, unidad: 'kg' }])
   })
 
   it('una factura con foto sube la deuda de la clínica al confirmarse', async () => {

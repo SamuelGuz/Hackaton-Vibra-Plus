@@ -75,6 +75,9 @@ export const textos = {
   comidaCantidad: (especie: string) => `¿Cuántos bultos de ${especie} llegaron?`,
   comidaEscribeNumero: 'Escríbeme el número de bultos. Por ejemplo: *5*',
   comidaNoEntendi: 'No te entendí el número 🙈 Escríbelo así: *3*',
+  comidaCuantosKilos: (especie: string) =>
+    `¿Cuántos kilos llegaron para los ${especie === 'gato' ? 'gatos' : 'perros'}? 🥩 Escríbelo así: *15* o *15 kilos de carne*`,
+  comidaKilosNoEntendi: 'No te entendí los kilos 🙈 Escríbelos así: *15*',
   quedanDias: (especie: string, dias: string, urgente: boolean) =>
     `Quedan *${dias}* de comida de ${especie}.${urgente ? ' Toca pedir hoy ⚠️' : ''}`,
 
@@ -124,7 +127,7 @@ export const botones = {
 export const OPCIONES_MENU = [
   { id: 'm:med', titulo: 'Le di una medicina', descripcion: 'Pastillas, gotas, baños…' },
   { id: 'm:bulto', titulo: 'Abrí un bulto', descripcion: 'Se abrió comida de perro o de gato' },
-  { id: 'm:llego', titulo: 'Llegó comida', descripcion: 'Llegaron bultos a la bodega' },
+  { id: 'm:llego', titulo: 'Llegó comida', descripcion: 'Bultos o kilos de carne a la bodega' },
   { id: 'm:entro', titulo: 'Entró plata', descripcion: 'Donación, padrino, rifa…', plata: true },
   { id: 'm:salio', titulo: 'Salió plata', descripcion: 'Una compra o un pago', plata: true },
   { id: 'm:factura', titulo: 'Factura de clínica', descripcion: 'Foto de una factura a crédito' },

@@ -5,6 +5,7 @@ import type { Ctx } from './ctx.js'
 import { guardarYPreguntar } from './confirmar.js'
 import { enviarInforme } from './informe.js'
 import { bajarYGuardar, entenderSeguro } from './medios.js'
+import { conKilos } from './kilos.js'
 import { yaReportada } from './medicina.js'
 import { mostrarMenu } from './menu.js'
 import { opcionDelMenu, temaDeTexto } from './intencion.js'
@@ -41,6 +42,11 @@ export async function registrarEntendido(
   origen: { tipoEntrada: NuevoRegistro['tipoEntrada']; mediaUrl?: string | null; escrito?: string },
 ): Promise<Estado> {
   const esAudio = origen.tipoEntrada === 'audio'
+  // "20 kilos de carne" se lee del texto aunque la IA falle o lo tome por 20 bultos
+  const dicho = origen.escrito ?? e?.transcripcion ?? ''
+  const conKilosLeidos = conKilos(e?.acciones ?? [], dicho)
+  if (!e && conKilosLeidos.length) e = { transcripcion: dicho, acciones: [], confianza: 0, futuras: 0 }
+  if (e) e = { ...e, acciones: conKilosLeidos }
   if (!e) {
     // Sin IA igual se intenta con lo escrito
     const tema = origen.escrito ? temaDeTexto(origen.escrito) : null

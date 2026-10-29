@@ -49,7 +49,8 @@ export interface FilasHoy {
     fecha_fin: string | null
   }[]
   dosis: { id: number; tratamiento_id: number; valor: string; fecha_hora: string; creado_por: number | null; canal: string | null }[]
-  inventario: { id: number; especie: Especie; cantidad: number; fecha_hora: string; creado_por: number | null; origen: string | null }[]
+  /** `cantidad` en bultos (los kilos sueltos, ya convertidos); `kg` solo en kilos sueltos */
+  inventario: { id: number; especie: Especie; cantidad: number; kg: number | null; fecha_hora: string; creado_por: number | null; origen: string | null }[]
   movimientos: {
     id: number
     tipo: 'ingreso' | 'gasto' | 'abono'
@@ -134,6 +135,7 @@ export function armarEventos(f: FilasEventos) {
     cambio: m.cantidad,
     quien: id(m.creado_por),
     origen: m.origen === 'panel' ? 'panel' : 'bot',
+    ...(m.kg != null ? { kg: m.kg, unidad: 'kg' as const } : {}),
   }))
 
   const movimientos: Movimiento[] = f.movimientos.map((m) => ({
@@ -257,7 +259,14 @@ export async function cargarEventos(pool: Pool, r: Rango) {
       p,
     ),
     pool.query<FilasHoy['inventario'][number]>(
-      `SELECT m.id, c.especie_objetivo AS especie, m.cantidad, to_char(m.fecha_hora, ${MOMENTO}) AS fecha_hora, m.creado_por, m.origen
+      // Los kilos sueltos van también en bultos equivalentes, para que el panel calcule los días igual que el bot
+      `SELECT m.id, c.especie_objetivo AS especie,
+              CASE WHEN c.unidad = 'kg' THEN COALESCE(m.cantidad * c.kg_por_unidad / NULLIF((
+                SELECT b.kg_por_unidad FROM catalogo_items b
+                WHERE b.tipo = 'comida' AND b.especie_objetivo = c.especie_objetivo AND b.unidad <> 'kg' ORDER BY b.id LIMIT 1), 0), 0)
+              ELSE m.cantidad END AS cantidad,
+              CASE WHEN c.unidad = 'kg' THEN m.cantidad * c.kg_por_unidad END AS kg,
+              to_char(m.fecha_hora, ${MOMENTO}) AS fecha_hora, m.creado_por, m.origen
        FROM inventario_movimientos m JOIN catalogo_items c ON c.id = m.item_id
        WHERE c.tipo = 'comida' AND c.especie_objetivo IS NOT NULL AND m.estado IN ${CONFIRMADOS} AND ${enRango('m.fecha_hora')}
        ORDER BY m.fecha_hora`,
@@ -326,7 +335,7 @@ export async function cargarFilas(pool: Pool, ahora: Date): Promise<FilasHoy> {
     ),
     pool.query(
       `SELECT especie_objetivo AS especie, kg_por_unidad, consumo_diario_kg_por_animal
-       FROM catalogo_items WHERE tipo = 'comida' AND especie_objetivo IS NOT NULL ORDER BY id`,
+       FROM catalogo_items WHERE tipo = 'comida' AND especie_objetivo IS NOT NULL AND unidad <> 'kg' ORDER BY id`,
     ),
     pool.query(
       `SELECT especie, count(*)::int AS n FROM animales

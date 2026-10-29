@@ -234,7 +234,12 @@ export class RepoFalso implements Repo {
     for (const a of acciones) {
       const id = `x${Math.random()}`
       if (a.tipo === 'dosis') this.datos.dosisDadas.push({ id, tratamientoId: a.tratamientoId, hora: a.hora, fechaHora, quien, origen: 'bot' })
-      if (a.tipo === 'inventario') this.datos.inventario.push({ id, fechaHora, tipo: a.especie, cambio: a.cambio, quien, origen: 'bot' })
+      if (a.tipo === 'inventario') {
+        // Como la base: los kilos sueltos llegan también en bultos equivalentes
+        const kg = a.unidad === 'kg' ? { kg: a.cambio, unidad: 'kg' as const, producto: a.producto } : {}
+        const cambio = a.unidad === 'kg' ? a.cambio / this.datos.configComida.kgPorBulto[a.especie] : a.cambio
+        this.datos.inventario.push({ id, fechaHora, tipo: a.especie, cambio, quien, origen: 'bot', ...kg })
+      }
       if (a.tipo === 'movimiento') this.datos.movimientos.push({ id, fechaHora, quien, ...a.movimiento })
       if (a.tipo === 'nota') this.datos.notas.push({ id, animalId: a.animalId, texto: a.texto, fechaHora, quien })
       if (a.tipo === 'deuda') this.datos.clinicas.find((k) => k.id === a.clinicaId)!.deuda += a.monto

@@ -178,7 +178,7 @@ describe('mapeo a la forma del panel', () => {
         { id: 100, animal_id: 10, medicamento: 'Fenobarbital', dosis: 1, unidad: 'pastilla', frecuencia_horas: 24, hora_inicio: '14:00', fecha_inicio: '2026-10-01', fecha_fin: null },
       ],
       dosis: [{ id: 7, tratamiento_id: 100, valor: '14:00', fecha_hora: '2026-10-27T14:01', creado_por: 1, canal: 'whatsapp' }],
-      inventario: [{ id: 8, especie: 'perro', cantidad: -1, fecha_hora: '2026-10-27T06:35', creado_por: 1, origen: 'panel' }],
+      inventario: [{ id: 8, especie: 'perro', cantidad: -1, kg: null, fecha_hora: '2026-10-27T06:35', creado_por: 1, origen: 'panel' }],
       movimientos: [
         { id: 9, tipo: 'abono', monto: 200_000, categoria: 'veterinaria', entidad_id: 50, soporte_url: null, concepto: null, fecha_hora: '2026-10-27T10:00', creado_por: 3 },
         { id: 10, tipo: 'ingreso', monto: 50_000, categoria: 'raro', entidad_id: null, soporte_url: null, concepto: 'Nequi', fecha_hora: '2026-10-27T11:00', creado_por: 3 },

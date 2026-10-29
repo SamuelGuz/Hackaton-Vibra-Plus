@@ -1,22 +1,38 @@
 // Mismas reglas que panel/src/lib/calculos.ts, para que el bot y el panel digan lo mismo.
 
 import { fechaLocal } from '../formato.js'
-import type { Clinica, DatosAlbergue, DosisDada, Especie, PorConfirmar, Tratamiento } from '../panel-tipos.js'
+import type { Clinica, DatosAlbergue, DosisDada, Especie, MovimientoInventario, PorConfirmar, Tratamiento } from '../panel-tipos.js'
 
 export type Nivel = 'bien' | 'ojo' | 'urgente'
 
+const movimientosDesdeElConteo = (datos: DatosAlbergue, especie: Especie) =>
+  datos.inventario.filter((m) => m.tipo === especie && m.fechaHora >= datos.conteoInicial.fecha)
+
+/** Kilos que mueve un registro de bodega: los kilos sueltos tal cual, los bultos por lo que pesa cada uno */
+export function kgDeMovimiento(datos: DatosAlbergue, m: MovimientoInventario): number {
+  return m.unidad === 'kg' && m.kg !== undefined ? m.kg : m.cambio * datos.configComida.kgPorBulto[m.tipo]
+}
+
+/** Bultos cerrados de concentrado (los kilos sueltos de carne no cuentan como bultos) */
 export function bultosEnBodega(datos: DatosAlbergue, especie: Especie): number {
-  const desde = datos.conteoInicial.fecha
-  const cambios = datos.inventario
-    .filter((m) => m.tipo === especie && m.fechaHora >= desde)
+  const cambios = movimientosDesdeElConteo(datos, especie)
+    .filter((m) => m.unidad !== 'kg')
     .reduce((suma, m) => suma + m.cambio, 0)
   return Math.max(0, datos.conteoInicial.bultos[especie] + cambios)
 }
 
+/** Kilos de comida en bodega: concentrado (bultos × kg por bulto) más carne y recortes en kilos sueltos */
+export function kgEnBodega(datos: DatosAlbergue, especie: Especie): number {
+  const inicial = datos.conteoInicial.bultos[especie] * datos.configComida.kgPorBulto[especie]
+  const cambios = movimientosDesdeElConteo(datos, especie).reduce((suma, m) => suma + kgDeMovimiento(datos, m), 0)
+  return Math.max(0, inicial + cambios)
+}
+
+/** Kilos en bodega entre lo que se come al día */
 export function diasDeComida(datos: DatosAlbergue, especie: Especie): number {
-  const { kgPorBulto, consumoDiarioKg } = datos.configComida
+  const { consumoDiarioKg } = datos.configComida
   if (consumoDiarioKg[especie] === 0) return Infinity
-  return (bultosEnBodega(datos, especie) * kgPorBulto[especie]) / consumoDiarioKg[especie]
+  return kgEnBodega(datos, especie) / consumoDiarioKg[especie]
 }
 
 export function nivelComida(datos: DatosAlbergue, dias: number): Nivel {

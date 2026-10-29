@@ -1,4 +1,5 @@
 // Validación de lo que manda el panel en POST /api/eventos y /api/eventos/estado.
+import { MAX_KG } from '../conversacion/kilos.js'
 import type { EstadoAnimal } from '../panel-tipos.js'
 import type { Accion, EstadoRegistro } from '../tipos.js'
 
@@ -21,7 +22,14 @@ export function validarEvento(x: any): { ok: EventoPanel } | { error: string } {
       if (!idValido(x.animalId) || !idValido(x.tratamientoId) || !texto(x.hora) || !HORA.test(x.hora)) break
       return { ok: { id: x.id, tipo: 'dosis', animalId: x.animalId, tratamientoId: x.tratamientoId, hora: x.hora } }
     case 'inventario':
-      if ((x.especie !== 'perro' && x.especie !== 'gato') || !Number.isInteger(x.cambio) || x.cambio === 0) break
+      if (x.especie !== 'perro' && x.especie !== 'gato') break
+      // Kilos sueltos (carne, recortes): admiten decimales
+      if (x.unidad === 'kg') {
+        if (typeof x.cambio !== 'number' || !Number.isFinite(x.cambio) || x.cambio === 0 || Math.abs(x.cambio) > MAX_KG) break
+        const producto = texto(x.producto) && x.producto.trim() ? x.producto.trim().slice(0, 40) : 'carne'
+        return { ok: { id: x.id, tipo: 'inventario', especie: x.especie, cambio: Math.round(x.cambio * 10) / 10, unidad: 'kg', producto } }
+      }
+      if (!Number.isInteger(x.cambio) || x.cambio === 0) break
       return { ok: { id: x.id, tipo: 'inventario', especie: x.especie, cambio: x.cambio } }
     case 'nota':
       if (!idValido(x.animalId) || !texto(x.texto) || !x.texto.trim()) break

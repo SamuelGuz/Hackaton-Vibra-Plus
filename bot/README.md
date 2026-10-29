@@ -13,7 +13,7 @@ Celular ──▶ WhatsApp Cloud API ──▶ POST /wa ──▶ bot/ ──▶
 Está pensado para gente que no se lleva con la tecnología:
 
 - **Casi todo es tocar botones.** Cada mensaje trae botones (máximo 3) o una lista (máximo 10 opciones).
-- **El audio sirve siempre.** En cualquier momento se puede mandar un audio contando todo de una vez.
+- **El audio sirve siempre.** En cualquier momento se puede mandar un audio contando todo de una vez. "Llegaron 20 kilos de carne" o "se gastaron 12 kilos de menudencia" se anotan en kilos, aunque la IA falle.
 - **Se confirma con un toque.** Lo que se registra queda *por confirmar* hasta tocar **Sí, está bien**, **Corregir** o **Borrar**. Montos y dosis van en negrita.
 - **Para volver al inicio**, escribir *menú*, *hola* o *0*. Si nadie responde en 30 minutos, el bot olvida el paso sin decir nada.
 - **No hay errores técnicos.** Si Gemini falla, el bot dice "No te entendí bien" y muestra el menú.
@@ -22,7 +22,7 @@ Está pensado para gente que no se lleva con la tecnología:
 |---|---|
 | Le di una medicina | Lista de dosis pendientes de hoy, luego confirmar. Si ya la reportó otra persona, avisa y no la duplica |
 | Abrí un bulto | Perro o gato, confirmar y "Quedan 4 días de comida" |
-| Llegó comida | Perro o gato, cuántos bultos y confirmar |
+| Llegó comida | Perro o gato, y **1 bulto**, **Varios bultos** o **🥩 Kilos sueltos** (carne y recortes del carnicero). Confirmar. Los kilos suman a los días de comida |
 | Entró plata / Salió plata | Cuánto ("50 mil" o un audio), para qué, foto opcional y confirmar |
 | Factura de clínica | Foto; Gemini lee el monto y la clínica, y pregunta lo que falte |
 | Contar algo de un animal | Elegir el animal o escribir su nombre (acepta apodos y errores), luego texto o audio |
@@ -36,6 +36,7 @@ Todas las frases están en [`src/textos.ts`](src/textos.ts), para ajustar el ton
 1. Postgres de `db/` corriendo, con la migración del bot aplicada:
    ```bash
    cd ../db && docker compose exec -T db psql -U huellitas -d huellitas < sql/003_bot.sql
+   docker compose exec -T db psql -U huellitas -d huellitas < sql/007_kilos_sueltos.sql   # kilos sueltos de carne
    ```
 2. Configuración y semilla:
    ```bash

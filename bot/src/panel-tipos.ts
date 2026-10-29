@@ -58,9 +58,14 @@ export interface MovimientoInventario {
   id: string
   fechaHora: string
   tipo: Especie
+  /** En bultos. Los kilos sueltos llegan convertidos a bultos equivalentes, para que el panel calcule igual. */
   cambio: number
   quien: string
   origen: 'panel' | 'bot'
+  /** Solo en kilos sueltos (carne, recortes…): los kilos tal cual */
+  kg?: number
+  unidad?: 'kg'
+  producto?: string
 }
 
 export type CategoriaGasto = 'comida' | 'veterinaria' | 'limpieza' | 'servicios' | 'transporte' | 'otro'
@@ -98,7 +103,8 @@ export interface PorConfirmar {
 
 export type Propuesta =
   | { tipo: 'dosis'; animalId: string; tratamientoId: string; hora: string }
-  | { tipo: 'inventario'; especie: Especie; cambio: number }
+  /** `cambio` en bultos; con `unidad: 'kg'`, en kilos sueltos (carne, menudencia… de `producto`) */
+  | { tipo: 'inventario'; especie: Especie; cambio: number; unidad?: 'kg'; producto?: string }
   | { tipo: 'movimiento'; movimiento: Omit<Movimiento, 'id' | 'fechaHora' | 'quien'> }
   | { tipo: 'nota'; animalId: string; texto: string }
   | { tipo: 'deuda'; clinicaId: string; monto: number; nota: string }

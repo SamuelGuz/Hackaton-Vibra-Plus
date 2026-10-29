@@ -1,5 +1,6 @@
 import type { NuevaSolicitudAdopcion, SolicitudGuardada } from './adopcion/solicitudes.js'
-import type { CambioSolicitud } from './adopcion/tipos.js'
+import type { SeguimientoDeAdopcion } from './adopcion/seguimientos.js'
+import type { CambioSolicitud, DiaSeguimiento, Monton } from './adopcion/tipos.js'
 import type { TipoInforme } from './informes/armar.js'
 import type { DatosAlbergue, Propuesta, Rol } from './panel-tipos.js'
 import type { MensajeWa } from './wa/webhook.js'
@@ -194,6 +195,12 @@ export interface Repo {
   solicitudesAdopcion(): Promise<SolicitudGuardada[]>
   /** Aplica solo lo que viene. false si no existe. */
   cambiarSolicitudAdopcion(id: string, cambio: CambioSolicitud): Promise<boolean>
+
+  // ---------- Seguimientos después de la adopción ----------
+  /** Los 5 seguimientos de cada adopción activa, con el resultado de los que ya se llamaron */
+  seguimientosAdopcion(): Promise<SeguimientoDeAdopcion[]>
+  /** Anota cómo salió la llamada (lo vuelve a anotar si ya estaba). false si la adopción no existe. */
+  registrarSeguimiento(adopcionId: string, dia: DiaSeguimiento, resultado: Monton, usuarioId: number, ahora: Date): Promise<boolean>
 }
 
 export interface Wa {

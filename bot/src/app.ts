@@ -5,6 +5,7 @@ import { armarEventos, type FilasEventos, type Rango } from './api/hoy.js'
 import { validarMiembro } from './api/equipo.js'
 import { validarCambioEstado, validarEvento } from './api/eventos.js'
 import { datosParaRol, esDePlata, manejaPlata, veraPlata } from './api/permisos.js'
+import { pendientesDeHoy, veAdoptantes } from './adopcion/seguimientos.js'
 import { sugerencia, validarCambioSolicitud, validarSolicitudFormulario } from './adopcion/solicitudes.js'
 import { atenderInteresadoExterno, montarRutasAgente } from './adopciones-agente/index.js'
 import { montarRutasCampanas, type ConfigCorreo, type Correo } from './campanas/index.js'
@@ -170,6 +171,31 @@ export function crearApp(cfg: ConfigApp) {
     const datos = datosParaRol(await deps.repo.hoy(deps.ahora()), usuario)
     const solicitudesEquipo = usuario.rol === 'admin' ? await deps.repo.contarSolicitudes() : 0
     return c.json({ ...datos, yo: String(usuario.id), solicitudesEquipo })
+  })
+
+  // ---------- Seguimientos de adopción: a quién toca llamar hoy ----------
+
+  // Todo el equipo ve la lista; el teléfono del adoptante, solo administración y adopciones (como las solicitudes)
+  app.get('/api/seguimientos/hoy', async (c) => {
+    const ahora = deps.ahora()
+    const hoy = fechaLocal(ahora)
+    const conTelefono = veAdoptantes(c.get('usuario').rol)
+    const lista = pendientesDeHoy(await deps.repo.seguimientosAdopcion(), ahora)
+    return c.json({
+      fecha: hoy,
+      seguimientos: lista.map((s) => ({
+        id: s.id,
+        adopcionId: s.adopcionId,
+        animalId: s.animalId,
+        animalNombre: s.animalNombre,
+        dia: s.dia,
+        fecha: s.fecha,
+        fechaEntrega: s.fechaEntrega,
+        adoptanteNombre: s.adoptanteNombre,
+        adoptanteTelefono: conTelefono ? s.adoptanteTelefono || null : null,
+        atrasado: s.fecha < hoy,
+      })),
+    })
   })
 
   // ---------- Equipo (solo la administradora) ----------

@@ -27,8 +27,10 @@ Está pensado para gente que no se lleva con la tecnología:
 | Entró plata / Salió plata | Cuánto ("50 mil" o un audio), para qué, foto opcional y confirmar |
 | Factura de clínica | Foto; Gemini lee el monto y la clínica, y pregunta lo que falte |
 | Contar algo de un animal | Elegir el animal o escribir su nombre (acepta apodos y errores), luego texto o audio |
-| Ver lo de hoy | Medicinas que faltan, días de comida y pendientes. A la administradora también le muestra caja y deuda |
+| Ver lo de hoy | Medicinas que faltan, días de comida, a quién toca llamar (seguimientos) y pendientes. A la administradora también le muestra caja y deuda |
 | Abrir el panel | Enlace personal `PANEL_URL/?t=<token>` (dura 90 días) |
+
+Escribir *seguimientos* (o "¿a quién toca llamar?") muestra los seguimientos de adopción del día (días 2, 5, 15, 30 y 90 después de la entrega, y los atrasados) y un mensaje por llamada con **🟢 Todo bien**, **🟡 Ojo / Revisar** y **🔴 Problemas**. Las fechas salen de la tabla `adopciones` y los resultados quedan en `checkins`. El teléfono del adoptante solo lo ven administración y adopciones.
 
 Todas las frases están en [`src/textos.ts`](src/textos.ts), para ajustar el tono sin tocar la lógica.
 
@@ -114,6 +116,7 @@ Todas las rutas piden `Authorization: Bearer <token>`. El token sale del enlace 
 | `GET /api/eventos?desde=AAAA-MM-DD&hasta=AAAA-MM-DD&tipo=dosis\|inventario\|movimiento\|nota` | `{ dosisDadas, inventario, movimientos, notas }` del rango (por defecto, hoy) |
 | `POST /api/eventos` | Recibe una lista de `Propuesta` con un `id` uuid generado en el celular. Guarda como **confirmado** y es idempotente por ese uuid. Responde `{ guardados: [{ id, registroId }], errores }` |
 | `POST /api/eventos/estado` | Recibe `{ ids, estado }`, con `estado` en `confirmado`, `corregido` o `anulado`. Los `ids` son los de `porConfirmar` o los uuid del panel (para "Deshacer"). Responde `{ cambiados }` |
+| `GET /api/seguimientos/hoy` | `{ fecha, seguimientos }`: a quién toca llamar hoy y los atrasados, con `animalNombre`, `dia`, `adoptanteNombre` y `atrasado`. `adoptanteTelefono` llega solo a administración y adopciones (a los demás, `null`) |
 | `GET /archivos/<nombre>` | Audio o foto de un registro (`media_url`). Acepta `?t=<token>`, para usarlo en `<img>` y `<audio>` |
 
 Reglas que conviene saber:

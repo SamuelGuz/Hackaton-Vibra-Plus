@@ -113,6 +113,21 @@ export const textos = {
   animalVarios: 'Encontré varios. ¿Cuál es?',
   animalNota: (nombre: string) => `¿Qué le notaste a *${nombre}*? Escríbelo o mándame un audio 🎤`,
 
+  // Seguimientos de adopción (días 2, 5, 15, 30 y 90)
+  seguimientosTitulo: '📞 Hoy toca llamar a los adoptantes de:',
+  seguimientosToca: 'Cuando llames, toca cómo te fue 👇',
+  seguimientosVerHoy: 'Escribe *seguimientos* para anotar cómo salió cada llamada.',
+  seguimientosNinguno: 'Hoy no toca llamar a ningún adoptante 🎉',
+  seguimientosMas: (n: number) => `Hay ${n} más: cuando anotes estas, escribe *seguimientos* otra vez.`,
+  seguimientoComoSalio: (animal: string, dia: number, adoptante: string) =>
+    `📞 *${animal}* (Día ${dia}) con ${adoptante}: ¿cómo te fue?`,
+  seguimientoAnotado: (animal: string, dia: number, resultado: 'verde' | 'amarillo' | 'rojo') =>
+    resultado === 'verde'
+      ? `🟢 Anotado: a *${animal}* le va bien en su casa (Día ${dia}).`
+      : resultado === 'amarillo'
+        ? `🟡 Anotado: lo de *${animal}* (Día ${dia}) queda para revisar. Alguien del equipo tiene que volver a llamar.`
+        : `🔴 Anotado: *${animal}* (Día ${dia}) tiene problemas. Avísale hoy a la coordinación de adopciones: puede tocar rescatarlo.`,
+
   // Panel
   panel: (url: string) =>
     `Este es tu enlace personal al panel 👇\n\n${url}\n\nNo se lo pases a nadie: con él se entra como si fueras tú.`,

@@ -17,6 +17,7 @@ import { libreMedia, libreTexto, registrarEntendido } from './libre.js'
 import { dosisEscrita, duplicadaEscrita, elegirDosis, empezarMedicina, responderDuplicada } from './medicina.js'
 import { bajarYGuardar, entenderSeguro } from './medios.js'
 import { mostrarMenu } from './menu.js'
+import { anotarSeguimiento, pideSeguimientos, verSeguimientos } from './seguimientos.js'
 import { sinTildes } from './numeros.js'
 import {
   categoriaEscrita,
@@ -136,6 +137,8 @@ async function boton(c: Ctx, estado: Estado, id: string): Promise<Estado> {
       return facturaSinFoto(c)
     case 'i':
       return enviarInforme(c, id.slice(2))
+    case 'sg':
+      return anotarSeguimiento(c, id)
   }
 
   // Botones que dependen del paso en que va la persona
@@ -214,6 +217,7 @@ async function respuestaDelPaso(c: Ctx, estado: Estado, t: string, a?: DelAudio)
 async function texto(c: Ctx, estado: Estado, t: string): Promise<Estado> {
   const respuesta = await respuestaDelPaso(c, estado, t)
   if (respuesta) return respuesta
+  if (pideSeguimientos(t)) return verSeguimientos(c)
   const informe = informePedido(t)
   return informe ? enviarInforme(c, informe) : libreTexto(c, t)
 }

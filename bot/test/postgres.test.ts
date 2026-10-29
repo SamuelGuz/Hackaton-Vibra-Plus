@@ -5,6 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { crearPool, type Pool } from '../src/datos/db.js'
 import { crearRepoPg, type RepoPg } from '../src/datos/repo-pg.js'
 import { diasDeComida, dosisDeHoy } from '../src/datos/calculos.js'
+import { pendientesDeHoy } from '../src/adopcion/seguimientos.js'
 
 const URL_PRUEBA = process.env.TEST_DATABASE_URL
 
@@ -51,7 +52,9 @@ describe.skipIf(!URL_PRUEBA)('repositorio sobre Postgres', () => {
 
   it('/api/hoy trae la semilla en la forma del panel', async () => {
     const d = await repo.hoy(ahora)
-    expect(d.animales).toHaveLength(70)
+    // 70 a cargo del refugio y 2 ya adoptados (los de los seguimientos)
+    expect(d.animales).toHaveLength(72)
+    expect(d.animales.filter((a) => a.estado !== 'adoptado')).toHaveLength(70)
     expect(d.clinicas.map((k) => k.deuda)).toEqual([1_550_000, 2_600_000])
     expect(d.porConfirmar.filter((p) => p.estado === 'pendiente')).toHaveLength(2)
     const tobias = d.animales.find((a) => a.nombre === 'Tobías')!
@@ -124,6 +127,25 @@ describe.skipIf(!URL_PRUEBA)('repositorio sobre Postgres', () => {
       [id],
     )
     expect(fila.rows).toEqual([{ cantidad: 15, unidad: 'kg' }])
+  })
+
+  it('seguimientos: las adopciones entregadas salen el día que toca; anotar una llamada la quita y se puede volver a anotar', async () => {
+    const hoy = pendientesDeHoy(await repo.seguimientosAdopcion(), ahora)
+    expect(hoy.map((s) => [s.animalNombre, s.dia, s.adoptanteNombre, s.adoptanteTelefono])).toEqual([
+      ['Firulais', 5, 'Juan Gómez', '573115550101'],
+      ['Canelita', 30, 'María López', '573105550202'],
+    ])
+    const firulais = hoy[0]
+    expect(await repo.registrarSeguimiento(firulais.adopcionId, 5, 'amarillo', 1, ahora)).toBe(true)
+    // Se corrige el resultado: no duplica la fila
+    expect(await repo.registrarSeguimiento(firulais.adopcionId, 5, 'verde', 1, ahora)).toBe(true)
+    const despues = await repo.seguimientosAdopcion()
+    expect(despues.find((s) => s.adopcionId === firulais.adopcionId && s.dia === 5)).toMatchObject({ resultado: 'verde', llamadaHumana: false })
+    expect(pendientesDeHoy(despues, ahora).map((s) => s.animalNombre)).toEqual(['Canelita'])
+    const filas = await pool.query(`SELECT riesgo, programado_para FROM checkins WHERE adopcion_id = $1 AND dia = 5`, [firulais.adopcionId])
+    expect(filas.rows).toEqual([{ riesgo: 'verde', programado_para: firulais.fecha }])
+    expect(await repo.registrarSeguimiento('99999999', 5, 'verde', 1, ahora)).toBe(false)
+    expect(await repo.registrarSeguimiento('no-es-id', 5, 'verde', 1, ahora)).toBe(false)
   })
 
   it('una factura con foto sube la deuda de la clínica al confirmarse', async () => {

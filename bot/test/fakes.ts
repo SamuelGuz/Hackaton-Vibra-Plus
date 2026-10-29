@@ -1,6 +1,7 @@
 // WhatsApp, Gemini, archivos y base de datos falsos para probar la conversación sin red.
 import type { NuevaSolicitudAdopcion, SolicitudGuardada } from '../src/adopcion/solicitudes.js'
-import type { CambioSolicitud } from '../src/adopcion/tipos.js'
+import { armarSeguimientos, type Entrega, type ResultadoSeguimiento } from '../src/adopcion/seguimientos.js'
+import type { CambioSolicitud, DiaSeguimiento, Monton } from '../src/adopcion/tipos.js'
 import type { DatosAlbergue, PorConfirmar } from '../src/panel-tipos.js'
 import type {
   Accion,
@@ -227,6 +228,19 @@ export class RepoFalso implements Repo {
     const s = this.adopcion.find((x) => x.id === id)
     if (!s) return false
     Object.assign(s, cambio)
+    return true
+  }
+
+  /** Adopciones entregadas y cómo salieron las llamadas (tablas adopciones y checkins) */
+  entregas: Entrega[] = []
+  resultadosSeguimiento: ResultadoSeguimiento[] = []
+  async seguimientosAdopcion() {
+    return armarSeguimientos(this.entregas, this.resultadosSeguimiento)
+  }
+  async registrarSeguimiento(adopcionId: string, dia: DiaSeguimiento, resultado: Monton) {
+    if (!this.entregas.some((e) => e.adopcionId === adopcionId)) return false
+    this.resultadosSeguimiento = this.resultadosSeguimiento.filter((r) => !(r.adopcionId === adopcionId && r.dia === dia))
+    this.resultadosSeguimiento.push({ adopcionId, dia, resultado, nota: '' })
     return true
   }
 

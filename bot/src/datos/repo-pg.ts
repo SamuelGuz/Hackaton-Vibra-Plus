@@ -1,7 +1,8 @@
 import { randomBytes } from 'node:crypto'
 import type pg from 'pg'
 import { sugerencia, type SolicitudGuardada } from '../adopcion/solicitudes.js'
-import type { Solicitud } from '../adopcion/tipos.js'
+import { armarSeguimientos } from '../adopcion/seguimientos.js'
+import type { Monton, Solicitud } from '../adopcion/tipos.js'
 import { cargarHoy } from '../api/hoy.js'
 import type { Accion, Estado, EstadoRegistro, NuevoRegistro, Registro, Repo, Usuario } from '../tipos.js'
 import { normalizarTelefono } from '../wa/telefono.js'
@@ -369,6 +370,44 @@ export function crearRepoPg(pool: Pool): RepoPg {
       const r = await pool.query(
         `UPDATE solicitudes_adopcion SET ${[...columnas, 'actualizado_en = now()'].join(', ')} WHERE id = $1 RETURNING id`,
         valores,
+      )
+      return r.rowCount === 1
+    },
+
+    async seguimientosAdopcion() {
+      const [entregas, llamadas] = await Promise.all([
+        pool.query<{ id: number; solicitud_id: number | null; animal_id: number; animal: string; fecha_entrega: string; adoptante: string; telefono: string | null }>(
+          `SELECT a.id, a.solicitud_id, a.animal_id, an.nombre AS animal, a.fecha_entrega, p.nombre AS adoptante, p.telefono
+           FROM adopciones a JOIN animales an ON an.id = a.animal_id JOIN personas p ON p.id = a.persona_id
+           WHERE a.estado = 'activa' ORDER BY a.fecha_entrega, a.id`,
+        ),
+        pool.query<{ adopcion_id: number; dia: number; riesgo: Monton; texto: string | null }>(
+          `SELECT c.adopcion_id, c.dia, c.riesgo, c.texto FROM checkins c JOIN adopciones a ON a.id = c.adopcion_id
+           WHERE a.estado = 'activa' AND c.riesgo IS NOT NULL`,
+        ),
+      ])
+      return armarSeguimientos(
+        entregas.rows.map((e) => ({
+          adopcionId: String(e.id),
+          solicitudId: e.solicitud_id == null ? null : String(e.solicitud_id),
+          animalId: String(e.animal_id),
+          animalNombre: e.animal,
+          fechaEntrega: e.fecha_entrega,
+          adoptanteNombre: e.adoptante,
+          adoptanteTelefono: e.telefono ?? '',
+        })),
+        llamadas.rows.map((l) => ({ adopcionId: String(l.adopcion_id), dia: l.dia, resultado: l.riesgo, nota: l.texto ?? '' })),
+      )
+    },
+
+    async registrarSeguimiento(adopcionId, dia, resultado, usuarioId, ahora) {
+      if (!/^\d{1,18}$/.test(adopcionId)) return false
+      const r = await pool.query(
+        `INSERT INTO checkins (adopcion_id, dia, programado_para, riesgo, atendido_por, atendido_en)
+         SELECT id, $2::smallint, fecha_entrega + $2::int, $3, $4, $5 FROM adopciones WHERE id = $1
+         ON CONFLICT (adopcion_id, dia) DO UPDATE
+           SET riesgo = EXCLUDED.riesgo, atendido_por = EXCLUDED.atendido_por, atendido_en = EXCLUDED.atendido_en`,
+        [adopcionId, dia, resultado, usuarioId, ahora],
       )
       return r.rowCount === 1
     },

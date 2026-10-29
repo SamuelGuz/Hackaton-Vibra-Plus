@@ -162,6 +162,33 @@ async function main() {
       ])
     }
 
+    // Adopciones ya entregadas, para los seguimientos de los días 2, 5, 15, 30 y 90:
+    // Firulais hace 5 días (toca hoy el día 5) y Canelita hace 30 (toca hoy el día 30). Las llamadas anteriores ya salieron bien.
+    const entregas: [string, string, string, string, number, number[]][] = [
+      ['Firulais', 'perro', 'Juan Gómez', '573115550101', 5, [2]],
+      ['Canelita', 'gato', 'María López', '573105550202', 30, [2, 5, 15]],
+    ]
+    for (const [nombre, especie, adoptante, telefono, hace, llamadas] of entregas) {
+      const a = await q(
+        `INSERT INTO animales (nombre, alias, especie, estado, fecha_ingreso, caracter, advertencias, creado_por)
+         VALUES ($1, '{}', $2, 'adoptado', $3, '', '{}', $4) RETURNING id`,
+        [nombre, especie, dias(-(hace + 60)), admin],
+      )
+      const p = await q(`INSERT INTO personas (nombre, telefono, es_adoptante) VALUES ($1, $2, true) RETURNING id`, [adoptante, telefono])
+      const ad = await q(`INSERT INTO adopciones (animal_id, persona_id, fecha_entrega, creado_por) VALUES ($1, $2, $3, $4) RETURNING id`, [
+        a.rows[0].id,
+        p.rows[0].id,
+        dias(-hace),
+        admin,
+      ])
+      for (const dia of llamadas) {
+        await q(
+          `INSERT INTO checkins (adopcion_id, dia, programado_para, riesgo, atendido_por, atendido_en) VALUES ($1, $2, $3, 'verde', $4, now())`,
+          [ad.rows[0].id, dia, dias(-hace + dia), admin],
+        )
+      }
+    }
+
     // Tratamientos: [animal, medicamento, dosis, unidad, cada cuántas horas, primera hora, desde, hasta]
     const tratamientos: [string, string, number, string, number, string, number, number][] = [
       ['Mateo', 'Amoxicilina', 3, 'ml', 12, '08:00', -4, 6],

@@ -5,6 +5,8 @@ import { diasDeComida, dosisDeHoy, nivelClinica, nivelComida, plataEnCaja } from
 import { puedeVerPlata, type Ctx } from './ctx.js'
 import { preguntarAlgoMas } from './confirmar.js'
 import { nombreCorto } from './plata.js'
+import { listaDeHoy, pendientes } from './seguimientos.js'
+import { textos } from '../textos.js'
 
 const MAX_DOSIS = 6
 
@@ -31,8 +33,11 @@ export async function verHoy(c: Ctx): Promise<Estado> {
     .map(({ e, dias }) => `${e} ${diasHablados(dias)}${nivelComida(d, dias) === 'urgente' ? ' ⚠️ toca pedir' : ''}`)
   if (comida.length) lineas.push(`🍖 Comida: ${comida.join(' · ')}`)
 
-  const pendientes = d.porConfirmar.filter((p) => p.estado === 'pendiente').length
-  if (pendientes) lineas.push(`⏳ Por confirmar en el panel: ${pendientes}`)
+  const llamadas = listaDeHoy(await pendientes(c.deps, c.ahora), c.ahora, c.usuario.rol)
+  if (llamadas) lineas.push(`${llamadas}\n${textos.seguimientosVerHoy}`)
+
+  const porConfirmar = d.porConfirmar.filter((p) => p.estado === 'pendiente').length
+  if (porConfirmar) lineas.push(`⏳ Por confirmar en el panel: ${porConfirmar}`)
 
   if (puedeVerPlata(c)) {
     lineas.push(`💵 En caja: *${pesos(plataEnCaja(d))}*`)

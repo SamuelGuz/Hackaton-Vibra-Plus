@@ -10,6 +10,7 @@ import { empezarMedicina } from './medicina.js'
 import { abrirPanel, mostrarMenu } from './menu.js'
 import { empezarFactura, empezarPlata } from './plata.js'
 import { verHoy } from './resumen.js'
+import { pideSeguimientos, verSeguimientos } from './seguimientos.js'
 
 /** Abre una opción del menú. `pista` es lo que se dijo, para saltarse preguntas que ya se respondieron. */
 export function opcionDelMenu(c: Ctx, opcion: string, pista?: string): Promise<Estado> {
@@ -34,6 +35,8 @@ export function opcionDelMenu(c: Ctx, opcion: string, pista?: string): Promise<E
       return abrirPanel(c)
     case 'informe':
       return elegirInforme(c)
+    case 'seg':
+      return verSeguimientos(c)
     default:
       return mostrarMenu(c)
   }
@@ -55,5 +58,6 @@ const TEMAS: [RegExp, string][] = [
 export function temaDeTexto(texto: string): string | null {
   const t = normal(texto)
   if (informePedido(texto)) return 'informe'
+  if (pideSeguimientos(texto)) return 'seg'
   return TEMAS.find(([re]) => re.test(t))?.[1] ?? null
 }

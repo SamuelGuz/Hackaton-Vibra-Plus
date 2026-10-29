@@ -201,8 +201,10 @@ export function crearRepoPg(pool: Pool): RepoPg {
     },
 
     async leerRegistro(id) {
-      if (!/^\d+$/.test(id)) return null
-      const r = await pool.query(`SELECT id, usuario_id, estado, acciones_json, media_url FROM registros_ia WHERE id = $1`, [id])
+      // Por su id, o por el uuid con que lo mandó el panel (igual que cambiarEstado)
+      const columna = /^\d+$/.test(id) ? 'id' : UUID.test(id) ? 'cliente_id' : null
+      if (!columna) return null
+      const r = await pool.query(`SELECT id, usuario_id, estado, acciones_json, media_url FROM registros_ia WHERE ${columna} = $1`, [id])
       const f = r.rows[0]
       if (!f) return null
       const reg: Registro = {

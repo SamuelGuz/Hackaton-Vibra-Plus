@@ -9,6 +9,9 @@ export const veraPlata = (rol: Rol) => rol === 'admin'
 /** Registrar ingresos, gastos y facturas (y confirmarlos o deshacerlos): todos menos voluntarios */
 export const manejaPlata = (rol: Rol) => rol !== 'voluntario'
 
+/** Lo que ve quien no es administración en lugar del texto de un pendiente ajeno que también traía plata */
+export const TEXTO_SIN_PLATA = '(También trae plata: el detalle lo ve la administración)'
+
 /** La acción mueve plata: un ingreso o gasto, o una factura que sube la deuda */
 export const esDePlata = (a: Accion | Propuesta) => a.tipo === 'movimiento' || a.tipo === 'deuda'
 
@@ -27,7 +30,9 @@ export function datosParaRol(d: DatosAlbergue, usuario: { id: number; rol: Rol }
       continue
     }
     const propuestas = p.propuestas.filter((x) => !esDePlata(x))
-    if (propuestas.length) porConfirmar.push({ ...p, propuestas })
+    if (!propuestas.length) continue
+    // Si se quitó plata, el texto original también se va: lo dicho ("pagué 80 mil") deja ver el monto
+    porConfirmar.push(propuestas.length < p.propuestas.length ? { ...p, propuestas, textoOriginal: TEXTO_SIN_PLATA } : p)
   }
   return {
     ...d,

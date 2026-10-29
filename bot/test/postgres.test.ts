@@ -196,6 +196,12 @@ describe.skipIf(!URL_PRUEBA)('repositorio sobre Postgres', () => {
     expect(await repo.duenoDeRecibo('/archivos/recibo-pg.jpg')).toEqual({ usuarioId: luis.id })
     expect(await repo.duenoDeRecibo('/archivos/nota-pg.ogg')).toBeNull()
     expect(await repo.duenoDeRecibo('/archivos/no-existe.jpg')).toBeNull()
+
+    // leerRegistro también lo encuentra por el uuid del panel (lo usa el permiso de /api/eventos/estado)
+    const uuid = '0b9f5d3e-4c1a-4e2b-9a7f-00000000abcd'
+    const id = await repo.crearRegistro({ usuarioId: luis.id, canal: 'panel', tipoEntrada: 'boton', transcripcion: 'x', estado: 'confirmado', clienteId: uuid, acciones: [{ tipo: 'movimiento', movimiento: { ...gastoPanel, foto: null } }] })
+    expect((await repo.leerRegistro(uuid))?.id).toBe(id)
+    expect(await repo.leerRegistro('no-es-id')).toBeNull()
   })
 
   it('solicitudes de adopción: una por clave, lo humano no se pisa y la persona queda como adoptante', async () => {

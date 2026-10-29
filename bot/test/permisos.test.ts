@@ -75,6 +75,20 @@ describe('GET /api/hoy', () => {
   })
 })
 
+describe('pendientes mezclados (algo normal + plata) de otra persona', () => {
+  it('llega solo lo que no es plata, y el texto original no deja ver el monto', async () => {
+    await t.repo.crearRegistro({ usuarioId: CAROLINA.id, canal: 'whatsapp', tipoEntrada: 'audio', transcripcion: 'le di la pastilla a Tobi y pagué 80 mil de comida', estado: 'por_confirmar',
+      acciones: [
+        { tipo: 'nota', animalId: '10', texto: 'se tomó la pastilla' },
+        { tipo: 'movimiento', movimiento: { tipo: 'gasto', monto: 80_000, categoria: 'comida', clinicaId: null, abonoDeuda: false, foto: null, nota: '' } },
+      ] })
+    const d = (await (await pedir('/api/hoy', LUIS)).json()) as { porConfirmar: { textoOriginal: string; propuestas: { tipo: string }[] }[] }
+    expect(d.porConfirmar).toHaveLength(1)
+    expect(d.porConfirmar[0].propuestas.map((p) => p.tipo)).toEqual(['nota'])
+    expect(d.porConfirmar[0].textoOriginal).not.toMatch(/80|mil|pagu/)
+  })
+})
+
 describe('GET /api/eventos', () => {
   it('los movimientos solo le llegan a la administradora', async () => {
     expect(((await (await pedir('/api/eventos', CAROLINA)).json()) as Hoy).movimientos).toHaveLength(1)
@@ -112,6 +126,19 @@ describe('POST /api/eventos/estado', () => {
     expect((await mandar('/api/eventos/estado', { ids: [id], estado: 'anulado' }, SARA)).status).toBe(403)
     expect(t.repo.registros[0].estadoActual).toBe('por_confirmar')
     expect((await mandar('/api/eventos/estado', { ids: [id], estado: 'anulado' }, LUIS)).status).toBe(200)
+  })
+
+  it('tampoco con el uuid del panel: un gasto registrado en el panel no lo anula un voluntario', async () => {
+    await mandar('/api/eventos', [gasto(1)], CAROLINA)
+    const r = await mandar('/api/eventos/estado', { ids: [UUID(1)], estado: 'anulado' }, SARA)
+    expect(r.status).toBe(403)
+    expect(t.repo.registros[0].estadoActual).toBe('confirmado')
+  })
+
+  it('un voluntario sí deshace su propia nota del panel por su uuid', async () => {
+    await mandar('/api/eventos', [nota(1)], SARA)
+    expect((await mandar('/api/eventos/estado', { ids: [UUID(1)], estado: 'anulado' }, SARA)).status).toBe(200)
+    expect(t.repo.registros[0].estadoActual).toBe('anulado')
   })
 
   it('un voluntario sí confirma lo que no es plata', async () => {

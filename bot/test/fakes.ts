@@ -162,7 +162,7 @@ export class RepoFalso implements Repo {
     return id
   }
   async leerRegistro(id: string) {
-    const r = this.registros.find((x) => x.id === id)
+    const r = this.registros.find((x) => x.id === id || (!!x.clienteId && x.clienteId === id))
     return r ? { id: r.id, usuarioId: r.usuarioId, estado: r.estadoActual, acciones: r.acciones, mediaUrl: r.mediaUrl ?? null } : null
   }
   async cambiarEstado(ids: string[], estado: EstadoRegistro) {

@@ -1,324 +1,119 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hand-off de Tareas Frontend & Producto — Para Daniel</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Handoff Daniel (Web Pública Tiendas + Panel Biomédico) | Refugio Yesenia</title>
   <style>
     :root {
-      --bg: #0b0f19;
-      --card: #161e2e;
-      --border: #283548;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --primary: #10b981;
-      --primary-glow: rgba(16, 185, 129, 0.2);
-      --accent: #38bdf8;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --code-bg: #060911;
+      --bg: #0b0d10;
+      --surface: #13171d;
+      --surface-2: #1a2028;
+      --border: #262f3d;
+      --text: #f3f5f8;
+      --muted: #9ba5b4;
+      --amber: #f59e0b;
+      --emerald: #10b981;
+      --sky: #38bdf8;
+      --rose: #f43f5e;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
-      padding: 2rem 1rem;
+      padding: 2rem 1.25rem 4rem;
     }
-    .container { max-width: 960px; margin: 0 auto; }
-    header {
-      background: linear-gradient(135deg, #161e2e 0%, #0b0f19 100%);
+    .container { max-width: 1020px; margin: 0 auto; }
+    .hero {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(16, 185, 129, 0.1));
       border: 1px solid var(--border);
-      padding: 2.25rem 2rem;
-      border-radius: 16px;
-      margin-bottom: 2rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border-radius: 18px;
+      padding: 1.8rem;
+      margin-bottom: 1.8rem;
     }
-    .badge {
-      display: inline-block;
-      padding: 0.35rem 0.8rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      margin-bottom: 0.75rem;
-    }
-    .badge-dev { background: #dbeafe; color: #1e40af; }
-    .badge-p0 { background: #fee2e2; color: #991b1b; }
-    .badge-p1 { background: #fef3c7; color: #92400e; }
-    h1 { font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; }
-    p.subtitle { color: var(--muted); font-size: 1.05rem; }
-    .meta-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 1.5rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-    .meta-grid strong { color: var(--text); }
+    .hero h1 { font-size: 1.85rem; margin-bottom: 0.5rem; }
+    .hero p { color: var(--muted); }
     .card {
-      background: var(--card);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.75rem;
-      margin-bottom: 1.75rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+      border-radius: 16px;
+      padding: 1.4rem;
+      margin-bottom: 1.2rem;
     }
-    h2 {
-      font-size: 1.35rem;
-      color: var(--accent);
-      margin-bottom: 1.25rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.6rem;
+    .card h2 { font-size: 1.25rem; margin-bottom: 0.8rem; color: var(--sky); }
+    .task {
       display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-    h3 { font-size: 1.1rem; color: #fff; margin: 1.25rem 0 0.5rem; }
-    .task-block {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.25rem;
-      margin-bottom: 1.25rem;
-      transition: all 0.2s ease;
-    }
-    .task-block:hover {
-      border-color: rgba(56, 189, 248, 0.4);
-    }
-    .task-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.75rem;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .task-title h4 { font-size: 1.1rem; color: #fff; font-weight: 700; }
-    .check-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      padding: 0.5rem 0;
-      cursor: pointer;
-      user-select: none;
-    }
-    .check-item input[type="checkbox"] {
-      width: 1.2rem;
-      height: 1.2rem;
-      margin-top: 0.2rem;
-      accent-color: var(--primary);
+      gap: 0.8rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       cursor: pointer;
     }
-    .check-item span {
-      font-size: 0.95rem;
-      color: #cbd5e1;
-    }
-    .check-item input[type="checkbox"]:checked + span {
-      text-decoration: line-through;
-      color: var(--muted);
-    }
-    code {
-      background: var(--code-bg);
-      color: var(--accent);
-      padding: 0.2rem 0.45rem;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-    .tag {
-      font-size: 0.75rem;
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
-      font-weight: 600;
-    }
-    .tag-file { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
-    .progress-bar-container {
-      background: rgba(255,255,255,0.05);
-      border-radius: 9999px;
-      height: 10px;
-      margin: 1.5rem 0 0.5rem;
-      overflow: hidden;
-    }
-    .progress-bar {
-      background: var(--primary);
-      height: 100%;
-      width: 0%;
-      transition: width 0.3s ease;
-      box-shadow: 0 0 12px var(--primary-glow);
-    }
-    .progress-text {
-      font-size: 0.85rem;
-      color: var(--muted);
-      text-align: right;
-    }
-    .info-callout {
-      background: rgba(16, 185, 129, 0.08);
-      border-left: 4px solid var(--primary);
-      padding: 1rem;
-      border-radius: 0 8px 8px 0;
-      margin-bottom: 1.5rem;
-      font-size: 0.95rem;
-      color: #d1fae5;
-    }
+    .task:last-child { border-bottom: none; }
+    .task input { width: 20px; height: 20px; margin-top: 0.2rem; accent-color: var(--emerald); }
+    .task.done div { text-decoration: line-through; color: #5c6675; }
+    code { background: var(--surface-2); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--amber); font-size: 0.86rem; }
   </style>
 </head>
 <body>
-
   <div class="container">
-
-    <!-- HEADER -->
-    <header>
-      <span class="badge badge-dev">Hand-off de Producción</span>
-      <h1>🚀 Plan de Ejecución Frontend & Pitch para Daniel</h1>
-      <p class="subtitle">Mapeo completo de pantallas, componentes y entregables para conectar con el backend de Samuel y reventar la hackatón.</p>
-
-      <div class="progress-bar-container">
-        <div class="progress-bar" id="progressBar"></div>
-      </div>
-      <div class="progress-text" id="progressText">0 de 16 tareas completadas (0%)</div>
-
-      <div class="meta-grid">
-        <div><strong>Responsable:</strong> Daniel (Frontend / UI / Pitch)</div>
-        <div><strong>Partner Backend:</strong> Samuel (Bot / API / Postgres)</div>
-        <div><strong>Estrategia:</strong> Silvia (Supervivencia & Viabilidad)</div>
-        <div><strong>Rama:</strong> <code>silvia-rescate-real</code></div>
-      </div>
-    </header>
-
-    <div class="info-callout">
-      💡 <strong>Enfoque de Victoria:</strong> Dejamos atrás las quejas y el overengineering. Samuel se encarga del bot en WhatsApp y tú te encargas de la <strong>experiencia visual, la web comunitaria de donaciones y la puesta en escena del pitch</strong>.
+    <div class="hero">
+      <h1>💻 Handoff Oficial para Daniel — Web de Tiendas + Panel Biomédico</h1>
+      <p>
+        Información 100% depurada para <strong>Refugio Yesenia (Bucaramanga)</strong>: enfocada en bultos de comida, vacunas, medicamentos, sin collares QR que se dañen y con el sello completo de <strong>Ingeniería Biomédica + Ingeniería de Sistemas</strong>.
+      </p>
     </div>
 
-    <!-- BLOQUE 1: LA WEB COMUNITARIA -->
     <div class="card">
-      <h2>🌐 1. La Web Comunitaria (El Destino del QR en las Tiendas)</h2>
-      <p style="color: var(--muted); margin-bottom: 1.25rem;">Esta es la página ultraligera a la que llega cualquier vecino cuando escanea el afiche en una panadería, tienda o veterinaria de barrio.</p>
-
-      <!-- Task 1.1 -->
-      <div class="task-block">
-        <div class="task-title">
-          <h4>1.1. Storytelling de Yesenia & Transparencia Radical</h4>
-          <span class="tag tag-file">panel/src/app/... o landing</span>
+      <h2>🏪 1. Página Web Pública (Al escanear el Póster QR en Tiendas)</h2>
+      <label class="task" onclick="this.classList.toggle('done')">
+        <input type="checkbox" />
+        <div>
+          <strong>Actualizar Storytelling a Refugio Yesenia (Bucaramanga) en <code>historia.ts</code>:</strong><br>
+          Usar exclusivamente la historia real de <strong>Yesenia</strong> y sus 3 antecedentes documentales verificados: <em>Vanguardia</em> (16 de julio de 2024), <em>Fundación Dar con Amor</em> (Informe 2023) y <em>Universidad de Santander UDES</em> (Campaña “Dona un Ladrillo”).
         </div>
-        <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 0.75rem;">Contar la verdad en 10 segundos: Yesenia (recicladora urbana, estrato 1), cuida 90 perros en su casa por amor.</p>
-        <div class="check-list">
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span>Hero con foto de Yesenia y mensaje de impacto: <em>"Cuidando 90 vidas con las uñas"</em>.</span></label>
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span>Contador visual en vivo: <strong>90 perros</strong> · <strong>0 bultos asegurados para el fin de semana</strong>.</span></label>
+      </label>
+      <label class="task" onclick="this.classList.toggle('done')">
+        <input type="checkbox" />
+        <div>
+          <strong>Destinos Reales de Donación (Bultos, Vacunas, Medicamentos y Dinero):</strong><br>
+          Enfocar los botones de apoyo en lo que realmente necesita el refugio: <strong>bultos de comida (concentrado), vacunas, medicamentos, abonos a clínicas veterinarias y ladrillos de adecuación</strong>.
         </div>
-      </div>
-
-      <!-- Task 1.2 -->
-      <div class="task-block">
-        <div class="task-title">
-          <h4>1.2. Las 3 Metas Tangibles del Mes (Bultos, Vacunas, Deuda)</h4>
-          <span class="badge badge-p0">ALTA PRIORIDAD</span>
+      </label>
+      <label class="task" onclick="this.classList.toggle('done')">
+        <input type="checkbox" />
+        <div>
+          <strong>Barra de Meta en Vivo + Registro Anónimo de Confianza + Mensaje al Lograr la Meta:</strong><br>
+          Conectar con <code>GET /api/publico/meta-del-dia</code> para mostrar: <em>"En total hemos recaudado $X de la meta de $Y"</em>, la lista anónima en tiempo real de las personas que donaron, y el campo para dejar su WhatsApp y recibir el mensajito automático cuando se alcance la meta.
         </div>
-        <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 0.75rem;">Cero pedidos de dinero en el aire. Metas con barras de progreso vivas:</p>
-        <div class="check-list">
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span><strong>Meta 1 (Comida):</strong> <em>"Llegar a 15 bultos de concentrado"</em> (Barra: 4 / 15 bultos recaudados).</span></label>
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span><strong>Meta 2 (Salud):</strong> <em>"Jornada de Vacunación Parvovirus/Rabia"</em> ($350.000 / $600.000).</span></label>
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span><strong>Meta 3 (Veterinaria):</strong> <em>"Abono a deuda en Veterinaria San Roque"</em> ($180.000 / $450.000).</span></label>
-        </div>
-      </div>
-
-      <!-- Task 1.3 -->
-      <div class="task-block">
-        <div class="task-title">
-          <h4>1.3. Botonera Nequi / Daviplata & Muro Anónimo en Vivo</h4>
-          <span class="tag tag-file">panel/src/components/...</span>
-        </div>
-        <div class="check-list">
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span>Botones de micro-donación rápida: <code>$5.000 (Aporte)</code> · <code>$25.000 (1 Vacuna)</code> · <code>$60.000 (Medio Bulto)</code> · <code>$120.000 (Bulto Completo)</code>.</span></label>
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span>Modal de Nequi/Daviplata con número visible y botón de copiar en 1 toque.</span></label>
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span>Muro en vivo: <em>"Hace 12 min: Donación anónima de $25.000 para vacuna de Toby"</em>.</span></label>
-        </div>
-      </div>
+      </label>
     </div>
 
-    <!-- BLOQUE 2: PORTAL DE ADOPCIÓN -->
     <div class="card">
-      <h2>🐶 2. Portal Público de Adopciones (`/adoptar`)</h2>
-      <p style="color: var(--muted); margin-bottom: 1.25rem;">El portal que desahoga el refugio. Las tarjetas de los perros listos para entrega.</p>
-
-      <!-- Task 2.1 -->
-      <div class="task-block">
-        <div class="task-title">
-          <h4>2.1. Tarjetas de Peluditos con Casos Reales</h4>
-          <span class="tag tag-file">panel/src/features/adoptar/...</span>
+      <h2>🧬 2. Panel Interno de Yesenia + Ingeniería Biomédica (Sin Collares QR)</h2>
+      <label class="task" onclick="this.classList.toggle('done')">
+        <input type="checkbox" />
+        <div>
+          <strong>Identificación Visual por Patios y Rasgos (Cero Collares QR):</strong><br>
+          En <code>Animales.tsx</code> y <code>Ficha.tsx</code>, permitir filtrar con 1 toque por <strong>Patio / Zona</strong> y rasgos visuales rápidos (color de manto, marcas), eliminando la dependencia de imprimir códigos QR para perros nuevos.
         </div>
-        <div class="check-list">
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span>Tarjetas con foto real, nombre, edad aproximada, tamaño y carácter (tranquilo, juguetón, guardián).</span></label>
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span>Badge de salud: <em>"Vacunado"</em> · <em>"Esterilizado"</em> · <em>"En tratamiento"</em>.</span></label>
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span>Botón CTA principal: <strong>"Quiero Adoptar a [Nombre]"</strong> ➔ Abre WhatsApp directo con el mensaje precargado para el bot de Samuel.</span></label>
+      </label>
+      <label class="task" onclick="this.classList.toggle('done')">
+        <input type="checkbox" />
+        <div>
+          <strong>Bloque Biomédico en <code>Ficha.tsx</code> (Farmacovigilancia + Sanación Tisular + Vacunas):</strong><br>
+          Mostrar en la ficha del animal: 1) Dosis segura por peso (<code>mg/kg</code>) y <strong>Ventana Terapéutica de Bloqueo</strong> contra doble dosis; 2) Progreso de <strong>Sanación de Heridas en 4 fases tisulares</strong> (Índice de Cicatrización %); y 3) Semáforo de <strong>Vacunas y Cuarentena Epidemiológica de 14 días</strong>.
         </div>
-      </div>
-
-      <!-- Task 2.2 -->
-      <div class="task-block">
-        <div class="task-title">
-          <h4>2.2. Semáforo Ligero de Salud (Modo Ficha Rápida)</h4>
-          <span class="tag tag-file">panel/src/features/ficha/...</span>
+      </label>
+      <label class="task" onclick="this.classList.toggle('done')">
+        <input type="checkbox" />
+        <div>
+          <strong>Botón de Cierre 7:00 PM (<code>"Todo bien"</code>) en <code>Hoy.tsx</code> y Llamada en <code>Confirmar.tsx</code>:</strong><br>
+          Añadir el botón de cierre nocturno en <code>Hoy.tsx</code> y el botón para llamar/escribir al voluntario en las tarjetas amarillas de <code>Confirmar.tsx</code>.
         </div>
-        <div class="check-list">
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span>Vista ultraligera (<20 KB) que muestra si el animal comió hoy (🟢), si tiene pastilla pendiente (🟡) o curación (🔴).</span></label>
-        </div>
-      </div>
+      </label>
     </div>
-
-    <!-- BLOQUE 3: EL AFICHE FÍSICO -->
-    <div class="card">
-      <h2>📄 3. El Afiche Físico de Barrio (El Caballo de Troya)</h2>
-      <p style="color: var(--muted); margin-bottom: 1.25rem;">La pieza física que calla al jurado cuando pregunten por qué no hicieron hardware.</p>
-
-      <div class="task-block">
-        <div class="task-title">
-          <h4>3.1. Diseño del Afiche / Alcancía de Barrio (Canva o Figma)</h4>
-          <span class="badge badge-p1">DISEÑO RÁPIDO</span>
-        </div>
-        <div class="check-list">
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span>Titular conmovedor: <em>"Ayuda a Yesenia y a los 90 peluditos del barrio"</em>.</span></label>
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span>Mensaje de la tienda: <em>"Con las vueltas de tu compra ($2.000 o $5.000) aseguras un bulto de comida o una vacuna hoy"</em>.</span></label>
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span>Código QR bien grande que apunte a la web comunitaria.</span></label>
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span>Tener el PDF listo para imprimir o proyectar en el pitch.</span></label>
-        </div>
-      </div>
-    </div>
-
-    <!-- BLOQUE 4: PUESTA EN ESCENA PITCH -->
-    <div class="card">
-      <h2>🏆 4. Guion y Puesta en Escena del Pitch (3 Minutos)</h2>
-      <p style="color: var(--muted); margin-bottom: 1.25rem;">Cómo van a presentar Daniel, Silvia y el equipo ante el jurado.</p>
-
-      <div class="task-block">
-        <div class="task-title">
-          <h4>4.1. Estructura del Discurso</h4>
-          <span class="badge badge-dev">ENSAYO</span>
-        </div>
-        <div class="check-list">
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span><strong>Minuto 0 a 1 (El Golpe de Realidad):</strong> <em>"Los otros equipos trajeron dispensadores; nosotros trajimos supervivencia. Yesenia cuida 90 perros en estrato 1, no tiene Wi-Fi y tiene un celular con pantalla rota. Ningún software de oficina le sirve."</em></span></label>
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span><strong>Minuto 1 a 2 (La Demo en Vivo):</strong> Mostrar el afiche físico ➔ Jurado escanea el QR ➔ Ve la meta de bultos y vacunas ➔ Yesenia manda un audio de 5 segundos en WhatsApp ➔ La web se actualiza al instante.</span></label>
-          <label class="check-item"><input type="checkbox" onchange="updateProgress()"><span><strong>Minuto 2 a 3 (Cierre de Negocio e Impacto):</strong> Mostrar el ahorro en sobredosis de medicamentos, el filtro automático de adoptantes y cómo la comunidad sostiene a los 90 animales sin intermediarios.</span></label>
-        </div>
-      </div>
-    </div>
-
   </div>
-
-  <script>
-    function updateProgress() {
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      const total = checkboxes.length;
-      let checked = 0;
-      checkboxes.forEach(cb => { if(cb.checked) checked++; });
-      const percent = Math.round((checked / total) * 100);
-      document.getElementById('progressBar').style.width = percent + '%';
-      document.getElementById('progressText').innerText = `${checked} de ${total} tareas completadas (${percent}%)`;
-    }
-  </script>
 </body>
 </html>

@@ -1,338 +1,86 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pendientes Técnicos Backend (Bot) — Para Samuel</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Handoff Samuel (Bot WhatsApp & Segundo Cerebro) | Refugio Yesenia</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --text: #e2e8f0;
-      --text-muted: #94a3b8;
-      --primary: #10b981;
-      --primary-hover: #059669;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --info: #3b82f6;
-      --border: #334155;
-      --code-bg: #090d16;
+      --bg: #0b0d10;
+      --surface: #13171d;
+      --surface-2: #1a2028;
+      --border: #262f3d;
+      --text: #f3f5f8;
+      --muted: #9ba5b4;
+      --amber: #f59e0b;
+      --emerald: #10b981;
+      --sky: #38bdf8;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace, sans-serif;
-      background-color: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+      background: var(--bg);
       color: var(--text);
       line-height: 1.6;
-      padding: 2rem 1rem;
+      padding: 2rem 1.25rem 4rem;
     }
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-    }
-    header {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    .container { max-width: 1020px; margin: 0 auto; }
+    .hero {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(245, 158, 11, 0.1));
       border: 1px solid var(--border);
-      padding: 2rem;
-      border-radius: 14px;
-      margin-bottom: 2rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      border-radius: 18px;
+      padding: 1.8rem;
+      margin-bottom: 1.8rem;
     }
-    .badge {
-      display: inline-block;
-      padding: 0.3rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      margin-bottom: 0.75rem;
-    }
-    .badge-p0 { background: #fee2e2; color: #991b1b; }
-    .badge-p1 { background: #fef3c7; color: #92400e; }
-    .badge-p2 { background: #e0e7ff; color: #3730a3; }
-    .badge-green { background: #d1fae5; color: #065f46; }
-    h1 { font-size: 1.85rem; margin-bottom: 0.5rem; color: #f8fafc; }
-    p.subtitle { color: var(--text-muted); font-size: 1rem; margin-bottom: 1rem; }
-    .meta-box {
-      display: flex;
-      gap: 1.5rem;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-      padding-top: 1rem;
-      flex-wrap: wrap;
-    }
+    .hero h1 { font-size: 1.85rem; margin-bottom: 0.5rem; }
+    .hero p { color: var(--muted); }
     .card {
-      background: var(--card-bg);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.75rem;
-      margin-bottom: 1.75rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-radius: 16px;
+      padding: 1.4rem;
+      margin-bottom: 1.1rem;
     }
-    h2 {
-      font-size: 1.3rem;
-      color: #38bdf8;
-      margin-bottom: 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.6rem;
-    }
-    h3 {
-      font-size: 1.05rem;
-      color: #f1f5f9;
-      margin-top: 1.25rem;
-      margin-bottom: 0.6rem;
-    }
-    ul { list-style: none; padding-left: 0; }
-    li {
-      position: relative;
-      padding-left: 1.5rem;
-      margin-bottom: 0.65rem;
-    }
-    li::before {
-      content: "→";
-      position: absolute;
-      left: 0.2rem;
-      color: var(--primary);
-      font-weight: bold;
-    }
-    code {
-      background: var(--code-bg);
-      color: #38bdf8;
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      font-size: 0.875rem;
-      border: 1px solid #1e293b;
-    }
-    pre {
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      padding: 1rem;
-      border-radius: 8px;
-      overflow-x: auto;
-      font-size: 0.85rem;
-      color: #cbd5e1;
-      margin: 0.75rem 0;
-    }
-    .task-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.75rem;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .file-tag {
-      font-size: 0.8rem;
-      color: #a7f3d0;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-    }
-    .why-box {
-      background: rgba(59, 130, 246, 0.1);
-      border-left: 3px solid var(--info);
-      padding: 0.75rem 1rem;
-      border-radius: 0 6px 6px 0;
-      font-size: 0.9rem;
-      color: #bfdbfe;
-      margin-bottom: 0.75rem;
-    }
-    .checklist {
-      margin-top: 0.75rem;
-    }
-    .checklist label {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.6rem;
-      cursor: pointer;
-      margin-bottom: 0.4rem;
-      font-size: 0.9rem;
-    }
-    input[type="checkbox"] {
-      margin-top: 0.25rem;
-      accent-color: var(--primary);
-    }
-    .footer {
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
-    }
+    .card h2 { font-size: 1.2rem; margin-bottom: 0.6rem; color: var(--emerald); }
+    .card p, .card li { color: var(--muted); font-size: 0.94rem; }
+    .card ul { padding-left: 1.1rem; margin-top: 0.5rem; }
+    .card li { margin-bottom: 0.4rem; }
+    .card strong { color: var(--text); }
+    code { background: var(--surface-2); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--amber); font-size: 0.86rem; }
   </style>
 </head>
 <body>
-
   <div class="container">
-    
-    <!-- HEADER -->
-    <header>
-      <span class="badge badge-green">Hoja de Ruta Backend</span>
-      <h1>🎯 Pendientes Críticos del Bot para Samuel</h1>
-      <p class="subtitle">Guía de integración para convertir el bot en el <strong>Segundo Cerebro</strong> de Yesenia y conectar la autogestión con la web comunitaria.</p>
-      <div class="meta-box">
-        <div><strong>Para:</strong> Samuel (Backend / Bot Owner)</div>
-        <div><strong>De parte de:</strong> Silvia & Monoga (Estrategia & Frontend)</div>
-        <div><strong>Rama activa:</strong> <code>silvia-rescate-real</code></div>
-        <div><strong>Contexto:</strong> Yesenia · 90 animales · Manos mojadas · WhatsApp Low-Data</div>
-      </div>
-    </header>
+    <div class="hero">
+      <h1>🤖 Arquitectura del Bot & Segundo Cerebro (Samuel) — Refugio Yesenia</h1>
+      <p>
+        Especificación depurada de los módulos del agente de WhatsApp y backend para la autogestión manos-libres de Yesenia (sin collares QR, enfocado en bultos de comida, vacunas, medicamentos, evolución de heridas y conexión en vivo con la web de las tiendas).
+      </p>
+    </div>
 
-    <!-- INTRO RESUMEN -->
     <div class="card">
-      <h2>⚡ Resumen de lo que ya hiciste vs. lo que falta</h2>
-      <p>Samuel, ya avanzaste con la conexión de <code>externo.ts</code>, las tablas SQL de adopciones y el detector de duplicados en <code>medicina.ts</code>. Eso está excelente. Sin embargo, para que el sistema realmente funcione para Yesenia en campo y la rompamos en la hackatón, el bot necesita <strong>5 ajustes quirúrgicos</strong>:</p>
-      <br>
+      <h2>1. Captura Manos-Libres por Voz/Foto + Candado Anti-Doble Dosis</h2>
       <ul>
-        <li><strong>1.</strong> Dejar de forzar "bultos" fijos y soportar <strong>kilos sueltos</strong> de carne/recortes de Don Carlos el carnicero.</li>
-        <li><strong>2.</strong> Conectar el sistema de <strong>seguimientos (Días 2, 5, 15, 30 y 90)</strong> que ya creaste en <code>clasificar.ts</code> al flujo de WhatsApp.</li>
-        <li><strong>3.</strong> <strong>Auto-confirmación en audios de alta confianza</strong> para que Yesenia no tenga que tocar la pantalla con las manos con barro.</li>
-        <li><strong>4.</strong> Envío automático proactivo a las <strong>7:00 AM del informe/foto resumen</strong> (vacunas y tareas del día).</li>
-        <li><strong>5.</strong> Endpoint o Webhook para que los audios de Yesenia <strong>actualicen en vivo la página web pública</strong> de las tiendas de barrio.</li>
+        <li><strong>Audios cortos con manos ocupadas:</strong> Yesenia o los voluntarios registran comida, bultos abiertos, medicinas dadas y notas de evolución de heridas por nota de voz en WhatsApp.</li>
+        <li><strong>Seguridad Clínica Biomédica:</strong> El candado (<code>candado.ts</code> + <code>medicina.ts</code>) impide registrar dos veces la misma dosis programada y mantiene los cambios críticos de medicamentos o dinero en la bandeja de confirmación para evitar errores.</li>
+        <li><strong>Identificación Visual y por Apodos (Sin Collares QR):</strong> Cuando llega un perro nuevo o se consulta por un animal, se identifica por nombre/apodo, patio y rasgos visuales desde WhatsApp.</li>
       </ul>
     </div>
 
-    <!-- TAREA 1 -->
     <div class="card">
-      <div class="task-header">
-        <span class="badge badge-p0">PRIORIDAD P0 · URGENTE</span>
-        <span class="file-tag">bot/src/conversacion/comida.ts & bot/src/datos/calculos.ts</span>
-      </div>
-      <h3>🥩 1. Soportar Kilos Sueltos de Carne / Carnicero (No solo bultos)</h3>
-      <div class="why-box">
-        <strong>Por qué es vital:</strong> Yesenia no compra bultos comerciales cerrados. A ella le llegan 15 kg de recortes o huesos donados por Don Carlos. Hoy <code>comida.ts</code> asume que todo es "bulto de perro o gato".
-      </div>
-      <p><strong>Qué hacer en el código:</strong></p>
+      <h2>2. Despertador Proactivo 7:00 AM + Recordatorio de Vacunas y Citas</h2>
       <ul>
-        <li>En <code>bot/src/conversacion/comida.ts</code>, permitir registrar entrada/salida en <strong>kilos</strong> (ej. <code>{ tipo: 'inventario', especie: 'perro', formato: 'kilos', cantidadKg: 15 }</code> o convertir bultos a kg dinámicamente).</li>
-        <li>Permitir que el parser de texto/audio en <code>libre.ts</code> entienda frases como: <em>"llegaron 20 kilos de carne"</em> o <em>"se gastaron 12 kilos de menudencia"</em>.</li>
-        <li>En <code>calculos.ts</code>, calcular días de comida dividiendo el total de kg en bodega (concentrado + carne) entre el consumo diario real.</li>
+        <li><strong>Informe Matutino Automático (<code>enviarResumenMatutino</code>):</strong> Envía a primera hora la imagen resumen con las medicinas del día, los días restantes de bultos de concentrado, las <strong>vacunas próximas a vencer</strong> y las <strong>visitas de adopción agendadas</strong> para hoy.</li>
       </ul>
-      <div class="checklist">
-        <label><input type="checkbox"> Soportar unidad de kilos (kg) además de bultos en <code>comida.ts</code>.</label>
-        <label><input type="checkbox"> Regex/IA en <code>libre.ts</code> reconociendo "kilos de carne / carnaza / menudencias".</label>
-        <label><input type="checkbox"> Test en <code>bot/test/conversacion.test.ts</code> que verifique la llegada de kilos de carne.</label>
-      </div>
     </div>
 
-    <!-- TAREA 2 -->
     <div class="card">
-      <div class="task-header">
-        <span class="badge badge-p0">PRIORIDAD P0 · SEGUIMIENTO</span>
-        <span class="file-tag">bot/src/adopcion/clasificar.ts & bot/src/conversacion/atender.ts</span>
-      </div>
-      <h3>📞 2. Despertar los Seguimientos de Adopción (Días 2, 5, 15, 30 y 90)</h3>
-      <div class="why-box">
-        <strong>Por qué es vital:</strong> Ya programaste <code>programarSeguimientos()</code> y <code>seguimientosDeHoy()</code> en <code>clasificar.ts</code>, pero actualmente nadie los llama. Yesenia no sabe a quién llamar hoy.
-      </div>
-      <p><strong>Qué hacer en el código:</strong></p>
+      <h2>3. Conexión en Vivo con la Página Web de Tiendas (<code>GET /api/publico/meta-del-dia</code>)</h2>
       <ul>
-        <li>Conectar <code>seguimientosDeHoy()</code> en la base de datos para que consulte las adopciones entregadas que tienen seguimiento pendiente hoy.</li>
-        <li>Crear un comando o disparador de WhatsApp para cuidadores: si Yesenia o un voluntario pide o recibe el resumen, listar los seguimientos del día:
-          <pre>📞 Hoy toca llamar a los adoptantes de:
-• Rocky (Día 5) — Adoptante: Juan Gómez (311...)
-• Luna (Día 30) — Adoptante: María López (310...)</pre>
-        </li>
-        <li>Permitir registrar el resultado de la llamada con un toque: <code>[🟢 Todo bien]</code>, <code>[🟡 Ojo / Revisar]</code>, <code>[🔴 Problemas / Rescatar]</code>.</li>
+        <li><strong>Meta Comunitaria y Muro Anónimo:</strong> Expone el progreso real de comida y aportes en pesos junto con las últimas acciones confirmadas del día (totalmente anonimizadas: sin nombres de personas ni teléfonos, solo nombres de animales, bultos, vacunas y medicinas).</li>
+        <li><strong>Notificación al Lograr la Meta:</strong> Permite avisar por WhatsApp a los donantes cuando se cumple la meta del refugio.</li>
       </ul>
-      <div class="checklist">
-        <label><input type="checkbox"> Persistir seguimientos en tabla Postgres (<code>db/sql/006_solicitudes_adopcion.sql</code>).</label>
-        <label><input type="checkbox"> Agregar endpoint <code>GET /api/seguimientos/hoy</code> consumible por bot y panel.</label>
-        <label><input type="checkbox"> Test unitario que valide que un animal entregado hace 5 días aparece en <code>seguimientosDeHoy()</code>.</label>
-      </div>
     </div>
-
-    <!-- TAREA 3 -->
-    <div class="card">
-      <div class="task-header">
-        <span class="badge badge-p1">PRIORIDAD P1 · USABILIDAD</span>
-        <span class="file-tag">bot/src/conversacion/libre.ts & confirmar.ts</span>
-      </div>
-      <h3>🖐️ 3. Auto-Confirmación por Confianza (A prueba de manos mojadas)</h3>
-      <div class="why-box">
-        <strong>Por qué es vital:</strong> Yesenia tiene las manos llenas de barro o jabón. Si el audio es clarísimo (ej. <em>"Le di la pastilla del corazón a Pecas"</em>), obligarla a sacar el celular y tocar <code>[Confirmar]</code> hace que el dato quede sin guardar en el bolsillo.
-      </div>
-      <p><strong>Qué hacer en el código:</strong></p>
-      <ul>
-        <li>En <code>libre.ts</code> / <code>confirmar.ts</code>: Si la transcripción tiene <strong>confianza alta (&ge; 0.90)</strong> y no hay conflicto de doble dosis, **guardar directamente la acción** y responder con mensaje de confirmación y opción de deshacer:
-          <pre>✅ Anotado: Medicina de Pecas registrada (2:05 PM).
-Si hubo un error, responde "corregir".</pre>
-        </li>
-        <li>Si hay conflicto (ej. la dosis ya fue dada por otro cuidador), ahí SÍ frenar y preguntar: <code>[dup:si] / [dup:no]</code> como ya lo tienes en <code>medicina.ts</code>.</li>
-      </ul>
-      <div class="checklist">
-        <label><input type="checkbox"> Agregar flag o lógica de guardado directo cuando <code>confianza &gt;= 0.9</code> y sin avisos de duplicado.</label>
-        <label><input type="checkbox"> Mantener la guarda estricta solo para casos dudosos o duplicados.</label>
-      </div>
-    </div>
-
-    <!-- TAREA 4 -->
-    <div class="card">
-      <div class="task-header">
-        <span class="badge badge-p1">PRIORIDAD P1 · RUTINA</span>
-        <span class="file-tag">bot/src/conversacion/informe.ts & bot/src/scheduler.ts</span>
-      </div>
-      <h3>🌅 4. El "Despertador Proactivo" (Foto Resumen 7:00 AM)</h3>
-      <div class="why-box">
-        <strong>Por qué es vital:</strong> Ya tienes <code>c.deps.dibujar(armarInforme(...))</code> que genera un PNG precioso. Pero hoy el bot es mudo hasta que alguien le escribe. Yesenia necesita que el bot le cante las tareas al empezar el día.
-      </div>
-      <p><strong>Qué hacer en el código:</strong></p>
-      <ul>
-        <li>Crear un cron/job o disparador matutino (7:00 AM hora Bogotá) que arme el informe de <strong>medicinas + comida + vacunas + visitas agendadas del día</strong>.</li>
-        <li>Enviar la imagen PNG directamente al número de WhatsApp de Yesenia sin que ella tenga que pedirlo.</li>
-        <li>Añadir en el informe la alerta si las vacunas de algún perro se vencen esta semana.</li>
-      </ul>
-      <div class="checklist">
-        <label><input type="checkbox"> Función exportable <code>enviarResumenMatutino(deps, telefono)</code>.</label>
-        <label><input type="checkbox"> Incluir vacunas pendientes y citas agendadas en la infografía PNG.</label>
-      </div>
-    </div>
-
-    <!-- TAREA 5 -->
-    <div class="card">
-      <div class="task-header">
-        <span class="badge badge-p1">PRIORIDAD P1 · CONEXIÓN WEB</span>
-        <span class="file-tag">bot/src/app.ts & bot/src/api/</span>
-      </div>
-      <h3>🌐 5. Puente con la Web Comunitaria (Eventos Públicos de Donación)</h3>
-      <div class="why-box">
-        <strong>Por qué es vital:</strong> Los vecinos de las tiendas que escanean el QR en el afiche físico necesitan ver que los audios de Yesenia actualizan la página en tiempo real (muro de confianza y barra de meta).
-      </div>
-      <p><strong>Qué hacer en el código:</strong></p>
-      <ul>
-        <li>Exponer un endpoint público y seguro (ej. <code>GET /api/publico/meta-del-dia</code>) que devuelva:
-          <pre>{
-  "metaKg": 25,
-  "recaudadoKg": 18,
-  "metaPesos": 150000,
-  "recaudadoPesos": 110000,
-  "ultimasAcciones": [
-    { "hora": "10:30 AM", "texto": "Yesenia curó la herida de Pecas" },
-    { "hora": "09:15 AM", "texto": "Llegaron 15 kg de carne con Don Carlos" }
-  ]
-}</pre>
-        </li>
-        <li>Cada vez que Yesenia confirme un audio de comida o curación, registrar el evento público anonimizado.</li>
-      </ul>
-      <div class="checklist">
-        <label><input type="checkbox"> Endpoint <code>GET /api/publico/meta-del-dia</code> montado en <code>app.ts</code>.</label>
-        <label><input type="checkbox"> Filtro de privacidad (cero nombres de personas, solo nombres de animales y kilos/medicinas).</label>
-      </div>
-    </div>
-
-    <!-- PIE -->
-    <div class="footer">
-      <p>Generado con el sistema de ingeniería <strong>ECC (Everything Claude Code)</strong> para el equipo de Hackaton Vibra Plus.</p>
-      <p>Cualquier duda o ajuste, coordinamos directo con Silvia y Monoga en la rama <code>silvia-rescate-real</code>.</p>
-    </div>
-
   </div>
-
 </body>
 </html>

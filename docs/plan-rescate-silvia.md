@@ -1,92 +1,63 @@
-# Plan de Rescate Real — Huellitas / Vibra Plus
-**Autoras:** Silvia & Equipo  
+# Plan Estratégico Integral — Refugio Yesenia (Bucaramanga)
+**Equipo:** Silvia, Daniel & Samuel (Ingeniería Biomédica + Ingeniería de Sistemas · 4to Semestre)  
 **Rama:** `silvia-rescate-real`  
-**Fecha:** 28 de Octubre de 2026 (Noche de Hackatón)  
-**Marco de Trabajo:** ECC (Everything Claude Code) + Perspectiva Humana Radical
+**Fuentes Verificadas:** [Investigación Documental Bucaramanga](research/investigacion-documental-yesenia.md) + [Entrevista de Campo](research/entrevista-respuestas.md)
 
 ---
 
-## 1. El Diagnóstico Crudo: La Realidad vs. El Humo Técnico
+## 1. Diagnóstico Real del Refugio Yesenia (Cero Inventos)
 
-### La Usuaria Real (Doña Gloria)
-* **Oficio:** Recicladora urbana en Colombia (estrato 1).
-* **Misión de vida:** Cuida en su propia casa a **90 perros y gatos rescatados** por puro amor.
-* **Economía del refugio:** Cero presupuesto fijo. No hay dinero para bultos de concentrado comercial.
-* **La línea de vida diaria:** Un amigo carnicero de barrio (Don Carlos) que le regala o le fía huesos, menudencias y recortes de carne para que los animales no mueran de hambre.
-* **Dispositivo y conectividad:** Celular Android de gama baja (3-4 años de uso), pantalla partida, batería desgastada, sin Wi-Fi fijo. Se conecta exclusivamente mediante "paqueticos" de datos prepago ($3.000 COP).
-* **Rutina física:** 14 horas al día de trabajo pesado con las manos mojadas, baldes, manguera, heces, costales de reciclaje y ladrillos.
+### 1.1. Antecedentes Documentales en Bucaramanga
+El **Refugio Yesenia** (Bucaramanga, Santander) cuenta con tres antecedentes documentales verificados:
+1. ***Vanguardia* (16 de julio de 2024):** Artículo *“Fundación Dar con Amor: nueve años de amor y dedicación hacia los animales en Bucaramanga”*, que documenta el apoyo a la remodelación y las necesidades de infraestructura del Refugio Yesenia.
+2. **Informe de gestión 2023 (*Fundación Dar con Amor*):** Registra actividades de voluntariado en el Refugio Yesenia (paseos de perros, baños y limpieza).
+3. **Repositorio Institucional de la *Universidad de Santander (UDES)*:** Trabajo académico sobre la campaña **“Dona un Ladrillo”**, orientada a la adecuación física del Refugio Yesenia.
 
----
-
-### Lo que encontramos en el repositorio (La crítica necesaria)
-1. **Campañas por Correo Electrónico (SMTP/Nodemailer):** Inviable. La gente que dona a un refugio popular no lee correos; responde a estados de WhatsApp y comprobantes de Nequi.
-2. **Página Web Pesada de Oficina (Panel React):** Diseñada para un usuario con computador y fibra óptica. En el celular de la señora con datos prepago, la página se come el saldo en minutos o no abre.
-3. **Catálogo de 70 Perros de Mentira:** El sistema tenía precargados 70 nombres ficticios de muestra ("Tobías"), mientras los 90 perros de carne y hueso que comen sobras de carnicería no estaban registrados.
-4. **La "Voz Cálida" era Puro Texto:** Se prometió interacción por voz pero no había sintetizador de audio (TTS). Era texto plano simulando voz.
-5. **83 Pruebas con Falla Oculta (`expected-fail`):** Pruebas marcadas para no contar como error ante los jurados en vez de resolver la causa raíz.
+### 1.2. Los 4 Dolores Críticos de Yesenia en el Día a Día
+1. **Manos llenas de barro, agua y limpieza (10:30 AM):** Yesenia está limpiando popó, bañando perros y repartiendo agua y comida en baldes. No puede sentarse frente a un computador, no puede teclear formularios largos con las manos mojadas, y **no tiene impresora ni plastificadora para fabricar collares QR que además los perros muerden y rompen en el barro**.
+2. **Sobrecarga cognitiva ("Su cerebro no alcanza para recordarlo todo"):** No puede recordar de memoria a quién ya alimentó, a quién ya le dio su medicamento, **cómo va la sanación de la herida de un perrito rescatado**, a quién le toca refuerzo de vacuna o cuándo alguien agendó visita de adopción.
+3. **Riesgo de doble dosis médica con voluntarios rotativos:** Cuando llegan voluntarios de apoyo (como los de *Dar con Amor* o la *UDES*), existe el peligro real de que dos personas le den el mismo medicamento (ej. anticonvulsivo a las 2:00 PM) provocando una sobredosis, o que nadie se lo dé pensando que otro ya lo hizo.
+4. **Necesidades urgentes de recursos y confianza para donar:** El refugio necesita constantemente **bultos de comida (concentrado), vacunas, medicamentos, dinero para abonar a las deudas en clínicas veterinarias y ladrillos/materiales**. Para que la gente done con confianza, necesita ver una meta clara y comprobar en tiempo real que su dinero sí llegó y se transformó en ayuda real.
 
 ---
 
-## 2. Las 5 Soluciones Realistas de Silvia
+## 2. Nuestra Solución en 3 Pilares ("El Segundo Cerebro de Yesenia" + Red de Tiendas)
 
-### 1. El "Secretario Escudo" en WhatsApp
-* **El problema:** La señora pierde 3 horas al día atendiendo en WhatsApp a personas que piden perros finos regalados o que le exigen recibir camadas sabiendo que no tiene comida.
-* **La solución:** Un asistente automatizado en WhatsApp que recibe a los desconocidos con calidez y firmeza:
-  - Aplica un filtro de 4 preguntas de oro (vivienda, presupuesto, rejas, compromiso veterinario).
-  - Si el interesado no es apto, lo redirige con empatía a donar o apadrinar comida.
-  - Si el interesado es apto ($\ge 75$ puntos), agenda una visita tentativa de fin de semana y le envía un resumen limpio a Gloria.
-  - A Doña Gloria solo le suena el teléfono cuando hay un adoptante confirmado o una donación real.
-
-### 2. La Campaña "Págale al Carnicero" (Comida Real en Kilos)
-* **El problema:** La gente desconfía de "donar a una cuenta bancaria genérica".
-* **La solución:** Micro-donaciones directas, tangibles y trazables conectadas a Nequi y Daviplata:
-  - 🥩 **Opción 1:** *$10.000 COP = Págale 2 kilos de carne al carnicero de Rocky hoy.*
-  - 🍗 **Opción 2:** *$25.000 COP = Cubre la menudencia de 10 perros por un día.*
-  - 🥣 **Opción 3:** *$60.000 COP = Dona un bulto de concentrado para mezclar con la carne.*
-* **El impacto:** Notificación inmediata al donante: *"Gracias a tus $10.000, Rocky comió hoy carne con Don Carlos el carnicero"*.
-
-### 3. Bitácora Médica por Notas de Voz (Manos Ocupadas)
-* **El problema:** No se pueden llenar planillas ni tocar pantallas con las manos llenas de barro o jabón. Olvidar si un animal tomó su medicina puede ser mortal por omisión o sobredosis.
-* **La solución:**
-  - La señora o un voluntario manda un audio de 5 segundos al chat del bot:  
-    👉 *"Hola, soy Gloria, ya le di la pastilla del ojo al Tuerto y nos llegaron 20 kilos de carnaza"*.
-  - El sistema extrae la información y marca:
-    - `Tuerto`: Medicina administrada hoy a las 9:15 AM.
-    - `Inventario`: +20 kg de carne registrados.
-  - Si alguien pregunta por la tarde: el sistema avisa de inmediato que la dosis ya fue dada para evitar duplicaciones.
-
-### 4. Ficha Digital Semáforo Ultraligera (<20 KB)
-* **El problema:** Abrir fichas técnicas pesadas bloquea los teléfonos viejos sin señal en los patios.
-* **La solución:**
-  - Placa o enlace directo que abre una ficha en HTML estático que pesa menos que un sticker de WhatsApp.
-  - Muestra foto real, nombre y un semáforo de 3 estados:
-    - 🟢 *Verde:* Comió hoy.
-    - 🟡 *Amarillo:* Medicina de las 2:00 PM pendiente.
-    - 🔴 *Rojo:* Curación o atención prioritaria.
-  - Advertencia de manejo en letras grandes: *"Asustadizo, no tocar orejas"*.
-
-### 5. Respeto al Bolsillo: Ecosistema 100% WhatsApp
-* **El problema:** Salirse de WhatsApp gasta los datos móviles del plan prepago.
-* **La solución:** La señora realiza el 100% de su interacción dentro del chat de WhatsApp que las empresas de telefonía en Colombia ofrecen sin cobro de megas en paquetes prepago.
+### Pilar 1: Red de Pósters QR en Tiendas Aliadas $\rightarrow$ Página Web de Storytelling y Confianza en Vivo
+* **El Póster en Tiendas (*"Ayuden a Yesenia"*):** Hablamos con tiendas y comercios aliados para colocar un póster con código QR.
+* **La Página Web Persuasiva:** Al escanear el QR, se abre la web enfocada en contar la historia real de Yesenia (respaldada por *Vanguardia*, *Dar con Amor* y *UDES*) y persuadir a las personas de apoyarla **siguiéndola, adoptando o donando para bultos de comida, vacunas, medicamentos o dinero**.
+* **Muro Anónimo de Confianza y Barra de Meta (`GET /api/publico/meta-del-dia`):**
+  - Cuando las personas donan, aparece de inmediato un **registro anónimo** de quienes donaron para que vean que su aporte realmente subió.
+  - Muestra en vivo el contador: *"Miren, en total hemos recaudado X cantidad de la meta de Y"*.
+* **Mensaje Automático al Lograr la Meta:** Cuando se alcanza la meta (y Yesenia confirma por voz en su Segundo Cerebro que llegaron los bultos o se aplicaron las vacunas), el sistema les envía un mensajito por WhatsApp celebrando el logro e integrándolos a la comunidad.
 
 ---
 
-## 3. Integración con el Entorno ECC (Everything Claude Code)
+### Pilar 2: El "Segundo Cerebro" de Yesenia (Autogestión Manos-Libres por Voz y Foto en WhatsApp)
+La idea central es que **ella sienta que tiene a otra persona al lado** encargándose de todo lo que su cerebro agotado no puede recordar:
 
-Para ejecutar este plan en la hackatón se desplegó el sistema ECC en `.agents/` y `.claude/`:
-* **`product-lens`:** Para auditar cada pantalla y endpoint desde la perspectiva de la recicladora.
-* **`silent-failure-hunter`:** Para evitar que mensajes de voz o confirmaciones se pierdan en zonas con mala señal de datos.
-* **`a11y-architect`:** Para asegurar botones de tamaño accesible (mínimo 48px) para dedos mojados o pantallas fisuradas.
-* **`database-reviewer`:** Para garantizar que las tablas SQL de solicitudes y alimentos registren con idempotencia y no dupliquen gastos.
+1. **Identificación Fenotípica Visual + Mapa por Patios (Cero Collares QR, Cero Impresoras):**
+   * Cuando llega un perro nuevo al refugio, Yesenia **no imprime nada ni le fabrica collares**.
+   * Solo le toma **1 foto en WhatsApp** y manda un audio de 5 segundos: *"Llegó este criollito negro con pecho blanco al Patio 2, tiene herida en la pata trasera, llamémoslo Rocky"*.
+   * La IA extrae automáticamente sus **rasgos visuales (Vector Fenotípico)** y el **Patio** donde duerme.
+   * Cuando un voluntario nuevo quiere saber quién es un perro y qué cuidados tiene, filtra con 1 toque por **Patio + Color** en el panel o le envía **1 foto del perro por WhatsApp al bot**, y en 2 segundos recibe sus alertas rojas (*"¡Ojo! No juntar con machos"*) y su medicina del día.
+2. **Despertador Matutino (7:00 AM) y Cierre de Paz Mental (7:00 PM):**
+   * **7:00 AM:** El bot le envía sola la imagen de resumen del día (medicinas programadas, vacunas que vencen esta semana, días restantes de bultos de comida y citas de adopción agendadas).
+   * **Durante el día:** Yesenia registra comida, medicinas, curaciones y recibos de veterinaria solo con notas de voz de 5 segundos o fotos en WhatsApp.
+   * **7:00 PM:** Revisa su resumen nocturno, toca el botón verde **`"Todo bien"`** y descansa tranquila sabiendo que ningún animal quedó sin comer ni sin su medicina.
+3. **Filtro Inteligente de Adopciones y Agendamiento:**
+   * El bot conversa 24/7 con los interesados en adoptar, evalúa las 4 condiciones clave (vivienda, presupuesto, cerramientos y compromiso veterinario), le avisa a Yesenia quién agendó o quién no agendó, y programa los recordatorios de seguimiento post-adopción.
 
 ---
 
-## 4. El Guion del Pitch para Ganar el Jurado
+### Pilar 3: El Sello de Ingeniería Biomédica + Machine Learning (4to Semestre)
+Aplicamos ingeniería clínica y modelos predictivos directamente sobre los datos que Yesenia envía por WhatsApp, sin requerir hardware costoso que se dañe en el barro:
 
-> *"Señores del jurado: Un refugio no fracasa por falta de amor; fracasa cuando el agotamiento y la falta de comida ahogan a quien rescata. 
-> 
-> En este proyecto no vinimos a construir un software de oficina para una persona que no tiene computador. Vinimos a salvar a Doña Gloria, una mujer recicladora que alimenta 90 perros con la ayuda de un amigo carnicero y un celular con la pantalla rota.
-> 
-> Nuestro sistema corre dentro de WhatsApp, convierte audios de 5 segundos en control de medicinas para no matar a un perro con doble dosis, frena a los curiosos para que Gloria descanse, y conecta la generosidad de la gente directamente con los kilos de carne que Don Carlos le corta a los animales cada mañana.
-> 
-> Esto no es tecnología para inflar un portafolio. Es tecnología de supervivencia que funciona hoy en un celular de $150.000 pesos."*
+1. **🛑 `PK-SafeLock` (Farmacovigilancia por Peso `mg/kg` y Bloqueo Anti-Sobredosis):**
+   * Calcula la dosis segura según el peso del animal y modela la ventana de eliminación farmacocinética ($C(t) = C_0 \cdot e^{-k_e t}$).
+   * Si un voluntario reporta una dosis por audio, queda registrada con la hora exacta y el nombre de quien la dio. Si otro voluntario intenta darle la misma pastilla antes de cumplirse la ventana terapéutica (ej. 12h en Fenobarbital), el sistema **lo frena en seco alertando riesgo de neurotoxicidad/sobredosis**.
+2. **🔬 `Tissue-Track CV` (Biometría de Cicatrización de Heridas por Foto):**
+   * Resuelve el dolor de Yesenia de *"no saber cómo va la sanación del perrito"*.
+   * Cada vez que manda una foto de la herida por WhatsApp, el sistema evalúa las **4 fases histológicas de cicatrización** (*Necrosis $\rightarrow$ Esfacelo/Exudado $\rightarrow$ Granulación Roja $\rightarrow$ Epitelización Rosa*) y muestra el **Índice de Evolución Tisular ($0-100\%$)** en la ficha del animal, alertando si aparece riesgo de infección.
+3. **🛡️ `BioShield SEIR & Metabolismo NRC` (Vacunas, Cuarentena y Predicción de Bultos):**
+   * Controla los **14 días obligatorios de cuarentena epidemiológica** (incubación de Parvovirus/Moquillo) antes de permitir pasar un perro recién rescatado a los patios generales, lleva el semáforo de refuerzos de vacunación y calcula mediante gasto metabólico ($RER = 70 \cdot Peso_{kg}^{0.75}$) cuántos días exactos de **bultos de comida** quedan en bodega.

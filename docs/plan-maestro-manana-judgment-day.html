@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plan Maestro Definitivo (Judgment Day + Council Loop) | Refugio Yesenia</title>
+  <style>
+    :root {
+      --bg: #090b0e;
+      --surface: #12161c;
+      --surface-2: #191f28;
+      --border: #262f3d;
+      --text: #f3f5f8;
+      --muted: #9ba5b4;
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, 0.14);
+      --emerald: #10b981;
+      --emerald-soft: rgba(16, 185, 129, 0.14);
+      --rose: #f43f5e;
+      --rose-soft: rgba(244, 63, 94, 0.14);
+      --sky: #38bdf8;
+      --sky-soft: rgba(56, 189, 248, 0.14);
+      --violet: #a855f7;
+      --violet-soft: rgba(168, 85, 247, 0.14);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2.2rem 1.25rem 5rem;
+    }
+    .container { max-width: 1160px; margin: 0 auto; }
+    .hero {
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.12), rgba(245, 158, 11, 0.1), rgba(16, 185, 129, 0.08));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 2.2rem;
+      margin-bottom: 2.2rem;
+    }
+    .badges { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1rem; }
+    .badge {
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+    }
+    .b-rose { background: var(--rose-soft); color: var(--rose); border: 1px solid rgba(244,63,94,0.3); }
+    .b-emerald { background: var(--emerald-soft); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); }
+    .b-amber { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+    .b-sky { background: var(--sky-soft); color: var(--sky); border: 1px solid rgba(56,189,248,0.3); }
+    .hero h1 { font-size: 2.2rem; line-height: 1.18; margin-bottom: 0.75rem; }
+    .hero p { color: var(--muted); font-size: 1.05rem; max-width: 880px; }
+
+    h2.sec {
+      font-size: 1.45rem;
+      margin: 2.4rem 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 1.2rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 1.2rem; }
+    @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.5rem;
+    }
+    .card h3 { font-size: 1.15rem; margin-bottom: 0.55rem; display: flex; align-items: center; gap: 0.5rem; }
+    .card p, .card li { color: var(--muted); font-size: 0.94rem; }
+    .card ul { padding-left: 1.2rem; margin-top: 0.5rem; }
+    .card li { margin-bottom: 0.45rem; }
+    .card strong { color: var(--text); }
+
+    .formula {
+      font-family: 'Courier New', monospace;
+      background: var(--surface-2);
+      border-left: 3px solid var(--sky);
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      margin: 0.75rem 0;
+      color: var(--sky);
+      font-size: 0.9rem;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { padding: 0.95rem 1.1rem; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { background: var(--surface-2); color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    tr:last-child td { border-bottom: none; }
+    code {
+      font-family: monospace;
+      background: var(--surface-2);
+      padding: 0.15rem 0.4rem;
+      border-radius: 5px;
+      color: var(--amber);
+      font-size: 0.85rem;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer;
+    }
+    .check-item:last-child { border-bottom: none; }
+    .check-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 0.2rem;
+      accent-color: var(--emerald);
+      cursor: pointer;
+    }
+    .check-item.done span { text-decoration: line-through; color: #5c6675; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div class="badges">
+        <span class="badge b-rose">⚖️ Judgment Day (jd-judge-a ∩ jd-judge-b)</span>
+        <span class="badge b-emerald">🧬 Ingeniería Biomédica + Sistemas 4to Semestre</span>
+        <span class="badge b-amber">🚫 Cero Collares QR · Cero Impresoras · Cero Mecatrónica</span>
+        <span class="badge b-sky">🔒 Git Intacto (Cero Merges / Cero Pushes)</span>
+      </div>
+      <h1>Plan Maestro para Ganar la Hackatón Mañana</h1>
+      <p>
+        Resultado del loop nocturno adversarial entre los dos jueces ciegos de <code>gentle-ai (judgment-day)</code>, el <code>Consejo de Innovación Radical (council + brainstorming)</code> y el <code>Especialista Biomédico (healthcare-reviewer)</code>. Todo pensado para la realidad cruda de Yesenia en Bucaramanga.
+      </p>
+    </div>
+
+    <!-- 1. EL PROBLEMA DE LOS COLLARES RESUELTO -->
+    <h2 class="sec">🐾 1. Adiós a los Collares QR Imposibles → Hola "Huella Fenotípica Visual + Mapa por Patios"</h2>
+    <div class="grid-2">
+      <div class="card" style="border-color: rgba(244,63,94,0.4);">
+        <h3>❌ Por qué matamos la idea del Collar QR por Perro</h3>
+        <ul>
+          <li><strong>Tenías 100% de razón:</strong> Cuando llega un perro callejero herido o con barro, Yesenia <strong>NO tiene impresora, ni plastificadora, ni tiempo</strong> para ponerse a diseñar e imprimir códigos QR.</li>
+          <li>En una manada de 70-90 perros jugando en el barro, los collares se rompen, se muerden o quedan ilegibles en 48 horas.</li>
+          <li>Además, ambos jueces (<code>jd-judge-a</code> y <code>jd-judge-b</code>) descubrieron que en <code>App.tsx</code> la ruta <code>/animales/:id</code> estaba bloqueada por login.</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color: rgba(16,185,129,0.4);">
+        <h3>✅ Cómo funciona ahora (Cero Impresoras, Cero Collares)</h3>
+        <ul>
+          <li><strong>Ingreso en 10 segundos por WhatsApp (1 Foto + 1 Audio):</strong> Yesenia toma 1 foto del perro recién llegado y dice: <em>"Llegó este criollito negro con pecho blanco y herida en la pata, quedó en el Patio 2, llamémoslo Rocky"</em>.</li>
+          <li><strong>Extracción de Vector Fenotípico (IA Multimodal):</strong> Gemini Vision extrae automáticamente color de manto, manchas, cicatrices, tamaño y el <strong>Patio/Canil</strong> donde duerme.</li>
+          <li><strong>Identificación para Voluntarios Nuevos (2 vías sin QR):</strong>
+            <br>1️⃣ <strong>En el Panel:</strong> Mapa táctil por <strong>Patios</strong> (<code>[Patio 1] [Patio 2] [Cuarentena]</code>) + Chips visuales de 1 toque (<code>[Negro] [Café] [Con herida]</code>).
+            <br>2️⃣ <strong>Por Foto en WhatsApp:</strong> El voluntario le toma una foto al perro y el bot responde en 2s: <em>"Es Bruno (96% coincidencia · Patio 2). ¡OJO! No juntar con machos. Le toca Fenobarbital."</em>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2. LOS 3 MOTORES DE INGENIERÍA BIOMÉDICA + ML -->
+    <h2 class="sec">🧬 2. El Sello de Ingeniería Biomédica + Sistemas (4to Semestre)</h2>
+    <div class="grid-3">
+      <div class="card">
+        <h3>🛑 Motor 1: PK-SafeLock (Farmacocinética)</h3>
+        <p><strong>Evita intoxicación mortal por doble dosis entre turnos rotativos (ej. Fenobarbital o Meloxicam).</strong></p>
+        <div class="formula">C(t) = C₀ · e^(-kₑ·t) &nbsp;|&nbsp; kₑ = ln(2) / t₁/₂</div>
+        <ul>
+          <li>Calcula la <strong>Dosis Segura por Peso (mg/kg)</strong> en la ficha (ej. Bruno: <code>18.5 kg · 2.5 mg/kg = 46 mg</code>).</li>
+          <li><strong>Ventana Terapéutica de Bloqueo:</strong> Si la dosis se dio a las 8:00 AM, bloquea cualquier intento de re-dosificar antes de las 8:00 PM alertando: <em>"Concentración plasmática activa (31.4 μg/mL). Segunda dosis causaría neurotoxicidad"</em>.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>🔬 Motor 2: Tissue-Track CV (Sanación de Heridas)</h3>
+        <p><strong>Mide cómo va la sanación del perrito a partir de las fotos de WhatsApp (Escala PUSH / Bates-Jensen).</strong></p>
+        <div class="formula">IET (%) = [1.0·A_gran + 1.5·A_epit - 0.8·A_esf] / A_total</div>
+        <ul>
+          <li>Clasifica la herida en las <strong>4 fases histológicas</strong>:
+            <br>⚫ <strong>Necrosis</strong> → 🟡 <strong>Esfacelo/Exudado</strong> → 🔴 <strong>Granulación Roja</strong> → 🌸 <strong>Epitelización Rosa</strong>.
+          </li>
+          <li>Muestra en la ficha de Pecas la barra de <strong>Índice de Salud Tisular (ej. Día 1: 32% → Día 7: 81%)</strong> y alerta si detecta signos de infección.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>🛡️ Motor 3: BioShield SEIR & Metabolismo NRC</h3>
+        <p><strong>Cerco epidemiológico de cuarentena + predicción metabólica exacta de bultos y vacunas.</strong></p>
+        <div class="formula">RER = 70 · (Peso_kg)^0.75 kcal/día</div>
+        <ul>
+          <li><strong>Candado de Cuarentena (14 días):</strong> Impide pasar un perro recién llegado a <code>adoptable</code> o al patio general antes de cumplir los 14 días de incubación de Parvovirus/Moquillo.</li>
+          <li><strong>Radar de Seroconversión Vacunal:</strong> Alerta automática a las 7:00 AM cuando vence un refuerzo de Séxtuple o Rabia.</li>
+          <li><strong>Día Cero Metabólico:</strong> Calcula cuántos kg diarios consume la manada real según su peso y proyecta el día exacto en que se acaban los bultos.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. HALLAZGOS CONFIRMADOS POR JUDGMENT DAY -->
+    <h2 class="sec">⚖️ 3. Los 5 Hallazgos Críticos Confirmados por Ambos Jueces (`jd-judge-a` ∩ `jd-judge-b`)</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Archivo Exacto</th>
+            <th>Fallo Encontrado por los Jueces Ciegos</th>
+            <th>Corrección Exacta para Mañana</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>JD-01</strong></td>
+            <td><code>panel/src/data/demo.ts:45-60</code></td>
+            <td><strong>¡Tobías está vacío en <code>demo.ts</code>!</strong> En el pitch hablábamos de Tobías (<code>perro-15</code>), pero en <code>demo.ts</code> Tobías no tiene ni advertencias ni medicinas (el que tiene Fenobarbital en <code>demo.ts</code> es <strong>Bruno, <code>perro-2</code></strong>, y la de la herida es <strong>Pecas, <code>perro-6</code></strong>).</td>
+            <td>Usar a <strong>Bruno</strong> (Fenobarbital + alerta roja) y a <strong>Pecas</strong> (herida en curación) o agregarle los datos biomédicos completos también a Tobías en <code>demo.ts</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>JD-02</strong></td>
+            <td><code>origin/monoga/mejoras-web</code><br><code>historia.ts:18-30</code></td>
+            <td>La landing pública tiene textos provisionales de otra historia y <code>"PENDIENTE: ..."</code>, y aún no hace <code>fetch('/api/publico/meta-del-dia')</code> al endpoint que ya creó Samuel.</td>
+            <td>Actualizar los textos de <code>historia.ts</code> a <strong>Refugio Yesenia (Bucaramanga)</strong> + metas de <strong>Bultos, Vacunas, Medicamentos y Ladrillos</strong>, y conectar la barra en vivo con <code>/api/publico/meta-del-dia</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>JD-03</strong></td>
+            <td><code>origin/samuel/conectar-externo</code><br><code>confirmar.ts:50-68</code></td>
+            <td>Al auto-confirmar todos los audios con confianza &gt;= 0.90, las medicinas pasan directo a <code>confirmado</code> y <strong>ya no aparece la tarjeta amarilla ("Por confirmar")</strong> en <code>/hoy</code> ni en <code>/confirmar</code> durante la demo.</td>
+            <td>Dejar que comida y notas se auto-confirmen, pero que <strong>medicamentos críticos y plata queden en Amarillo (<code>pendiente</code>)</strong> para demostrar la validación humana de seguridad clínica.</td>
+          </tr>
+          <tr>
+            <td><strong>JD-04</strong></td>
+            <td><code>panel/src/features/animales/Ficha.tsx:108-121</code></td>
+            <td><code>Ficha.tsx</code> muestra el horario del medicamento pero no dice si hoy ya se lo dieron (peligro de doble dosis), no tiene la barra de cicatrización ni el carné de vacunas, y deja sacar perros de cuarentena sin control.</td>
+            <td>Añadir en <code>Ficha.tsx</code> el badge de <strong>Ventana Terapéutica PK-SafeLock</strong>, la barra de <strong>Cicatrización Tisular (Tissue-Track)</strong> y el <strong>Carné de Vacunas + Cuarentena 14 días</strong>.</td>
+          </tr>
+          <tr>
+            <td><strong>JD-05</strong></td>
+            <td><code>panel/src/features/hoy/Hoy.tsx:137-149</code><br><code>Confirmar.tsx:88-109</code></td>
+            <td>En <code>Hoy.tsx</code> falta el botón verde <strong>"Todo bien — Cerrar el día"</strong> de las 7:00 PM, en <code>Confirmar.tsx</code> falta el botón de <strong>Llamar al voluntario</strong>, y <code>panel/src/lib/calculos.ts</code> aún no suma kilos sueltos.</td>
+            <td>Agregar esos 2 botones en <code>Hoy.tsx</code> y <code>Confirmar.tsx</code> y sincronizar la función de kilos en <code>panel/src/lib/calculos.ts</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 4. LAS 3 EXPERIENCIAS GANADORAS EN EL ESCENARIO -->
+    <h2 class="sec">🔥 4. Las 3 Experiencias en Vivo que Harán Ganar el 1er Lugar en 3 Minutos</h2>
+    <div class="grid-3">
+      <div class="card" style="border-top: 4px solid var(--amber);">
+        <h3>1️⃣ Min 0:15 · El Jurado Escanea el Póster de la Tienda</h3>
+        <p>
+          Le entregamos en la mano a un jurado el <strong>Póster Físico de las Tiendas ("Ayuden a Yesenia")</strong>. Lo escanea con su propio celular, ve la barra de meta en vivo, anota un apoyo simbólico para <strong>bultos/vacunas</strong> y pone su número de WhatsApp. ¡En la pantalla gigante del auditorio se ve cómo sube la barra y aparece su donación anónima al instante!
+        </p>
+      </div>
+      <div class="card" style="border-top: 4px solid var(--rose);">
+        <h3>2️⃣ Min 1:15 · El Freno Biomédico Anti-Sobredosis + Herida</h3>
+        <p>
+          Mandamos en vivo un audio por WhatsApp simulando a un voluntario nuevo diciendo: <em>"Le voy a dar la pastilla de Fenobarbital a Bruno"</em> y una foto de la herida de Pecas. En vivo salta la alerta de <strong>Bloqueo Farmacocinético (PK-SafeLock)</strong> frenando la sobredosis mortal y se actualiza el <strong>Índice de Cicatrización Tisular al 81%</strong>.
+        </p>
+      </div>
+      <div class="card" style="border-top: 4px solid var(--emerald);">
+        <h3>3️⃣ Min 2:45 · ¡El Celular del Jurado Vibra en su Mano!</h3>
+        <p>
+          Al cerrar el día tocando el botón <strong>"Todo bien"</strong> de las 7:00 PM, el sistema detecta que la meta del día se cumplió y <strong>le envía un WhatsApp real al celular del jurado que escaneó el póster en el minuto 0:15</strong>: <em>"¡Gracias! La meta de hoy se logró: Bruno recibió su medicina segura, Pecas va en 81% de sanación y hoy los 70 perritos comieron en Bucaramanga."</em>
+        </p>
+      </div>
+    </div>
+
+    <!-- 5. CHECKLIST INTERACTIVO PARA MAÑANA -->
+    <h2 class="sec">🚀 5. Checklist de Acción Rápida para Mañana al Despertar</h2>
+    <div class="card">
+      <label class="check-item" onclick="this.classList.toggle('done')">
+        <input type="checkbox" />
+        <span><strong>[Daniel · 20 min]</strong> Actualizar <code>panel/landing/src/contenido/historia.ts</code> en <code>monoga/mejoras-web</code> con la información oficial de <strong>Refugio Yesenia (Bucaramanga)</strong> y metas de Bultos, Vacunas, Medicamentos y Ladrillos.</span>
+      </label>
+      <label class="check-item" onclick="this.classList.toggle('done')">
+        <input type="checkbox" />
+        <span><strong>[Daniel · 25 min]</strong> Conectar en <code>EditorialSections.tsx</code> / <code>ComoAyuda.tsx</code> el <code>fetch('/api/publico/meta-del-dia')</code> con la Barra de Meta en Vivo, el Muro de Donaciones Anónimas y el campo de WhatsApp del donante.</span>
+      </label>
+      <label class="check-item" onclick="this.classList.toggle('done')">
+        <input type="checkbox" />
+        <span><strong>[Daniel · 25 min]</strong> Agregar en <code>Ficha.tsx</code> y <code>Animales.tsx</code>: filtro rápido por <strong>Patios + Rasgos Visuales</strong> (cero collares QR) y el bloque de <strong>Ingeniería Biomédica</strong> (PK-SafeLock <code>mg/kg</code>, barra de Cicatrización Tisular y Vacunas/Cuarentena).</span>
+      </label>
+      <label class="check-item" onclick="this.classList.toggle('done')">
+        <input type="checkbox" />
+        <span><strong>[Samuel · 20 min]</strong> En <code>bot/src/conversacion/confirmar.ts</code>: mantener las dosis de medicamentos críticos en estado <code>pendiente</code> (Amarillo) o disparar la alerta de bloqueo farmacocinético cuando se repiten.</span>
+      </label>
+      <label class="check-item" onclick="this.classList.toggle('done')">
+        <input type="checkbox" />
+        <span><strong>[Samuel · 20 min]</strong> En <code>bot/src/api/publico.ts</code>: permitir registrar el WhatsApp del donante en la meta del día para dispararle el mensaje automático cuando se alcance la meta en vivo frente al jurado.</span>
+      </label>
+      <label class="check-item" onclick="this.classList.toggle('done')">
+        <input type="checkbox" />
+        <span><strong>[Silvia · 20 min]</strong> Imprimir 1 afiche físico de tienda (<em>"Ayuden a Yesenia"</em>) con el QR grande hacia la landing pública para entregárselo al jurado en el segundo 0:15 del pitch.</span>
+      </label>
+    </div>
+  </div>
+</body>
+</html>

@@ -4,3 +4,7 @@ node_modules/
 /bot/test/rag/_explorar.ts
 
 ECC/
+# Local AI runtime state
+.atl/
+.agents/
+.claude/

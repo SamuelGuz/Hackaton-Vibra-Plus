@@ -1,36 +1,35 @@
-# 📚 Documentación de Huellitas Vibra Plus
+# 📚 Índice Oficial de Documentación — Refugio Yesenia (Bucaramanga)
 
-Empieza aquí. Cada documento responde una necesidad clara del proyecto.
-
----
-
-## 🌟 Documentos Estratégicos del Plan Silvia (Vigentes)
-
-| Documento | ¿Qué responde? | Formato |
-| :--- | :--- | :--- |
-| [**`resumen-solucion-silvia.html`**](resumen-solucion-silvia.html) | **Página web ejecutiva interactiva**: Resumen completo en viñetas, problemas, soluciones y el pitch. | HTML Interactivo |
-| [**`plan-rescate-silvia.md`**](plan-rescate-silvia.md) | Documento maestro con el diagnóstico crudo, la crítica técnica y las 5 soluciones del Plan Carnicero. | Markdown |
+Esta carpeta contiene **únicamente la información real, verificada y vigente** que maneja el equipo para la Hackatón Vibra Plus 2026.
 
 ---
 
-## 📋 Documentos de Coordinación y Requerimientos
+## 🏆 1. Documentos Maestros para Hoy (Pitch, Plan Maestro y Handoffs)
 
-| Documento | Qué responde | Estado |
+| Documento | Qué contiene | Formato |
 | :--- | :--- | :--- |
-| [Huellitas_Requerimientos_VibraPlus.md](Huellitas_Requerimientos_VibraPlus.md) | ¿Qué pidió la fundación originalmente? | Referencia fija |
-| [PLAN_INTEGRADO.md](PLAN_INTEGRADO.md) | ¿Cómo encajan las piezas? Contrato `/api/*`, roles y cronograma | Vigente técnico |
-| [PLAN_PANEL.md](PLAN_PANEL.md) | ¿Cómo se ve y se usa el panel? Pantallas y componentes | Vigente para panel |
-| [placa-viva/diseno.md](placa-viva/diseno.md) | ¿Qué hacen la placa, la ficha de hoy y el bot de WhatsApp? | Vigente funcional |
-| [research/](research/) | Entrevista real con el refugio, costos y precios de WhatsApp | Evidencia del problema |
-| [auditoria-daniel/](auditoria-daniel/) | Informes 00-07 con la auditoría técnica de RAG, bot y campañas | Auditoría previa |
+| [**`plan-maestro-manana-judgment-day.html`**](plan-maestro-manana-judgment-day.html) | **Plan Maestro Definitivo:** Solución sin collares QR (Huella Fenotípica + Mapa por Patios), los 3 Motores de Ingeniería Biomédica + ML, las 3 experiencias en vivo para el jurado y el checklist final del equipo. | HTML Interactivo |
+| [**`pitch-3-minutos-rubrica.html`**](pitch-3-minutos-rubrica.html) | **Teleprompter de 3:00 Minutos + Rúbrica Oficial (40/30/30):** Guion exacto palabra por palabra, cronómetro en vivo, coreografía de escenario y defensa de preguntas del jurado. | HTML con Cronómetro |
+| [**`resumen-solucion-silvia.html`**](resumen-solucion-silvia.html) | **Resumen Ejecutivo del Proyecto:** Los dolores reales de Yesenia, cómo funciona su Segundo Cerebro y cómo las tiendas aliadas impulsan las donaciones de bultos, vacunas y medicinas. | HTML Ejecutivo |
+| [**`plan-rescate-silvia.md`**](plan-rescate-silvia.md) | **Documento Estratégico en Markdown:** Explicación integral de la solución para lectura rápida en GitHub. | Markdown |
+| [**`handoff-daniel-frontend.html`**](handoff-daniel-frontend.html) | **Handoff para Daniel (Web Pública + Panel Biomédico):** Tareas con checkboxes para la página de las tiendas y las vistas del panel. | HTML con Checkboxes |
+| [**`pendientes-samuel-bot.html`**](pendientes-samuel-bot.html) | **Handoff para Samuel (Bot WhatsApp + API Pública):** Especificación de los 5 módulos del bot (confirmado en suite de 735 tests). | HTML Técnico |
 
 ---
 
-## 💻 Dónde está el Código
+## 🔍 2. Evidencia Real e Investigación Documental (Refugio Yesenia)
 
-| Carpeta | Qué es | Tecnología |
+| Documento | Qué respalda | Estado |
 | :--- | :--- | :--- |
-| [`bot/`](../bot/) | Servidor API, WhatsApp, IA y lógica de adopciones | Node.js / Hono / TypeScript |
-| [`panel/`](../panel/) | Panel administrativo y fichas ligeras | React / Vite |
-| [`db/`](../db/) | Migraciones PostgreSQL y esquemas | SQL / Postgres |
-| [`shared/`](../shared/) | Lógica compartida de negocio y tipos | TypeScript |
+| [**`research/investigacion-documental-yesenia.md`**](research/investigacion-documental-yesenia.md) | **Fuentes Documentales de Bucaramanga:** Artículo de *Vanguardia* (16 jul 2024), Informe de gestión 2023 de *Fundación Dar con Amor* y trabajo académico de la *UDES* (*“Dona un Ladrillo”*). Separa lo documentado de lo que se confirma con Yesenia. | **Fuente de Verdad Oficial** |
+| [**`research/entrevista-respuestas.md`**](research/entrevista-respuestas.md) | **Entrevista de Campo (P1–P10):** El caos de las 10:30 AM con manos mojadas, el miedo a duplicar dosis de medicamentos entre turnos y el cierre nocturno de paz mental. | **Evidencia de Usuario Real** |
+
+---
+
+## ⚙️ 3. Arquitectura Técnica Base
+
+| Documento | Qué describe |
+| :--- | :--- |
+| [**`PLAN_INTEGRADO.md`**](PLAN_INTEGRADO.md) | Contrato de datos `@huellitas/shared`, rutas `/api/*`, sincronización offline-first y permisos por rol. |
+| [**`PLAN_PANEL.md`**](PLAN_PANEL.md) | Diseño de interfaz móvil de alto contraste para pantallas bajo el sol y manos ocupadas. |
+| [**`auditoria-daniel/`**](auditoria-daniel/) | Auditoría técnica inicial del estado de `bot/`, `panel/` y base de datos. |

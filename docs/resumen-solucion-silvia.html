@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resumen Ejecutivo — Plan Rescate Real (Huellitas Vibra Plus)</title>
+  <style>
+    :root {
+      --primary: #10b981;
+      --primary-dark: #047857;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --dark: #0f172a;
+      --card-bg: #ffffff;
+      --bg: #f8fafc;
+      --text: #334155;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      padding: 2.5rem 2rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1);
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+    .badge-green { background: #d1fae5; color: #065f46; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-amber { background: #fef3c7; color: #92400e; }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.025em;
+    }
+    header p {
+      color: #94a3b8;
+      font-size: 1rem;
+    }
+    .meta {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      border-top: 1px solid #334155;
+      padding-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    h2 {
+      font-size: 1.35rem;
+      color: var(--dark);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.6rem;
+    }
+    h3 {
+      font-size: 1.1rem;
+      color: var(--dark);
+      margin-top: 1.25rem;
+      margin-bottom: 0.6rem;
+    }
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    li {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 0.65rem;
+    }
+    li::before {
+      content: "•";
+      position: absolute;
+      left: 0.35rem;
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 1.2rem;
+      line-height: 1.2;
+    }
+    li.danger::before {
+      color: var(--danger);
+    }
+    strong {
+      color: var(--dark);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+    @media (min-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .highlight-box {
+      background: #f0fdf4;
+      border-left: 4px solid var(--primary);
+      padding: 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+    }
+    .quote {
+      font-style: italic;
+      color: #475569;
+      background: #f1f5f9;
+      padding: 1.25rem;
+      border-radius: 8px;
+      border-left: 4px solid #64748b;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- HEADER -->
+    <header>
+      <span class="badge badge-green">Estrategia Hackatón 2026</span>
+      <h1>Plan Rescate Real — Huellitas Vibra Plus</h1>
+      <p>Solución 100% viable y humana para Doña Gloria, sus 90 animales y Don Carlos el Carnicero.</p>
+      <div class="meta">
+        <div><strong>Liderazgo:</strong> Silvia & Equipo</div>
+        <div><strong>Rama Git:</strong> <code>silvia-rescate-real</code></div>
+        <div><strong>Enfoque:</strong> WhatsApp-First / Low-Data / Cero Fricción</div>
+      </div>
+    </header>
+
+    <!-- 1. LA REALIDAD DE LA CALLE -->
+    <section class="card">
+      <h2>🐾 1. La Realidad de la Calle: El Perfil de la Usuaria</h2>
+      <ul>
+        <li><strong>Quién es Doña Gloria:</strong> Mujer recicladora en Colombia (estrato 1) que cuida <strong>90 perros y gatos</strong> en su propia vivienda por pura vocación.</li>
+        <li><strong>El sustento de los animales:</strong> No hay presupuesto para concentrado comercial; los animales comen gracias a <strong>Don Carlos (amigo carnicero)</strong>, quien le dona recortes de carne, menudencias y huesos.</li>
+        <li><strong>Su teléfono y conexión:</strong> Android gama baja (3-4 años de uso), pantalla rota, sin Wi-Fi fijo. Se comunica comprando paqueticos de datos prepago ($3.000 COP).</li>
+        <li><strong>Condiciones de trabajo:</strong> Manos mojadas, barro, agua, baldes y manguera. Es imposible llenar planillas o navegar pantallas complejas.</li>
+      </ul>
+    </section>
+
+    <!-- 2. DIAGNÓSTICO CRÍTICO -->
+    <section class="card">
+      <h2>💀 2. Autopsia del Proyecto Anterior: Lo que era Inviable</h2>
+      <div class="grid grid-2">
+        <div>
+          <h3>❌ La Fantasía Tecnológica</h3>
+          <ul>
+            <li class="danger"><strong>Campañas por Correo (SMTP):</strong> Nadie que done a un albergue en estrato 1 lee correos; la ayuda se mueve por WhatsApp y Nequi.</li>
+            <li class="danger"><strong>Panel Web Pesado (React):</strong> Diseñado para escritorio con fibra óptica. En un celular barato prepago gasta los datos en minutos.</li>
+            <li class="danger"><strong>70 Perros Falsos:</strong> El sistema venía cargado con fotos e historias inventadas de internet, ignorando a los 90 animales reales que tienen hambre hoy.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>❌ Los Engaños de Código</h3>
+          <ul>
+            <li class="danger"><strong>Voz que era Puro Texto:</strong> Se prometió interacción por voz pero el sistema solo tenía texto plano sin generador de audio real (TTS).</li>
+            <li class="danger"><strong>83 Pruebas Fallidas Ocultas:</strong> Casos marcados con trampa para no salir en rojo en vez de solucionar los errores de raíz.</li>
+            <li class="danger"><strong>Cables Desconectados:</strong> El archivo principal de arranque no conectaba la inteligencia artificial con el mundo exterior.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. LAS 5 SOLUCIONES REALISTAS -->
+    <section class="card">
+      <h2>🚀 3. Las 5 Soluciones Realistas del Plan Silvia</h2>
+
+      <h3>1. El "Secretario Escudo" en WhatsApp</h3>
+      <ul>
+        <li><strong>Objetivo:</strong> Liberar a Doña Gloria de las 3 horas diarias que pierde respondiendo a curiosos en su celular.</li>
+        <li><strong>Cómo opera:</strong> El asistente atiende 24/7 y aplica las 4 preguntas de oro (vivienda, presupuesto, rejas, compromiso veterinario).</li>
+        <li><strong>Filtro inteligente:</strong> Si la persona no califica, la invita amablemente a apadrinar comida. Si califica (≥75 pts), le propone visita para el sábado.</li>
+        <li><strong>Paz mental:</strong> A Doña Gloria solo le suena el teléfono cuando hay un adoptante confirmado o una donación real.</li>
+      </ul>
+
+      <h3>2. La Campaña "Págale al Carnicero" (Comida Tangible en Kilos)</h3>
+      <ul>
+        <li><strong>Objetivo:</strong> Despertar confianza inmediata reemplazando pedidos de plata abstracta por kilos de comida medibles.</li>
+        <li><strong>Botonera de Nequi / Daviplata:</strong>
+          <ul>
+            <li>🥩 <em>$10.000 COP:</em> 2 kilos de carne fresca con Don Carlos para Rocky hoy.</li>
+            <li>🍗 <em>$25.000 COP:</em> Menudencia y caldo para 10 perros por un día.</li>
+            <li>🥣 <em>$60.000 COP:</em> Bulto de concentrado para mezclar con la carne.</li>
+          </ul>
+        </li>
+        <li><strong>Transparencia radical:</strong> Notificación al donante: <em>"Hoy Rocky comió gracias a tu aporte con Don Carlos el carnicero"</em>.</li>
+      </ul>
+
+      <h3>3. Bitácora Médica por Notas de Voz (Manos Ocupadas)</h3>
+      <ul>
+        <li><strong>Objetivo:</strong> Evitar la muerte de animales por duplicación u omisión de dosis sin tocar la pantalla con las manos sucias.</li>
+        <li><strong>Cómo opera:</strong> Gloria o cualquier voluntario envía un audio de WhatsApp de 5 segundos: <em>"Ya le di la pastilla del ojo al Tuerto y llegaron 20 kg de carnaza"</em>.</li>
+        <li><strong>Procesamiento automático:</strong> El sistema extrae el perro, la hora y el medicamento, y actualiza el inventario de carne.</li>
+        <li><strong>Alerta preventiva:</strong> Si otro cuidador pregunta más tarde, el bot le dice: <em>"Gloria ya le dio la pastilla a las 9:15 AM, no se la repita"</em>.</li>
+      </ul>
+
+      <h3>4. Ficha Digital Semáforo Ultraligera (&lt;20 KB)</h3>
+      <ul>
+        <li><strong>Objetivo:</strong> Consulta instantánea frente al perro sin descargar aplicaciones pesadas ni consumir datos.</li>
+        <li><strong>Cómo opera:</strong> Enlace rápido que carga en 0.2 segundos incluso en redes móviles lentas.</li>
+        <li><strong>Información visible:</strong> Foto real, nombre y semáforo de 3 colores:
+          <ul>
+            <li>🟢 <strong>Verde:</strong> Comió hoy.</li>
+            <li>🟡 <strong>Amarillo:</strong> Medicina de las 2:00 PM pendiente.</li>
+            <li>🔴 <strong>Rojo:</strong> Requiere curación urgente.</li>
+          </ul>
+        </li>
+        <li><strong>Avisos de seguridad:</strong> Letras grandes para voluntarios: <em>"No tocar cola, es asustadizo"</em>.</li>
+      </ul>
+
+      <h3>5. Ecosistema Zero-Data (Respeto al Bolsillo)</h3>
+      <ul>
+        <li><strong>Objetivo:</strong> Que Doña Gloria nunca tenga que gastar saldo extra de su bolsillo.</li>
+        <li><strong>Cómo opera:</strong> Toda la gestión ocurre dentro de WhatsApp, canal que las operadoras en Colombia suelen ofrecer sin costo en planes prepago.</li>
+      </ul>
+    </section>
+
+    <!-- 4. INTEGRACIÓN TÉCNICA ECC -->
+    <section class="card">
+      <h2>⚙️ 4. Blindaje Técnico con el Arsenal ECC</h2>
+      <ul>
+        <li><strong><code>product-lens</code>:</strong> Todo cambio se evalúa bajo la regla: <em>"¿Funciona en un celular con pantalla rota y manos con barro?"</em>.</li>
+        <li><strong><code>silent-failure-hunter</code>:</strong> Cero pérdidas de datos si la conexión prepago se corta en medio del patio.</li>
+        <li><strong><code>a11y-architect</code>:</strong> Botones táctiles gigantes (mínimo 48px) para dedos mojados o con guantes.</li>
+        <li><strong><code>database-reviewer</code>:</strong> Registro seguro y a prueba de duplicaciones de donaciones y gastos de comida.</li>
+      </ul>
+    </section>
+
+    <!-- 5. PITCH DE HACKATÓN -->
+    <section class="card">
+      <h2>🏆 5. El Discurso para Ganar la Hackatón (60 Segundos)</h2>
+      <div class="quote">
+        "Un refugio popular no se apaga por falta de amor; se apaga cuando el agotamiento y la falta de comida vencen a quien rescata.<br><br>
+        No construimos un software de oficina para una persona que no tiene computador. Diseñamos un sistema de supervivencia para Doña Gloria: recicladora, estrato 1, con 90 perros en su casa y un amigo carnicero que le fía huesos para mantenerlos vivos.<br><br>
+        Nuestra plataforma vive dentro de WhatsApp, transforma audios de 5 segundos en control médico para evitar sobredosis, frena a los curiosos para que Gloria descanse, y convierte la generosidad de la gente en kilos de carne pesados en la báscula de Don Carlos.<br><br>
+        Esto no es tecnología para inflar un currículum; es tecnología indestructible que corre en un teléfono de $150.000 pesos y salva 90 vidas reales."
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>

@@ -95,7 +95,7 @@ Se prende solo cuando hay `GEMINI_API_KEY` ([`src/externo.ts`](src/externo.ts)).
 | `GET /api/publico/rag/perritos?especie=perro\|gato&limite=N` | Tarjetas de los animales |
 | `GET /api/publico/rag/buscar?q=...` | Búsqueda por lo que la persona necesita |
 | `GET /api/publico/rag/preguntar?q=...` | Preguntas sobre el refugio |
-| `POST /api/publico/agente-voz` | Turno con el agente: `{ texto }` o `{ audioBase64, mime }`, más `sesionId` y `perroId` opcionales. `/api/publico/voz-adopcion` es la misma ruta con otro nombre |
+| `POST /api/publico/agente-voz` | Turno con el agente: `{ texto }` o `{ audioBase64, mime }`, más `sesionId` y `perroId` opcionales. Con `"conAudio": true` la respuesta trae además `audio: { mime: "audio/wav", base64 }` (unos 5 s más); si la voz falla, `audio` viene en `null` y el texto llega igual. `/api/publico/voz-adopcion` es la misma ruta con otro nombre |
 | `POST /api/publico/campanas/generar` | Arma una campaña de correo y su vista previa |
 | `POST /api/publico/campanas/enviar` | La envía. Pide la cabecera `X-Campana-Clave` igual a `CAMPANAS_CLAVE` y Resend o SMTP configurado. Sin eso no sale ningún correo |
 

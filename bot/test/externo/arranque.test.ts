@@ -53,6 +53,8 @@ describe('armar el frente externo', () => {
     expect(e.llm).toBe(llm)
     expect(e.whatsappPublico).toBe('573001112233')
     expect(e.correo.config.urlBase).toBe(PANEL)
+    // La voz de la página se arma con la misma llave (no se llama a Gemini al armarla)
+    expect(typeof e.voz?.hablar).toBe('function')
   })
 
   it('sin RESEND_API_KEY ni SMTP_HOST no hay quien envíe correos (no se mandan campañas)', () => {

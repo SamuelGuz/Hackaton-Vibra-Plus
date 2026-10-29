@@ -54,6 +54,18 @@ function leerCuerpo(c: unknown): Entrada {
 export function montarRutasAgente(app: Hono<any>, deps: Deps, ctx: ContextoExterno): void {
   const agente = obtenerAgente(deps)
 
+  /** El guion como WAV en base64, o null si no hay voz o falló: el texto se responde igual */
+  const decir = async (guion: string): Promise<{ mime: string; base64: string } | null> => {
+    if (!ctx.voz || !guion.trim()) return null
+    try {
+      const a = await ctx.voz.hablar(guion)
+      return { mime: a.mime, base64: a.datos.toString('base64') }
+    } catch (e) {
+      console.error('La voz del agente falló:', e instanceof Error ? e.message : e)
+      return null
+    }
+  }
+
   const atender = async (c: Context) => {
     if (!agente.limiteWeb.permitir(ipDe(c.req.raw.headers))) return c.json({ error: textosAgente.limiteWeb }, 429)
 
@@ -68,6 +80,9 @@ export function montarRutasAgente(app: Hono<any>, deps: Deps, ctx: ContextoExter
     }
     const entrada = leerCuerpo(json)
     if ('error' in entrada) return c.json({ error: entrada.error }, 400)
+    // Con "conAudio": true la respuesta trae el guion dicho como WAV (unos segundos más de espera)
+    const conAudio = (json as Record<string, unknown>).conAudio
+    if (conAudio !== undefined && typeof conAudio !== 'boolean') return c.json({ error: '"conAudio" debe ser true o false' }, 400)
 
     const sesionId = entrada.ok.sesionId ?? crypto.randomUUID()
     try {
@@ -87,6 +102,7 @@ export function montarRutasAgente(app: Hono<any>, deps: Deps, ctx: ContextoExter
         guionVoz: r.guionVoz,
         perritos: r.perritos.map((p) => ({ id: p.id, nombre: p.nombre, especie: p.especie, edadTexto: p.edadTexto, foto: p.foto })),
         accion: r.accion,
+        ...(conAudio ? { audio: await decir(r.guionVoz) } : {}),
       })
     } catch (e) {
       console.error('El agente de voz falló:', e)

@@ -1,6 +1,7 @@
 // Contrato público del motor RAG: lo que ve la landing, el agente y las campañas.
 // Nada de aquí incluye datos internos (deudas, teléfonos, nombres del equipo).
 import type { Especie } from '../panel-tipos.js'
+import type { Voz } from '../adopciones-agente/voz.js'
 
 export type Tamano = 'pequeno' | 'mediano' | 'grande'
 
@@ -111,6 +112,8 @@ export interface ContextoExterno {
   whatsappPublico: string | null
   /** Motor de preguntas (rag/respuestas.ts); el arranque lo arma cuando existe */
   respuestas?: ServicioRespuestas
+  /** Voz del agente para la página (adopciones-agente/voz.ts); sin ella no hay audio, solo texto */
+  voz?: Voz
 }
 
 // ---------- Ampliaciones (T-RAG2): perfil más rico y motor de preguntas ----------

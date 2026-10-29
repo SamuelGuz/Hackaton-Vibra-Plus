@@ -1,0 +1,32 @@
+.seccion { background: #0f3d2a; color: #ffffff; padding-block: clamp(5rem, 3rem + 7vw, 9rem); font-family: 'Inter Wild', 'Inter', system-ui, sans-serif; }
+.contenedor { width: min(100% - 2.5rem, 72rem); margin-inline: auto; }
+.cabecera h2 { color: #ffffff !important; font-size: clamp(2.4rem, 1.2rem + 4.6vw, 5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.02; max-width: 16ch; margin: 0 0 1.25rem; }
+.cabecera p { max-width: 46ch; font-size: clamp(1rem, 0.95rem + 0.4vw, 1.25rem); line-height: 1.5; color: #d9d2bd; margin: 0; }
+.selector { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block: clamp(2rem, 4vw, 3rem); }
+.selector button { min-height: 3.25rem; padding-inline: 1.5rem; border-radius: 999px; border: 1px solid #5f7f6c; color: #ffffff; background: transparent; font-weight: 500; cursor: pointer; transition: background 0.2s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s; }
+.selector button:hover { background: rgb(251 247 238 / 0.1); }
+.selector button[aria-pressed='true'] { background: #ffffff; color: #14201a; border-color: #ffffff; }
+.selector button:active { transform: scale(0.97); }
+.panel { background: #ffffff; color: #14201a; border-radius: 28px; padding: clamp(1.5rem, 1rem + 3vw, 3.5rem); }
+.panel h3 { font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.6rem); font-weight: 800; letter-spacing: -0.03em; margin: 0 0 1.25rem; color: #14201a !important; }
+.panel p { max-width: 58ch; line-height: 1.55; color: #3d4a41; }
+.metas { display: grid; gap: 2rem; margin-bottom: 2.25rem; }
+.metaTop { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.5rem 1rem; margin-bottom: 0.75rem; }
+.metaTop h4 { margin: 0; font-size: 1.125rem; font-weight: 700; letter-spacing: -0.01em; color: #14201a; }
+.metaCifra { font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem); font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.metaCifra i { font-style: normal; font-size: 0.55em; font-weight: 500; color: #3d4a41; letter-spacing: 0; }
+.pista { height: 1.25rem; border-radius: 999px; background: #ffffff; border: 1px solid #cfc3a8; overflow: hidden; }
+.relleno { height: 100%; min-width: 0; border-radius: 999px; background: #1f5a3a; transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.metaDetalle { margin: 0.6rem 0 0 !important; font-size: 0.9375rem; }
+.metaDetalle b { color: #1f5a3a; margin-left: 0.4rem; }
+.compras { border-top: 1px solid #cfc3a8; padding-top: 1.5rem; margin-bottom: 1.5rem; }
+.compras h4 { margin: 0 0 0.75rem; font-size: 1rem; font-weight: 700; color: #14201a; }
+.compras ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+.compras li { display: flex; gap: 1rem; line-height: 1.4; }
+.compras time { flex: none; color: #1f5a3a; font-weight: 600; font-variant-numeric: tabular-nums; }
+.vacio { margin: 0 !important; }
+.nota { font-size: 0.8125rem !important; margin-block: 0.5rem 1.5rem !important; }
+.boton { display: inline-flex; align-items: center; min-height: 3.25rem; padding-inline: 2rem; border-radius: 999px; background: #1f5a3a; color: #ffffff !important; font-weight: 500; text-decoration: none; transition: background 0.2s cubic-bezier(0.22, 1, 0.36, 1), transform 0.2s; }
+.boton:hover { background: #2a7149; transform: translateY(-2px); }
+.boton:active { transform: scale(0.97); }
+@media (prefers-reduced-motion: reduce) { .relleno { transition: none; } .boton:hover { transform: none; } }

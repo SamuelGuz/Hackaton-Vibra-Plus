@@ -1,0 +1,52 @@
+.botones { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; margin-top: 1.5rem; }
+.campo { display: grid; gap: 0.4rem; margin: 0 0 1.25rem; }
+.campo label { font-weight: 600; font-size: 0.9375rem; }
+.campo input, .campo select, .campo textarea { width: 100%; min-height: 3rem; padding: 0.7rem 1rem; border-radius: 16px; border: 1.5px solid #14201a; background: #ffffff; color: #14201a; line-height: 1.4; }
+.campo textarea { resize: vertical; }
+.pequeno { font-size: 0.875rem !important; }
+.error { color: #8a2e1f !important; font-weight: 600; margin-top: 1rem !important; }
+.rotulo { display: inline-block; padding: 0.2rem 0.75rem; border-radius: 999px; background: #eef2ee; font-size: 0.8125rem !important; font-weight: 600; color: #14201a !important; }
+.sub { margin: 1.5rem 0 0.5rem !important; font-size: 1.125rem !important; letter-spacing: -0.02em !important; }
+.mensaje { padding: 1rem 1.25rem; border-radius: 20px; background: #ffffff; color: #14201a !important; font-size: 0.9375rem; }
+
+.check { display: flex; gap: 0.85rem; align-items: flex-start; font-weight: 600; line-height: 1.4; cursor: pointer; margin-bottom: 1rem; }
+.check input { width: 1.5rem; height: 1.5rem; flex: none; accent-color: #1f5a3a; margin: 0.05rem 0 0; }
+.desliza { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 150ms cubic-bezier(0.22, 1, 0.36, 1), opacity 150ms; }
+.desliza > div { overflow: hidden; }
+.abierto { grid-template-rows: 1fr; opacity: 1; }
+
+.datos { margin: 0 0 1rem; display: grid; }
+.datos > div { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.7rem 0; border-top: 1px solid #d6cab0; }
+.datos dt { color: #3d4a41; }
+.datos dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 0.75rem; text-align: right; }
+.lista { list-style: none; padding: 0; margin: 0 0 1rem; display: grid; gap: 0.5rem; }
+.lista li { animation: entra 260ms cubic-bezier(0.22, 1, 0.36, 1) both; line-height: 1.4; }
+.lista time { font-weight: 700; color: #1f5a3a; margin-right: 0.5rem; }
+@keyframes entra { from { opacity: 0; transform: translateY(8px); } }
+
+.puntos { display: flex; gap: 0.5rem; list-style: none; padding: 0; margin: 0 0 1.25rem; }
+.puntos li { width: 0.65rem; height: 0.65rem; border-radius: 999px; background: #d6cab0; transition: background 160ms, width 220ms cubic-bezier(0.22, 1, 0.36, 1); }
+.puntoActual { width: 1.8rem !important; background: #1f5a3a !important; }
+.puntoHecho { background: #1f5a3a !important; opacity: 0.55; }
+.pregunta { border: 0; padding: 0; margin: 0; display: grid; gap: 0.6rem; }
+.pregunta legend { padding: 0; margin-bottom: 0.9rem; font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+.opcion { position: relative; display: block; }
+.opcion input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.opcion span { display: flex; align-items: center; min-height: 3.25rem; padding: 0 1.25rem; border-radius: 999px; border: 1.5px solid #14201a; font-weight: 600; transition: background 160ms, color 160ms; }
+.opcion input:checked + span { background: #1f5a3a; border-color: #1f5a3a; color: #ffffff; }
+.opcion input:focus-visible + span { outline: 2px solid #1f5a3a; outline-offset: 3px; }
+.opcion:active span { transform: scale(0.98); }
+
+.gracias { display: grid; justify-items: start; gap: 0.25rem; }
+.corazonGrande { animation: pulsa 600ms cubic-bezier(0.22, 1, 0.36, 1) 150ms both; transform-origin: center; margin-bottom: 0.75rem; }
+@keyframes pulsa { 0% { transform: scale(1); } 45% { transform: scale(1.08); } 100% { transform: scale(1); } }
+.fuerte { font-size: 1.25rem !important; font-weight: 700; color: #14201a !important; letter-spacing: -0.02em; }
+
+.avisoCaja { position: fixed; z-index: 130; left: 0; right: 0; bottom: 1.5rem; display: flex; justify-content: center; pointer-events: none; padding-inline: 1rem; }
+.aviso { margin: 0; padding: 0.85rem 1.4rem; border-radius: 999px; background: #0f3d2a; color: #ffffff; font-weight: 500; animation: entra 200ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .desliza, .puntos li { transition: none; }
+  .lista li, .aviso { animation: none; }
+  .corazonGrande { animation: none; }
+}

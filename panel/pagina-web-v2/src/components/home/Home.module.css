@@ -1,0 +1,135 @@
+/*
+ * Home sections. Look = the hero (docs/estrategia/BRANDING-HERO.md): beige ground, green action,
+ * Inter 800 with tight tracking, 28px photos, no cards, no shadows, no gradients.
+ * Selectors are prefixed with `.seccion` so they outrank `main[data-tema] h2` from huellitas-tema.css.
+ */
+.seccion {
+  --fondo: #ffffff;
+  --claro: #ffffff;
+  --tinta: #14201a;
+  --tinta2: #3d4a41;
+  --regla: #b9ad94;
+  --verde: #1f5a3a;
+  --salida: cubic-bezier(0.22, 1, 0.36, 1);
+  padding-block: clamp(5rem, 3rem + 8vw, 11rem);
+  background: var(--fondo);
+  color: var(--tinta);
+}
+.claro { background: var(--claro); }
+.suelo { background: var(--fondo); }
+.contenedor { width: min(100% - 2.5rem, 80rem); margin-inline: auto; }
+
+/* Type */
+.seccion .titulo { font-size: clamp(2.4rem, 1.2rem + 4.6vw, 5.25rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.02; max-width: 16ch; margin: 0 0 1.5rem; color: var(--tinta); text-wrap: balance; }
+.seccion .cuerpo { font-size: clamp(1rem, 0.95rem + 0.4vw, 1.25rem); line-height: 1.55; font-weight: 450; color: var(--tinta2); max-width: 46ch; margin: 0 0 1.75rem; }
+.seccion .sobre { font-size: 0.875rem; font-weight: 500; color: var(--verde); margin: 0 0 1rem; }
+.seccion .micro { font-size: 0.8125rem; line-height: 1.5; font-weight: 450; color: var(--tinta2); margin: 0.75rem 0 0; max-width: 46ch; }
+.seccion .capitular::first-letter { float: left; margin-right: 0.12em; font-size: 2.35em; font-weight: 650; line-height: 0.95; color: var(--tinta); }
+.accion { display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+.accionCentro { margin-top: clamp(3rem, 6vw, 6rem); }
+.seccion .enlace { display: inline-flex; align-items: center; min-height: 3rem; font-weight: 500; color: var(--tinta); text-decoration: underline; text-underline-offset: 0.3em; text-decoration-thickness: 1px; transition: opacity 0.18s var(--salida); }
+.seccion .enlace:hover { color: var(--tinta); opacity: 0.65; }
+.seccion :is(a, button, summary):focus-visible { outline: 2px solid var(--verde); outline-offset: 4px; border-radius: 6px; }
+
+/* Reveal: rise 28px + fade, 800ms, once */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s var(--salida, cubic-bezier(0.22, 1, 0.36, 1)), transform 0.8s var(--salida, cubic-bezier(0.22, 1, 0.36, 1)); }
+.revealOn { opacity: 1; transform: none; }
+@media (scripting: none) { .reveal { opacity: 1; transform: none; } }
+
+/* 2. Frase puente */
+.puente { padding-block: clamp(6rem, 4rem + 10vw, 14rem); }
+.seccion .frase { font-size: clamp(2.1rem, 1rem + 4.4vw, 4.9rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.06; max-width: 22ch; margin: 0; color: var(--tinta); text-wrap: balance; }
+.palabra, .palabraOn { transition: opacity 0.35s var(--salida); }
+.frase[data-listo] .palabra { opacity: 0.22; }
+.frase[data-listo] .palabraOn { opacity: 1; }
+
+/* 3. Misión */
+.misionGrid { display: grid; gap: clamp(3rem, 6vw, 6rem); grid-template-columns: 1fr; align-items: start; }
+.metas { display: grid; gap: 2.5rem; }
+.metaTop { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.35rem 1rem; margin-bottom: 0.9rem; }
+.seccion .metaTitulo { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.01em; margin: 0; line-height: 1.2; }
+.metaCifra { font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem); font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.metaCifra i { font-style: normal; font-size: 0.55em; font-weight: 500; letter-spacing: 0; color: var(--tinta2); }
+.pista { height: 0.75rem; border-radius: 999px; background: #eef2ee; overflow: hidden; }
+.pistaVacia { background: transparent; border: 1.5px dotted var(--regla); }
+.relleno { height: 100%; width: 100%; border-radius: 999px; background: var(--verde); transform-origin: left center; transition: transform 0.7s var(--salida); }
+.seccion .metaNota { margin: 0.7rem 0 0; font-size: 0.875rem; line-height: 1.5; color: var(--tinta2); max-width: 52ch; }
+.seccion .vacioMision { margin: 2rem 0 0; font-size: clamp(1.1rem, 1rem + 0.5vw, 1.4rem); font-weight: 600; letter-spacing: -0.015em; line-height: 1.35; max-width: 34ch; }
+.ultima { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--regla); }
+.seccion .ultimaTitulo { font-size: 1rem; font-weight: 700; margin: 0 0 0.5rem; letter-spacing: -0.01em; }
+.seccion .ultimaTexto { margin: 0; line-height: 1.5; color: var(--tinta2); max-width: 46ch; }
+
+/* 5. Fichas: two staggered columns, different photo ratios (no identical grid) */
+.fichas { display: grid; gap: 4rem 2rem; grid-template-columns: 1fr; margin-top: clamp(3rem, 6vw, 5rem); }
+.ficha { min-width: 0; }
+.fichaBaja { }
+.fotoFicha { position: relative; overflow: hidden; border-radius: 28px; background: #eef2ee; }
+.fotoAlta { aspect-ratio: 4 / 5; }
+.fotoMedia { aspect-ratio: 1 / 1; }
+.fotoFicha img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s var(--salida); }
+.rotulo { position: absolute; left: 1rem; bottom: 1rem; padding: 0.35rem 0.8rem; border-radius: 999px; background: rgb(251 247 238 / 0.92); font-size: 0.75rem; font-weight: 500; color: var(--tinta); }
+.fichaInfo { padding-top: 1.25rem; }
+.seccion .fichaInfo h3 { font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 0.6rem; }
+.seccion .fichaInfo p { margin: 0 0 0.75rem; line-height: 1.55; color: var(--tinta2); }
+.fichaAcciones { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.5rem; }
+.favoritoWrap { position: relative; display: inline-flex; align-items: center; }
+.favorito { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 3rem; padding-inline: 1.1rem; border-radius: 999px; background: transparent; border: 1px solid var(--regla); color: var(--tinta); font-weight: 500; cursor: pointer; transition: background 0.16s var(--salida), color 0.16s var(--salida), border-color 0.16s var(--salida), transform 0.16s var(--salida); }
+.favorito svg { width: 18px; height: 18px; fill: transparent; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; transition: fill 0.16s var(--salida), transform 0.2s var(--salida); }
+.favorito:active { transform: scale(0.97); }
+.favoritoOn { background: var(--verde); border-color: var(--verde); color: #ffffff; }
+.favoritoOn svg { fill: #ffffff; transform: scale(1.1); }
+.avisoFav { position: absolute; left: 0; top: 100%; margin-top: 0.15rem; font-size: 0.75rem; color: var(--tinta2); white-space: nowrap; }
+@media (hover: hover) { .fotoFicha:hover img { transform: scale(1.02); } .favorito:not(.favoritoOn):hover { background: rgb(31 90 58 / 0.08); } }
+
+/* Hearts */
+.corazones { position: absolute; left: 50%; top: 0; width: 0; height: 0; pointer-events: none; }
+.corazon { position: absolute; left: 0; top: 0; fill: var(--verde); opacity: 0; animation: sube 2.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.corazonClaro { fill: var(--regla); }
+@keyframes sube {
+  0% { opacity: 0; transform: translate(0, 0); }
+  20% { opacity: 0.6; }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)); }
+}
+@keyframes soloFade { 0% { opacity: 0; } 40% { opacity: 0.6; } 100% { opacity: 0; } }
+
+/* 6. Yesenia */
+.yeseniaGrid { display: grid; gap: clamp(2.5rem, 5vw, 5rem); grid-template-columns: 1fr; align-items: center; }
+.fotoYesenia { border-radius: 28px; overflow: hidden; aspect-ratio: 5 / 4; background: #eef2ee; }
+.fotoYesenia img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* 7. Muro */
+.muro { padding-block: clamp(4rem, 2rem + 6vw, 8rem); }
+.seccion .fraseMuro { font-size: clamp(1.3rem, 1rem + 1.6vw, 2.4rem); font-weight: 700; letter-spacing: -0.025em; line-height: 1.2; max-width: 28ch; margin: 0; padding-bottom: 1rem; border-bottom: 2px dotted var(--regla); display: inline-block; }
+.nombres { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; font-size: clamp(1.4rem, 1rem + 1.6vw, 2.4rem); font-weight: 800; letter-spacing: -0.03em; }
+
+/* 8. FAQ */
+.faqGrid { display: grid; gap: 2.5rem; grid-template-columns: 1fr; align-items: stretch; }
+.preguntas { border-top: 1px solid var(--regla); }
+.pregunta { border-bottom: 1px solid var(--regla); }
+.pregunta summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4rem; padding-block: 0.75rem; cursor: pointer; list-style: none; font-size: clamp(1.1rem, 1rem + 0.5vw, 1.4rem); font-weight: 700; letter-spacing: -0.015em; }
+.pregunta summary::-webkit-details-marker { display: none; }
+.pregunta summary::after { content: ''; flex: none; width: 0.6rem; height: 0.6rem; border-right: 2px solid var(--tinta); border-bottom: 2px solid var(--tinta); transform: rotate(45deg) translateY(-2px); transition: transform 0.2s var(--salida); }
+.pregunta[open] summary::after { transform: rotate(-135deg) translateY(-2px); }
+.seccion .pregunta p { margin: 0 0 1.5rem; max-width: 52ch; line-height: 1.55; color: var(--tinta2); }
+
+/* 9. Cierre */
+.cierre { padding-bottom: 0; }
+.fila { margin-top: clamp(3rem, 6vw, 6rem); width: min(100% - 2.5rem, 80rem); margin-inline: auto; }
+.fila img { display: block; width: 100%; height: auto; max-height: 24rem; object-fit: contain; object-position: bottom center; }
+.fila .micro { padding-block: 1rem 2rem; }
+
+@media (min-width: 900px) {
+  .misionGrid { grid-template-columns: 1fr 1fr; }
+  .fichas { grid-template-columns: 1fr 1fr; }
+  .fichaBaja { margin-top: clamp(4rem, 9vw, 9rem); }
+  .yeseniaGrid { grid-template-columns: 1.15fr 1fr; }
+  .faqGrid { grid-template-columns: 5fr 7fr; }
+  .tituloSticky { position: sticky; top: 6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { transform: none; transition: opacity 0.4s linear; }
+  .palabra, .palabraOn, .relleno, .fotoFicha img, .favorito, .favorito svg { transition: none; }
+  .corazon { animation: soloFade 0.4s linear both; transform: none; }
+  .fotoFicha:hover img { transform: none; }
+}

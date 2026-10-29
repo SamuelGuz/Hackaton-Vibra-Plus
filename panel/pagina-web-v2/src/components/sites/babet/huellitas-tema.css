@@ -1,0 +1,97 @@
+/*
+ * Huellitas theme over the cloned section structure.
+ * Rules come from docs/BRANDING-HERO.md of the lab (the v5 hero): beige ground, green action,
+ * Inter 800 display with tight tracking, pill buttons, no shadows.
+ * Selector `main[data-tema]` outranks the clone's single-class rules without touching them.
+ */
+main[data-tema='huellitas'] {
+  --babet-orange: #1f5a3a;
+  --babet-dark: #14201a;
+  --babet-smoke: #ffffff;
+  --babet-text: #3d4a41;
+  --babet-white: #ffffff;
+  --babet-line: #d6cab0;
+  --babet-light: #6f7a70;
+  --fuente-tema: 'Inter Wild', 'Inter', system-ui, sans-serif;
+}
+main[data-tema='huellitas'],
+main[data-tema='huellitas'] *:not(svg *) {
+  font-family: var(--fuente-tema);
+}
+main[data-tema='huellitas'] :is(h1, h2, h3, h4) {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--babet-dark);
+}
+main[data-tema='huellitas'] h2 { font-size: clamp(2.4rem, 1.2rem + 4.4vw, 4.75rem); }
+main[data-tema='huellitas'] p { font-weight: 450; }
+main[data-tema='huellitas'] img[data-foto] { object-fit: cover; }
+main[data-tema='huellitas'] img[data-foto][data-recorte] { object-fit: contain; }
+main[data-tema='huellitas'] a:hover { color: var(--babet-orange); }
+/* Buttons: green fill, beige text, fully round. */
+main[data-tema='huellitas'] [class*='button'] { font-weight: 500; letter-spacing: 0.005em; }
+main[data-tema='huellitas'] [class*='button']:hover { background: #2a7149; }
+/* Wordmark replaces the clone's logo image. */
+.huellitas-marca { font-weight: 800; letter-spacing: -0.045em; font-size: 2rem; line-height: 1; color: var(--babet-dark); }
+.huellitas-marca--claro { color: #ffffff; }
+/* Simple fade-in for page header when it appears after the hero. */
+.huellitas-header-visible { animation: huellitas-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes huellitas-in { from { transform: translateY(-100%); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .huellitas-header-visible { animation: none; } }
+
+/* Hero v5 tokens remapped to beige + green (same roles as docs/BRANDING-HERO.md §3). */
+html[data-hero='5'] {
+  --wild-white: #ffffff;
+  --wild-paper: #ffffff;
+  --wild-ink: #14201a;
+  --wild-secondary: #3d4a41;
+  --wild-rule: #b9ad94;
+  --wild-button: #1f5a3a;
+  --wild-hairline: #cfc3a8;
+  --wild-control: rgb(20 32 26 / 0.45);
+  --color-acento: #1f5a3a;
+  --color-acento-hover: #2a7149;
+  --color-fondo: #ffffff;
+  --fondo-hero: #eef2ee;
+}
+
+/* The clone's coloured illustrations and photo backgrounds are not part of this brand. */
+main[data-tema='huellitas'] img[src*='/assets/img/shape/'] { display: none; }
+main[data-tema='huellitas'] section[style*='background-image'] { background-image: none !important; }
+main[data-tema='huellitas'] [class*='marqueeCard'] i img { filter: brightness(0) saturate(100%) invert(22%) sepia(32%) saturate(900%) hue-rotate(95deg); }
+
+/* Footer on the deep green field with beige text (tema's heading colour must not win here). */
+main[data-tema='huellitas'] footer { --footer-bg: #0f3d2a; --footer-text: #d9d2bd; }
+main[data-tema='huellitas'] footer :is(h2, h3, h4) { color: #ffffff !important; }
+main[data-tema='huellitas'] footer :is(.huellitas-marca) { color: #ffffff; }
+
+/* Photo framing: our own images replace the clone's masked stock photos. */
+main[data-tema='huellitas'] [class*='whyDog'] img { width: min(21rem, 62vw); height: auto; }
+main[data-tema='huellitas'] [class*='aboutImage'] > img { mask: none; -webkit-mask: none; border-radius: 28px; aspect-ratio: 4 / 5; object-fit: cover; }
+main[data-tema='huellitas'] [class*='videoImage'] img { min-height: 24rem; }
+main[data-tema='huellitas'] [class*='packageThumb'] img { border-radius: 20px; aspect-ratio: 4 / 3; object-fit: cover; }
+main[data-tema='huellitas'] [class*='articleImage'] img { aspect-ratio: 4 / 3; object-fit: cover; }
+main[data-tema='huellitas'] [class*='appointmentPicture'] img, main[data-tema='huellitas'] [class*='faqPicture'] img { max-height: 36rem; width: 100%; }
+main[data-tema='huellitas'] [class*='eyebrow'] img { display: none; }
+
+/* Home: the clone's lower sections (pricing, FAQ, appointment, blog) now live in the new route pages
+   or in src/components/home. Only the footer from LowerSections is kept on `/`. */
+main[data-tema='huellitas'] .home-pie > section { display: none; }
+main[data-tema='huellitas'] .home-pie [class*='footerCta'] { display: none; }
+
+/* White ground with the drifting dot texture (same recipe as the home sections).
+   The hero's diagonal white lines disappear on white, so the dots replace them. */
+html[data-hero='5'] [class*='__paper'] svg { display: none; }
+html[data-hero='5'] [class*='__paper']::before {
+  content: '';
+  position: absolute;
+  inset: -24px;
+  background-image: radial-gradient(circle, rgb(20 32 26 / 0.2) 0.9px, transparent 1.7px);
+  background-size: 16px 16px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 0%, rgb(0 0 0 / 0.45) 55%, transparent 85%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 0%, rgb(0 0 0 / 0.45) 55%, transparent 85%);
+  animation: huellitas-puntos 24s linear infinite;
+}
+@keyframes huellitas-puntos { to { transform: translate(16px, 16px); } }
+@media (prefers-reduced-motion: reduce) { html[data-hero='5'] [class*='__paper']::before { animation: none; } }

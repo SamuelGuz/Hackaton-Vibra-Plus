@@ -1,0 +1,74 @@
+{
+  "version": 2,
+  "actualizado": null,
+  "periodo": {
+    "tipo": "semana",
+    "desde": null,
+    "hasta": null
+  },
+  "ejemplo": true,
+  "metas": [
+    {
+      "id": "comida",
+      "titulo": "Comida de la semana",
+      "detalle": "Carne, huesos, menudencias y concentrado.",
+      "meta": 200000,
+      "recaudado": 38000,
+      "ejemplo": true
+    },
+    {
+      "id": "infraestructura",
+      "titulo": "Infraestructura del refugio",
+      "detalle": "Cercas, techos y espacios seguros.",
+      "meta": 500000,
+      "recaudado": 0,
+      "estado": "vacio",
+      "ejemplo": true
+    }
+  ],
+  "compras": [
+    {
+      "fecha": "2026-10-29T17:10:00-05:00",
+      "texto": "Repartió la comida entre los perros y gatos.",
+      "tipo": "entrega"
+    },
+    {
+      "fecha": "2026-10-29T15:52:00-05:00",
+      "texto": "Subió la foto del recibo.",
+      "tipo": "recibo"
+    },
+    {
+      "fecha": "2026-10-29T15:40:00-05:00",
+      "texto": "Compró un bulto de concentrado.",
+      "monto": 60000,
+      "tipo": "bulto"
+    },
+    {
+      "fecha": "2026-10-29T09:15:00-05:00",
+      "texto": "Recibió huesos y menudencia del carnicero.",
+      "tipo": "carne"
+    }
+  ],
+  "donantes": [],
+  "compat": {
+    "metaKg": null,
+    "recaudadoKg": null,
+    "metaPesos": null,
+    "recaudadoPesos": null,
+    "ultimasAcciones": []
+  },
+  "donaciones": [
+    {
+      "fecha": "2026-10-29T14:20:00-05:00",
+      "monto": 10000
+    },
+    {
+      "fecha": "2026-10-29T11:05:00-05:00",
+      "monto": 25000
+    },
+    {
+      "fecha": "2026-10-28T19:30:00-05:00",
+      "monto": 3000
+    }
+  ]
+}

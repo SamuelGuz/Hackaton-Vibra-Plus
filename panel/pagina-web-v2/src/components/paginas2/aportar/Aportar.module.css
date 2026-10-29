@@ -1,0 +1,218 @@
+/* /aportar quick-donate page. Lives inside the Home's `.home` wrapper (home2/Infografia.module.css),
+   so it inherits its tokens (--verde, --tinta, --superficie, --regla, --ease-out) and dot texture.
+   Every selector starts with `.ap` so it outranks `main[data-tema='huellitas'] h2/p/a`.
+   Motion: ease-out, transform/opacity only, under 300ms for UI, press scale .97, hover only on fine pointers. */
+
+.ap { --verde-suave: #a9cbb5; --error: #9b2c2c; }
+
+/* ---------- top: one screen ---------- */
+/* The fixed site header is ~79px on phones and ~85px on desktop. */
+.ap section.tope { padding-block: calc(79px + 1.25rem) 3rem; }
+.ap .topeGrid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+.ap div.topeFoto { aspect-ratio: 1; }
+.ap .topeChip { left: 5%; bottom: 6%; }
+
+.ap .panel { min-width: 0; animation: entra 240ms var(--ease-out) both; }
+@keyframes entra { from { opacity: 0; transform: translateY(8px); } }
+
+.ap h1.h1 { margin: 0 0 1rem; max-width: 14ch; font-size: clamp(2.1rem, 1.3rem + 3.4vw, 4rem) !important; outline: none; }
+.ap h1.h1:focus-visible { outline: 3px solid var(--verde); outline-offset: 6px; border-radius: 8px; }
+.ap .h2 { margin: 2.25rem 0 0.9rem; font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem) !important; font-weight: 800; letter-spacing: -0.035em; line-height: 1.05 !important; color: var(--tinta) !important; }
+.ap .valor { display: block; color: var(--verde); font-variant-numeric: tabular-nums; }
+
+.ap .yesenia { display: flex; align-items: center; gap: 0.75rem; max-width: 40ch; margin: 0 0 1.25rem; font-size: 0.9375rem; line-height: 1.4; color: var(--tinta-2); }
+.ap .yesenia strong { color: var(--tinta); font-weight: 700; }
+.ap .avatar { flex: none; width: 3rem; height: 3rem; border-radius: 999px; object-fit: cover; object-position: 50% 28%; background: var(--superficie); }
+
+/* mission mini */
+.ap .mision { max-width: 30rem; margin: 0 0 1.25rem; padding: 0.95rem 1.1rem 0.85rem; border-radius: 22px; background: var(--superficie); }
+.ap .misionCifras { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.15rem 0.6rem; margin: 0 0 0.6rem; }
+.ap .misionCifras strong { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--tinta); }
+.ap .misionCifras span { font-size: 0.875rem; color: var(--tinta-2); }
+.ap .pista { position: relative; height: 1rem; border-radius: 999px; background: #ffffff; border: 1px solid var(--regla); overflow: hidden; }
+.ap .tuyo, .ap .relleno { position: absolute; inset: 0; border-radius: 999px; transform-origin: left; transition: transform 600ms var(--ease-out); }
+.ap .tuyo { background: var(--verde-suave); }
+.ap .relleno { background: var(--verde); }
+.ap .misionNota { display: flex; flex-wrap: wrap; gap: 0.2rem 0.6rem; margin: 0.6rem 0 0; font-size: 0.8125rem; line-height: 1.35; color: var(--tinta-2); }
+.ap .misionNota b { color: var(--verde); font-weight: 700; font-variant-numeric: tabular-nums; }
+.ap .misionNota em { font-style: normal; opacity: 0.85; }
+
+/* amount pills: 4 across on desktop, 2 × 2 on phones */
+.ap fieldset.montos { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 34rem; margin-bottom: 1rem; }
+.ap fieldset.montos legend { font-size: 1rem; }
+.ap fieldset.montos label { white-space: nowrap; }
+
+.ap .otro { max-width: 34rem; margin: 0 0 1rem; animation: entra 200ms var(--ease-out) both; }
+.ap .otro > label { display: block; margin-bottom: 0.45rem; font-size: 0.9375rem; font-weight: 650; }
+.ap .otroCampo { display: flex; align-items: center; gap: 0.35rem; min-height: 3.25rem; padding-inline: 1.15rem; border-radius: 999px; border: 1.5px solid var(--regla); background: #ffffff; transition: border-color 160ms ease; }
+.ap .otroCampo:focus-within { border-color: var(--verde); outline: 3px solid var(--verde); outline-offset: 3px; }
+.ap .otroCampo span { font-size: 1.25rem; font-weight: 700; color: var(--tinta-2); }
+.ap .otroCampo input { flex: 1; min-width: 0; border: 0; background: transparent; font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--tinta); outline: none; }
+.ap .otroCampo input::placeholder { color: #9aa39d; font-weight: 600; }
+.ap .otroCampo:has(input[aria-invalid]) { border-color: var(--error); }
+.ap .otroAyuda { margin: 0.4rem 0 0 1.15rem; font-size: 0.8125rem; color: var(--tinta-2); }
+.ap .otroCampo:has(input[aria-invalid]) + .otroAyuda { color: var(--error); }
+
+.ap .donar { width: 100%; max-width: 34rem; font-size: 1.1875rem; font-variant-numeric: tabular-nums; }
+.ap button:disabled { opacity: 0.45; cursor: not-allowed; }
+.ap button:disabled:active { transform: none; }
+.ap .micro { max-width: 40ch; margin: 0.8rem 0 0; font-size: 0.8125rem; line-height: 1.45; color: var(--tinta-2); }
+.ap .nota { margin: 0.5rem 0 0; max-width: 42ch; font-size: 0.8125rem; line-height: 1.45; color: var(--tinta-2); }
+
+/* ---------- step 2 · pay ---------- */
+.ap .volver { display: inline-flex; align-items: center; min-height: 2.75rem; margin: 0 0 0.5rem; padding: 0; background: none; color: var(--verde) !important; font-size: 0.9375rem; font-weight: 650; text-decoration: underline; text-underline-offset: 0.25em; transition: transform 160ms var(--ease-out); }
+.ap .volver:active { transform: scale(0.97); }
+.ap .pagarLead { max-width: 40ch; margin: 0 0 1.25rem; font-size: 1.0625rem; line-height: 1.5; color: var(--tinta-2); }
+
+.ap .datos { display: grid; gap: 0.5rem; max-width: 34rem; margin: 0 0 1rem; }
+.ap .dato { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'etiqueta boton' 'valor boton'; align-items: center; column-gap: 0.75rem; padding: 0.75rem 0.75rem 0.75rem 1.15rem; border-radius: 20px; background: var(--superficie); }
+.ap .dato dt { grid-area: etiqueta; font-size: 0.8125rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--verde); }
+.ap .dato dd { grid-area: valor; margin: 0; font-size: 1.0625rem; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.ap .dato .pendiente { font-weight: 600; color: var(--tinta-2); }
+.ap .copiar { grid-area: boton; min-height: 2.75rem; padding-inline: 1.1rem; border-radius: 999px; background: #ffffff; border: 1.5px solid var(--regla); color: var(--tinta); font-size: 0.9375rem; font-weight: 650; transition: transform 160ms var(--ease-out), border-color 160ms ease; }
+.ap .copiar:active { transform: scale(0.97); }
+
+.ap .aviso { display: flex; gap: 0.7rem; max-width: 34rem; margin: 0 0 1.25rem; padding: 0.9rem 1.1rem; border-radius: 20px; border: 1.5px dashed var(--regla); background: #ffffff; font-size: 0.9375rem; line-height: 1.45; color: var(--tinta); }
+.ap .aviso svg { margin-top: 0.1rem; color: var(--verde); }
+
+.ap .acciones { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.75rem; max-width: 34rem; }
+.ap .conIcono { gap: 0.6rem; }
+
+/* ---------- step 3 · thanks ---------- */
+.ap .gracias { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); grid-template-areas: 'texto foto' 'resto foto'; column-gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+.ap .graciasTexto { grid-area: texto; }
+.ap div.graciasFoto { grid-area: foto; position: sticky; top: 7rem; }
+.ap .graciasResto { grid-area: resto; min-width: 0; }
+.ap .corazon { display: inline-grid; place-items: center; width: 3rem; height: 3rem; margin: 0 0.6rem 0.4rem 0; border-radius: 999px; background: var(--verde); color: #ffffff; vertical-align: middle; }
+.ap .corazon svg { width: 1.5rem; height: 1.5rem; fill: currentColor; stroke: none; }
+
+.ap .ahora { display: grid; gap: 0.6rem; max-width: 34rem; margin: 0; padding: 0; list-style: none; }
+.ap .ahora li { position: relative; display: grid; grid-template-columns: auto 1fr; column-gap: 0.85rem; align-items: center; padding: 0.85rem 1rem; border-radius: 20px; background: var(--superficie); }
+.ap .ahora li:not(:last-child)::after { content: ''; position: absolute; left: calc(1rem + 1.25rem - 1px); bottom: -0.6rem; width: 2px; height: 0.6rem; background: var(--verde); }
+.ap .ahora span { grid-row: span 2; display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 999px; background: var(--verde); color: #ffffff; }
+.ap .ahora strong { font-size: 1.0625rem; font-weight: 800; letter-spacing: -0.02em; }
+.ap .ahora em { font-style: normal; font-size: 0.875rem; color: var(--tinta-2); }
+
+.ap .muroOpcional { max-width: 34rem; margin-top: 2rem; padding: 1.1rem 1.15rem; border-radius: 22px; border: 1.5px dashed var(--regla); background: #ffffff; }
+.ap .check { display: flex; gap: 0.75rem; align-items: flex-start; font-size: 0.9375rem; line-height: 1.45; color: var(--tinta-2); cursor: pointer; }
+.ap .check strong { display: block; color: var(--tinta); font-size: 1.0625rem; }
+.ap .check input { flex: none; width: 1.35rem; height: 1.35rem; margin-top: 0.15rem; accent-color: var(--verde); }
+.ap .muroCampos { display: grid; gap: 0.5rem; margin-top: 1rem; animation: entra 200ms var(--ease-out) both; }
+.ap .muroCampos > label { font-size: 0.9375rem; font-weight: 650; }
+.ap .muroCampos input { min-height: 3rem; padding-inline: 1.1rem; border-radius: 999px; border: 1.5px solid var(--regla); background: #ffffff; font-size: 1rem; color: var(--tinta); }
+.ap .muroCampos input:focus-visible { outline: 3px solid var(--verde); outline-offset: 3px; border-color: var(--verde); }
+.ap .muroCampos .nota { margin-bottom: 0.5rem; }
+.ap .graciasPie { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-top: 1.75rem; }
+
+/* ---------- below the fold ---------- */
+.ap .origen { display: flex; justify-content: center; margin: 2rem 0 0; }
+.ap .origenPildora { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.8rem 1.4rem; border-radius: 999px; background: var(--verde); color: #ffffff; font-size: 1.125rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ap .destinos { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; margin: 0; padding: 2.75rem 0 0; list-style: none; }
+/* branch lines from the pill to each destination */
+.ap .destinos::before { content: ''; position: absolute; top: 1.35rem; left: 16.66%; right: 16.66%; height: 2px; background: var(--verde); }
+.ap .destino { position: relative; display: grid; gap: 1rem; }
+.ap .destino::before { content: ''; position: absolute; top: -1.4rem; left: calc(50% - 1px); width: 2px; height: 1.4rem; background: var(--verde); }
+.ap .origen + .destinos > .destino:nth-child(2)::after { content: ''; position: absolute; top: -2.75rem; left: calc(50% - 1px); width: 2px; height: 1.4rem; background: var(--verde); }
+.ap div.destinoEscena { aspect-ratio: 4 / 3.4; }
+.ap .destinoTexto { display: grid; grid-template-columns: auto 1fr; column-gap: 0.85rem; align-items: center; }
+.ap .destinoIcono { grid-row: span 2; display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 999px; background: var(--verde); color: #ffffff; }
+.ap .destinoTexto h3 { margin: 0; font-size: 1.5rem !important; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1 !important; color: var(--tinta) !important; }
+.ap .destinoTexto p { margin: 0; color: var(--tinta-2); }
+
+.ap .prueba { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+.ap .tarjeta { padding: 1.5rem; border-radius: 24px; border: 1.5px dashed var(--regla); background: #ffffff; }
+.ap .etiqueta { margin: 0 0 0.75rem; font-size: 0.8125rem !important; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em !important; line-height: 1.3 !important; color: var(--verde) !important; }
+.ap .vacio { display: flex; gap: 0.6rem; margin: 0; font-size: 1.0625rem; font-weight: 600; line-height: 1.45; color: var(--tinta); }
+.ap .vacio svg { margin-top: 0.15rem; color: var(--verde); }
+.ap .compras { display: grid; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+.ap .compras li { display: grid; grid-template-columns: 4.5rem 1fr auto; gap: 0.75rem; align-items: baseline; }
+.ap .compras time { font-size: 0.875rem; font-weight: 700; color: var(--verde); }
+.ap .compras b { font-variant-numeric: tabular-nums; }
+.ap .nombres { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.ap .nombres li { padding: 0.45rem 0.9rem; border-radius: 999px; background: var(--superficie); font-weight: 650; }
+
+.ap .faq { display: grid; gap: 0.6rem; max-width: 46rem; margin: 2rem 0 2.5rem; }
+.ap .faq details { border-radius: 20px; background: var(--superficie); }
+.ap .faq summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3.5rem; padding: 0.75rem 1.15rem; font-size: 1.0625rem; font-weight: 700; cursor: pointer; list-style: none; }
+.ap .faq summary::-webkit-details-marker { display: none; }
+.ap .faq summary:focus-visible { outline: 3px solid var(--verde); outline-offset: 3px; border-radius: 20px; }
+.ap .faq i { position: relative; flex: none; width: 1.75rem; height: 1.75rem; border-radius: 999px; background: #ffffff; }
+.ap .faq i::before, .ap .faq i::after { content: ''; position: absolute; left: 50%; top: 50%; width: 0.7rem; height: 2px; margin: -1px 0 0 -0.35rem; background: var(--verde); transition: transform 200ms var(--ease-out); }
+.ap .faq i::after { transform: rotate(90deg); }
+.ap .faq details[open] i::after { transform: rotate(0deg); }
+.ap .faq p { margin: 0; padding: 0 1.15rem 1.1rem; max-width: 60ch; line-height: 1.55; color: var(--tinta-2); }
+
+/* ---------- mobile bottom bar ---------- */
+.ap .barra { display: none; }
+
+@media (hover: hover) and (pointer: fine) {
+  .ap .copiar:hover:enabled { border-color: var(--verde); }
+  .ap .volver:hover { color: var(--verde-hover) !important; }
+}
+
+/* Tablet: single column; the top photo goes away so the button stays near the top. */
+@media (max-width: 62em) {
+  .ap .topeGrid { grid-template-columns: minmax(0, 1fr); }
+  .ap div.topeFoto { display: none; }
+  .ap .gracias { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'texto' 'foto' 'resto'; }
+  .ap div.graciasFoto { position: relative; top: auto; max-width: 34rem; aspect-ratio: 4 / 3.4; }
+}
+
+@media (min-width: 62.01em) {
+  .ap section.tope { padding-block: calc(85px + 3.5rem) 5rem; }
+}
+
+/* Phone: 4-column grid; blocks span 4 or 2, nothing overlaps. */
+@media (max-width: 40em) {
+  .ap h1.h1 { max-width: none; font-size: clamp(2rem, 1.1rem + 4.2vw, 2.4rem) !important; }
+  .ap fieldset.montos { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.6rem; }
+  .ap fieldset.montos label { grid-column: span 2; min-height: 3rem; }
+  .ap .acciones > * { width: 100%; }
+  .ap .acciones > div > button { width: 100%; }
+  .ap .corazon { width: 2.5rem; height: 2.5rem; }
+
+  .ap .origen { justify-content: flex-start; margin-top: 1.5rem; }
+  .ap .destinos { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; padding: 1.25rem 0 0 1.25rem; }
+  .ap .destinos::before { left: 0.25rem; right: auto; top: 0; bottom: 4.85rem; width: 2px; height: auto; }
+  .ap .destino { grid-column: span 4; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; align-items: center; }
+  .ap .destino::before { top: calc(50% - 1px); left: -1rem; width: 1rem; height: 2px; }
+  .ap .origen + .destinos > .destino:nth-child(2)::after { display: none; }
+  .ap div.destinoEscena { grid-column: span 2; aspect-ratio: 1; }
+  .ap .destinoTexto { grid-column: span 2; grid-template-columns: 1fr; row-gap: 0.35rem; }
+  .ap .destinoIcono { grid-row: auto; width: 2.5rem; height: 2.5rem; }
+  .ap .destinoTexto h3 { font-size: 1.25rem !important; }
+  .ap .destinoTexto p { font-size: 0.9375rem; }
+
+  .ap .prueba { grid-template-columns: minmax(0, 1fr); }
+  .ap .compras li { grid-template-columns: 3.75rem 1fr; }
+  .ap .compras b { grid-column: 2; }
+  .ap .cierreBoton { width: 100%; }
+
+  .ap .barra { position: fixed; z-index: 40; left: 0.75rem; right: 0.75rem; bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.5rem 0.5rem 0.5rem 1.2rem; border-radius: 999px; background: var(--tinta); color: #ffffff; font-size: 1rem; font-weight: 700; font-variant-numeric: tabular-nums; transform: translateY(150%); transition: transform 280ms var(--ease-out); }
+  .ap .barraVisible { transform: none; }
+  .ap .barra button { min-height: 2.9rem; padding-inline: 1.5rem; border-radius: 999px; background: var(--verde); color: #ffffff; font-weight: 650; transition: transform 160ms var(--ease-out); }
+  .ap .barra button:active { transform: scale(0.97); }
+  .ap .faq { margin-bottom: 1.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ap .panel, .ap .otro, .ap .muroCampos { animation: none; }
+  .ap .tuyo, .ap .relleno, .ap .barra, .ap .faq i::after { transition: none; }
+}
+
+/* progress + activity (Actividad.tsx) */
+.ap .avance { max-width: 40rem; margin-top: 1.5rem; padding: 1.1rem 1.25rem; border-radius: 22px; background: var(--superficie); }
+.ap .avanceTitulo { margin: 0 0 0.35rem; font-size: 0.9375rem; font-weight: 650; color: var(--tinta-2); }
+.ap .avanceCifras { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.15rem 0.6rem; margin: 0 0 0.7rem; }
+.ap .avanceCifras strong { font-size: 2rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--tinta); }
+.ap .avanceCifras span { font-size: 0.9375rem; color: var(--tinta-2); }
+.ap .avancePista { height: 1.1rem; border-radius: 999px; background: #ffffff; border: 1px solid var(--regla); overflow: hidden; }
+.ap .avanceRelleno { height: 100%; border-radius: 999px; background: var(--verde); transform-origin: left; transition: transform 700ms var(--ease-out); }
+.ap .avanceNota { margin: 0.6rem 0 0; font-size: 0.875rem; font-weight: 650; color: var(--verde); font-variant-numeric: tabular-nums; }
+.ap .linea { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.ap .linea li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 0.75rem; align-items: start; }
+.ap .linea p { margin: 0; font-size: 1rem; font-weight: 600; line-height: 1.35; color: var(--tinta); }
+.ap .linea time { display: block; margin-top: 0.2rem; font-size: 0.8125rem; font-weight: 600; color: var(--tinta-2); }
+.ap .linea b { font-variant-numeric: tabular-nums; font-weight: 800; color: var(--verde); }
+.ap .lineaIcono { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 999px; background: var(--superficie); color: var(--verde); }
+@media (prefers-reduced-motion: reduce) { .ap .avanceRelleno { transition: none; } }

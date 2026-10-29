@@ -1,0 +1,727 @@
+[
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/appointment/appointment-1-1.png",
+    "local": "/sites/babet/assets/img/appointment/appointment-1-1.png",
+    "bytes": 194676
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/bg/process-bg-1-1.png",
+    "local": "/sites/babet/assets/img/bg/process-bg-1-1.png",
+    "bytes": 94841
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/bg/team-bg-1.png",
+    "local": "/sites/babet/assets/img/bg/team-bg-1.png",
+    "bytes": 61082
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/blog/blog-s-1-1.jpg",
+    "local": "/sites/babet/assets/img/blog/blog-s-1-1.jpg",
+    "bytes": 77214
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/blog/blog-s-1-2.jpg",
+    "local": "/sites/babet/assets/img/blog/blog-s-1-2.jpg",
+    "bytes": 54800
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/blog/blog-s-1-3.jpg",
+    "local": "/sites/babet/assets/img/blog/blog-s-1-3.jpg",
+    "bytes": 65256
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/brand/brand1-1.svg",
+    "local": "/sites/babet/assets/img/brand/brand1-1.svg",
+    "bytes": 4689
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/brand/brand1-2.svg",
+    "local": "/sites/babet/assets/img/brand/brand1-2.svg",
+    "bytes": 4913
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/brand/brand1-3.svg",
+    "local": "/sites/babet/assets/img/brand/brand1-3.svg",
+    "bytes": 4769
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/brand/brand1-4.svg",
+    "local": "/sites/babet/assets/img/brand/brand1-4.svg",
+    "bytes": 6285
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/brand/brand1-5.svg",
+    "local": "/sites/babet/assets/img/brand/brand1-5.svg",
+    "bytes": 4661
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/faq/faq-img-1-1.jpg",
+    "local": "/sites/babet/assets/img/faq/faq-img-1-1.jpg",
+    "bytes": 45603
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/favicons/android-icon-192x192.png",
+    "local": "/sites/babet/assets/img/favicons/android-icon-192x192.png",
+    "bytes": 4078
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/favicons/apple-icon-114x114.png",
+    "local": "/sites/babet/assets/img/favicons/apple-icon-114x114.png",
+    "bytes": 2642
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/favicons/apple-icon-120x120.png",
+    "local": "/sites/babet/assets/img/favicons/apple-icon-120x120.png",
+    "bytes": 2808
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/favicons/apple-icon-144x144.png",
+    "local": "/sites/babet/assets/img/favicons/apple-icon-144x144.png",
+    "bytes": 3408
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/favicons/apple-icon-152x152.png",
+    "local": "/sites/babet/assets/img/favicons/apple-icon-152x152.png",
+    "bytes": 3645
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/favicons/apple-icon-180x180.png",
+    "local": "/sites/babet/assets/img/favicons/apple-icon-180x180.png",
+    "bytes": 4378
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/favicons/apple-icon-57x57.png",
+    "local": "/sites/babet/assets/img/favicons/apple-icon-57x57.png",
+    "bytes": 1536
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/favicons/apple-icon-60x60.png",
+    "local": "/sites/babet/assets/img/favicons/apple-icon-60x60.png",
+    "bytes": 1695
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/favicons/apple-icon-72x72.png",
+    "local": "/sites/babet/assets/img/favicons/apple-icon-72x72.png",
+    "bytes": 1991
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/favicons/apple-icon-76x76.png",
+    "local": "/sites/babet/assets/img/favicons/apple-icon-76x76.png",
+    "bytes": 2098
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/favicons/favicon-16x16.png",
+    "local": "/sites/babet/assets/img/favicons/favicon-16x16.png",
+    "bytes": 481
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/favicons/favicon-32x32.png",
+    "local": "/sites/babet/assets/img/favicons/favicon-32x32.png",
+    "bytes": 1207
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/favicons/favicon-96x96.png",
+    "local": "/sites/babet/assets/img/favicons/favicon-96x96.png",
+    "bytes": 2260
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/gallery/gallery_1_1.jpg",
+    "local": "/sites/babet/assets/img/gallery/gallery_1_1.jpg",
+    "bytes": 47638
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/gallery/gallery_1_2.jpg",
+    "local": "/sites/babet/assets/img/gallery/gallery_1_2.jpg",
+    "bytes": 18744
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/gallery/gallery_1_3.jpg",
+    "local": "/sites/babet/assets/img/gallery/gallery_1_3.jpg",
+    "bytes": 13323
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/gallery/gallery_1_4.jpg",
+    "local": "/sites/babet/assets/img/gallery/gallery_1_4.jpg",
+    "bytes": 45321
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/gallery/gallery_1_5.jpg",
+    "local": "/sites/babet/assets/img/gallery/gallery_1_5.jpg",
+    "bytes": 13423
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/gallery/gallery_1_6.jpg",
+    "local": "/sites/babet/assets/img/gallery/gallery_1_6.jpg",
+    "bytes": 11926
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/hero/hero_bg_1_1.jpg",
+    "local": "/sites/babet/assets/img/hero/hero_bg_1_1.jpg",
+    "bytes": 92659
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/hero/hero_bg_1_2.jpg",
+    "local": "/sites/babet/assets/img/hero/hero_bg_1_2.jpg",
+    "bytes": 95472
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/hero/hero_bg_1_3.jpg",
+    "local": "/sites/babet/assets/img/hero/hero_bg_1_3.jpg",
+    "bytes": 146426
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/hero/hero-bg1-mask.png",
+    "local": "/sites/babet/assets/img/hero/hero-bg1-mask.png",
+    "bytes": 4283
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/appointment-icon-1-1.svg",
+    "local": "/sites/babet/assets/img/icon/appointment-icon-1-1.svg",
+    "bytes": 11517
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/appointment-icon-1-2.svg",
+    "local": "/sites/babet/assets/img/icon/appointment-icon-1-2.svg",
+    "bytes": 9324
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/appointment-icon-1-3.svg",
+    "local": "/sites/babet/assets/img/icon/appointment-icon-1-3.svg",
+    "bytes": 13953
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/arrow-down.svg",
+    "local": "/sites/babet/assets/img/icon/arrow-down.svg",
+    "bytes": 482
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/arrow-left.svg",
+    "local": "/sites/babet/assets/img/icon/arrow-left.svg",
+    "bytes": 484
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/arrow-right-1.svg",
+    "local": "/sites/babet/assets/img/icon/arrow-right-1.svg",
+    "bytes": 701
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/arrow-right-black.svg",
+    "local": "/sites/babet/assets/img/icon/arrow-right-black.svg",
+    "bytes": 453
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/arrow-right.svg",
+    "local": "/sites/babet/assets/img/icon/arrow-right.svg",
+    "bytes": 484
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/checkmark2.svg",
+    "local": "/sites/babet/assets/img/icon/checkmark2.svg",
+    "bytes": 30930
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/marquee-icon1-1.svg",
+    "local": "/sites/babet/assets/img/icon/marquee-icon1-1.svg",
+    "bytes": 2072
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/phone-black.svg",
+    "local": "/sites/babet/assets/img/icon/phone-black.svg",
+    "bytes": 986
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/phone-white.svg",
+    "local": "/sites/babet/assets/img/icon/phone-white.svg",
+    "bytes": 373
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/phone.svg",
+    "local": "/sites/babet/assets/img/icon/phone.svg",
+    "bytes": 982
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/quote_icon.svg",
+    "local": "/sites/babet/assets/img/icon/quote_icon.svg",
+    "bytes": 860
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/icon/subtitle-icon.svg",
+    "local": "/sites/babet/assets/img/icon/subtitle-icon.svg",
+    "bytes": 2607
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/logo-icon.svg",
+    "local": "/sites/babet/assets/img/logo-icon.svg",
+    "bytes": 5291
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/logo.svg",
+    "local": "/sites/babet/assets/img/logo.svg",
+    "bytes": 38610
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/logo2.svg",
+    "local": "/sites/babet/assets/img/logo2.svg",
+    "bytes": 38603
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/logo3.svg",
+    "local": "/sites/babet/assets/img/logo3.svg",
+    "bytes": 38645
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/normal/about-thumb-mask1-1.png",
+    "local": "/sites/babet/assets/img/normal/about-thumb-mask1-1.png",
+    "bytes": 2622
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/normal/about-thumb1-1.jpg",
+    "local": "/sites/babet/assets/img/normal/about-thumb1-1.jpg",
+    "bytes": 43849
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/normal/client-group-thumb1.png",
+    "local": "/sites/babet/assets/img/normal/client-group-thumb1.png",
+    "bytes": 5864
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/normal/footer-default-cta-thumb-1.png",
+    "local": "/sites/babet/assets/img/normal/footer-default-cta-thumb-1.png",
+    "bytes": 18434
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/normal/footer-default-cta-thumb-2.png",
+    "local": "/sites/babet/assets/img/normal/footer-default-cta-thumb-2.png",
+    "bytes": 11006
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/normal/footer-default-cta-thumb-3.png",
+    "local": "/sites/babet/assets/img/normal/footer-default-cta-thumb-3.png",
+    "bytes": 33671
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/normal/video-thumb1-1.jpg",
+    "local": "/sites/babet/assets/img/normal/video-thumb1-1.jpg",
+    "bytes": 116711
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/normal/why-thumb1-1.png",
+    "local": "/sites/babet/assets/img/normal/why-thumb1-1.png",
+    "bytes": 66088
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/pages/home-2.jpg",
+    "local": "/sites/babet/assets/img/pages/home-2.jpg",
+    "bytes": 26843
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/pages/home-3.jpg",
+    "local": "/sites/babet/assets/img/pages/home-3.jpg",
+    "bytes": 36054
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/pages/home-4.jpg",
+    "local": "/sites/babet/assets/img/pages/home-4.jpg",
+    "bytes": 32307
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/pages/home-5.jpg",
+    "local": "/sites/babet/assets/img/pages/home-5.jpg",
+    "bytes": 33323
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/pages/home-6.jpg",
+    "local": "/sites/babet/assets/img/pages/home-6.jpg",
+    "bytes": 22998
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/pages/home-7.jpg",
+    "local": "/sites/babet/assets/img/pages/home-7.jpg",
+    "bytes": 30430
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/pages/home-8.jpg",
+    "local": "/sites/babet/assets/img/pages/home-8.jpg",
+    "bytes": 26231
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/pages/index.jpg",
+    "local": "/sites/babet/assets/img/pages/index.jpg",
+    "bytes": 31947
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/pricing/pricing-1-1.jpg",
+    "local": "/sites/babet/assets/img/pricing/pricing-1-1.jpg",
+    "bytes": 17711
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/pricing/pricing-1-2.jpg",
+    "local": "/sites/babet/assets/img/pricing/pricing-1-2.jpg",
+    "bytes": 3324
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/pricing/pricing-1-3.jpg",
+    "local": "/sites/babet/assets/img/pricing/pricing-1-3.jpg",
+    "bytes": 4607
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/process/process_1_1.png",
+    "local": "/sites/babet/assets/img/process/process_1_1.png",
+    "bytes": 63826
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/process/process_1_2.png",
+    "local": "/sites/babet/assets/img/process/process_1_2.png",
+    "bytes": 56061
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/service/service_card_1_1.jpg",
+    "local": "/sites/babet/assets/img/service/service_card_1_1.jpg",
+    "bytes": 19954
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/service/service_card_1_2.jpg",
+    "local": "/sites/babet/assets/img/service/service_card_1_2.jpg",
+    "bytes": 20030
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/service/service_card_1_3.jpg",
+    "local": "/sites/babet/assets/img/service/service_card_1_3.jpg",
+    "bytes": 23744
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/service/service_card_1_4.jpg",
+    "local": "/sites/babet/assets/img/service/service_card_1_4.jpg",
+    "bytes": 19196
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/service/service_card_1_5.jpg",
+    "local": "/sites/babet/assets/img/service/service_card_1_5.jpg",
+    "bytes": 27564
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/service/service_card_1_6.jpg",
+    "local": "/sites/babet/assets/img/service/service_card_1_6.jpg",
+    "bytes": 30919
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/service/service_card_1_7.jpg",
+    "local": "/sites/babet/assets/img/service/service_card_1_7.jpg",
+    "bytes": 26148
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/service/service_card_1_8.jpg",
+    "local": "/sites/babet/assets/img/service/service_card_1_8.jpg",
+    "bytes": 22414
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/pricing-1-1_mask.jpg",
+    "local": "/sites/babet/assets/img/shape/pricing-1-1_mask.jpg",
+    "bytes": 1572
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/pricing-1-2_mask.jpg",
+    "local": "/sites/babet/assets/img/shape/pricing-1-2_mask.jpg",
+    "bytes": 1140
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/process_card_mask1_1.jpg",
+    "local": "/sites/babet/assets/img/shape/process_card_mask1_1.jpg",
+    "bytes": 891
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/service_card_mask1_1.jpg",
+    "local": "/sites/babet/assets/img/shape/service_card_mask1_1.jpg",
+    "bytes": 1547
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-1.png",
+    "local": "/sites/babet/assets/img/shape/shape1-1.png",
+    "bytes": 39382
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-10.png",
+    "local": "/sites/babet/assets/img/shape/shape1-10.png",
+    "bytes": 1610
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-11.png",
+    "local": "/sites/babet/assets/img/shape/shape1-11.png",
+    "bytes": 1090
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-12.png",
+    "local": "/sites/babet/assets/img/shape/shape1-12.png",
+    "bytes": 1244
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-13.png",
+    "local": "/sites/babet/assets/img/shape/shape1-13.png",
+    "bytes": 997
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-14.png",
+    "local": "/sites/babet/assets/img/shape/shape1-14.png",
+    "bytes": 1075
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-15.png",
+    "local": "/sites/babet/assets/img/shape/shape1-15.png",
+    "bytes": 803
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-16.png",
+    "local": "/sites/babet/assets/img/shape/shape1-16.png",
+    "bytes": 1314
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-17.png",
+    "local": "/sites/babet/assets/img/shape/shape1-17.png",
+    "bytes": 1399
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-18.png",
+    "local": "/sites/babet/assets/img/shape/shape1-18.png",
+    "bytes": 1925
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-19.png",
+    "local": "/sites/babet/assets/img/shape/shape1-19.png",
+    "bytes": 1871
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-2.png",
+    "local": "/sites/babet/assets/img/shape/shape1-2.png",
+    "bytes": 1125
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-20.png",
+    "local": "/sites/babet/assets/img/shape/shape1-20.png",
+    "bytes": 2055
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-21.png",
+    "local": "/sites/babet/assets/img/shape/shape1-21.png",
+    "bytes": 1521
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-22.png",
+    "local": "/sites/babet/assets/img/shape/shape1-22.png",
+    "bytes": 16077
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-23.png",
+    "local": "/sites/babet/assets/img/shape/shape1-23.png",
+    "bytes": 2235
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-24.png",
+    "local": "/sites/babet/assets/img/shape/shape1-24.png",
+    "bytes": 38024
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-25.png",
+    "local": "/sites/babet/assets/img/shape/shape1-25.png",
+    "bytes": 35704
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-26.png",
+    "local": "/sites/babet/assets/img/shape/shape1-26.png",
+    "bytes": 38103
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-3.png",
+    "local": "/sites/babet/assets/img/shape/shape1-3.png",
+    "bytes": 1087
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-4.png",
+    "local": "/sites/babet/assets/img/shape/shape1-4.png",
+    "bytes": 1357
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-5.png",
+    "local": "/sites/babet/assets/img/shape/shape1-5.png",
+    "bytes": 986
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-6.png",
+    "local": "/sites/babet/assets/img/shape/shape1-6.png",
+    "bytes": 1457
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-7.png",
+    "local": "/sites/babet/assets/img/shape/shape1-7.png",
+    "bytes": 2153
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-8.png",
+    "local": "/sites/babet/assets/img/shape/shape1-8.png",
+    "bytes": 1475
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1-9.png",
+    "local": "/sites/babet/assets/img/shape/shape1-9.png",
+    "bytes": 1788
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape1.png",
+    "local": "/sites/babet/assets/img/shape/shape1.png",
+    "bytes": 1706
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape2.png",
+    "local": "/sites/babet/assets/img/shape/shape2.png",
+    "bytes": 1500
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/shape3.png",
+    "local": "/sites/babet/assets/img/shape/shape3.png",
+    "bytes": 1295
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/team-1_mask.jpg",
+    "local": "/sites/babet/assets/img/shape/team-1_mask.jpg",
+    "bytes": 2056
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/testi_card_mask1_1.jpg",
+    "local": "/sites/babet/assets/img/shape/testi_card_mask1_1.jpg",
+    "bytes": 1314
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/shape/why-bg-shape1-1.png",
+    "local": "/sites/babet/assets/img/shape/why-bg-shape1-1.png",
+    "bytes": 22639
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/team/team-1-1.png",
+    "local": "/sites/babet/assets/img/team/team-1-1.png",
+    "bytes": 6787
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/team/team-1-2.png",
+    "local": "/sites/babet/assets/img/team/team-1-2.png",
+    "bytes": 5704
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/team/team-1-3.png",
+    "local": "/sites/babet/assets/img/team/team-1-3.png",
+    "bytes": 7782
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/team/team-1-4.png",
+    "local": "/sites/babet/assets/img/team/team-1-4.png",
+    "bytes": 7085
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/team/team-big-1-1.png",
+    "local": "/sites/babet/assets/img/team/team-big-1-1.png",
+    "bytes": 100043
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/team/team-big-1-2.png",
+    "local": "/sites/babet/assets/img/team/team-big-1-2.png",
+    "bytes": 68669
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/team/team-big-1-3.png",
+    "local": "/sites/babet/assets/img/team/team-big-1-3.png",
+    "bytes": 94370
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/team/team-big-1-4.png",
+    "local": "/sites/babet/assets/img/team/team-big-1-4.png",
+    "bytes": 114437
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/testimonial/testi1-1.jpg",
+    "local": "/sites/babet/assets/img/testimonial/testi1-1.jpg",
+    "bytes": 1580
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/testimonial/testi1-2.jpg",
+    "local": "/sites/babet/assets/img/testimonial/testi1-2.jpg",
+    "bytes": 1980
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/testimonial/testi1-3.jpg",
+    "local": "/sites/babet/assets/img/testimonial/testi1-3.jpg",
+    "bytes": 1701
+  },
+  {
+    "source": "https://html.themehour.net/babet/demo/assets/img/testimonial/testi1-4.jpg",
+    "local": "/sites/babet/assets/img/testimonial/testi1-4.jpg",
+    "bytes": 1639
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/fredoka/v17/X7nP4b87HvSqjb_WIi2yDCRwoQ_k7367_B-i2yQag0-mac3OryLMFg.ttf",
+    "local": "/sites/babet/fonts/font-0.ttf",
+    "bytes": 48740
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/fredoka/v17/X7nP4b87HvSqjb_WIi2yDCRwoQ_k7367_B-i2yQag0-mac3O8SLMFg.ttf",
+    "local": "/sites/babet/fonts/font-1.ttf",
+    "bytes": 48856
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/onest/v11/gNMZW3F-SZuj7zOT0IfSjTS16cPhKxiZsg.ttf",
+    "local": "/sites/babet/fonts/font-10.ttf",
+    "bytes": 90568
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/onest/v11/gNMZW3F-SZuj7zOT0IfSjTS16cPhEhiZsg.ttf",
+    "local": "/sites/babet/fonts/font-11.ttf",
+    "bytes": 90516
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/onest/v11/gNMZW3F-SZuj7zOT0IfSjTS16cPhdRiZsg.ttf",
+    "local": "/sites/babet/fonts/font-12.ttf",
+    "bytes": 90404
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/onest/v11/gNMZW3F-SZuj7zOT0IfSjTS16cPhXBiZsg.ttf",
+    "local": "/sites/babet/fonts/font-13.ttf",
+    "bytes": 89996
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/fredoka/v17/X7nP4b87HvSqjb_WIi2yDCRwoQ_k7367_B-i2yQag0-mac3OwyLMFg.ttf",
+    "local": "/sites/babet/fonts/font-2.ttf",
+    "bytes": 48792
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/fredoka/v17/X7nP4b87HvSqjb_WIi2yDCRwoQ_k7367_B-i2yQag0-mac3OLyXMFg.ttf",
+    "local": "/sites/babet/fonts/font-3.ttf",
+    "bytes": 48768
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/fredoka/v17/X7nP4b87HvSqjb_WIi2yDCRwoQ_k7367_B-i2yQag0-mac3OFiXMFg.ttf",
+    "local": "/sites/babet/fonts/font-4.ttf",
+    "bytes": 48588
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/onest/v11/gNMZW3F-SZuj7zOT0IfSjTS16cPh9R6Zsg.ttf",
+    "local": "/sites/babet/fonts/font-5.ttf",
+    "bytes": 90296
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/onest/v11/gNMZW3F-SZuj7zOT0IfSjTS16cPhdR-Zsg.ttf",
+    "local": "/sites/babet/fonts/font-6.ttf",
+    "bytes": 90480
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/onest/v11/gNMZW3F-SZuj7zOT0IfSjTS16cPhqx-Zsg.ttf",
+    "local": "/sites/babet/fonts/font-7.ttf",
+    "bytes": 90436
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/onest/v11/gNMZW3F-SZuj7zOT0IfSjTS16cPh9R-Zsg.ttf",
+    "local": "/sites/babet/fonts/font-8.ttf",
+    "bytes": 90296
+  },
+  {
+    "source": "https://fonts.gstatic.com/s/onest/v11/gNMZW3F-SZuj7zOT0IfSjTS16cPhxx-Zsg.ttf",
+    "local": "/sites/babet/fonts/font-9.ttf",
+    "bytes": 90544
+  }
+]

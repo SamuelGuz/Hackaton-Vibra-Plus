@@ -2,6 +2,7 @@
 // más lo que la dueña enriquece a mano (historia, edad, tamaño, compatibilidad). Sin perfil curado
 // se arma uno determinista y honesto: nunca se inventan detalles de rescate.
 import { quitarDatosSensibles } from '../ia/redactar.js'
+import { fotoPublicaSegura } from '../catalogo/datos.js'
 import { fechaLocal } from '../formato.js'
 import type { Animal, DatosAlbergue, Tratamiento } from '../panel-tipos.js'
 import type { Compatibilidad, PerfilCurado, PerfilExtra, PerfilRico, Tamano } from './tipos.js'
@@ -196,12 +197,12 @@ export function construirPerfil(
     tamano: curado?.tamano ?? tamanoPorDefecto(animal),
     personalidad: curado?.personalidad ?? personalidadDe(animal.caracter),
     historia: curado?.historia ?? historiaPorDefecto(animal),
-    historiaConfirmada: Boolean(curado),
+    historiaConfirmada: curado?.historiaConfirmada === true,
     compatibilidad: curado?.compatibilidad ?? compatibilidadPorDefecto(animal.caracter),
     necesidadesMedicas,
     // cubiertoPct = aporte mensual de los padrinos / meta mensual (ver aporteMensualCOP), entre 0 y 100
     meta: { mensualCOP, padrinos, cubiertoPct: porcentajeCubierto(aporte, mensualCOP) },
-    foto: animal.foto && /^https?:\/\//i.test(animal.foto) ? animal.foto : null,
+    foto: fotoPublicaSegura(animal.foto),
     urgencia: urgenciaDe(animal, edadAnios, activos.length, animal.advertencias.length),
     adoptable: animal.estado === 'adoptable' || animal.estado === 'hogar_temporal',
     ...extrasDe(curado),

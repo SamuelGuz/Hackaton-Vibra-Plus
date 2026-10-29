@@ -15,6 +15,8 @@ export interface Compatibilidad {
 
 /** Perfil completo de un animal: lo que la base no guarda (historia, edad, tamaño…) se enriquece aquí. */
 export interface PerfilRico extends PerfilExtra {
+  /** Fotos y datos de demostración; identidad pendiente de verificación. */
+  datosDemo?: boolean
   id: string
   nombre: string
   especie: Especie
@@ -29,7 +31,7 @@ export interface PerfilRico extends PerfilExtra {
   compatibilidad: Compatibilidad
   necesidadesMedicas: string[]
   meta: { mensualCOP: number; padrinos: number; cubiertoPct: number }
-  /** Solo URLs http(s) públicas; las rutas /archivos/* piden sesión y no se exponen */
+  /** URL http(s) pública o ruta de foto del catálogo; /archivos/* nunca se expone. */
   foto: string | null
   /** 0 a 1: qué tan urgente es ayudarlo (salud, sin padrino, viejito) */
   urgencia: number
@@ -78,6 +80,8 @@ export interface Llm {
 
 /** Datos que la base no guarda y que la dueña (o la demo) enriquece a mano. Ver rag/perfiles-data.ts */
 export interface PerfilCurado extends PerfilExtra {
+  /** Solo true cuando el refugio confirmó expresamente esta historia. */
+  historiaConfirmada?: boolean
   edadAnios: number
   tamano: Tamano
   personalidad: string[]

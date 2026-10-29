@@ -1,12 +1,17 @@
 // Motor RAG: arma los perfiles ricos desde los datos del albergue, los guarda unos segundos en memoria
 // y responde listados y búsquedas. Si Gemini falla, la búsqueda sigue funcionando solo con palabras.
 import type { DatosAlbergue } from '../panel-tipos.js'
+import { fichaDemo } from '../catalogo/datos.js'
 import { actividadHoy } from './actividad.js'
 import { crearIndiceSemantico, ordenar, sugerirUrgentes, textoDocumento } from './buscar.js'
 import { construirPerfil, esVisible } from './perfil.js'
 import type { Llm, OpcionesListado, PerfilCurado, PerritoPublico, RespuestaBusqueda, ServicioRag } from './tipos.js'
 
 export interface OpcionesRag {
+  /** Limita el frente público a los cinco perros demo; no modifica datos internos. */
+  catalogoDemo?: boolean
+  /** Origen público del API, para consumidores externos de las fotos. */
+  basePublica?: string
   /** Normalmente `() => deps.repo.hoy(deps.ahora())` */
   datos: () => Promise<DatosAlbergue>
   /** Sin él (o si falla) la búsqueda es solo léxica */
@@ -46,7 +51,19 @@ export function crearRag(o: OpcionesRag): ServicioRag {
   async function construir(): Promise<PerritoPublico[]> {
     const [datos, curados] = await Promise.all([o.datos(), (perfiles ??= perfilesPorDefecto())])
     const ahora = o.ahora()
-    return datos.animales.map((a) => ({ ...construirPerfil(a, datos, curados, ahora), hoy: actividadHoy(a.id, datos, ahora) }))
+    return datos.animales
+      .filter(a => !o.catalogoDemo || (a.especie === 'perro' && fichaDemo(a.nombre)))
+      .map(a => {
+        const perfil = { ...construirPerfil(a, datos, curados, ahora), hoy: actividadHoy(a.id, datos, ahora) }
+        const ficha = o.catalogoDemo ? fichaDemo(a.nombre) : undefined
+        if (!ficha) return perfil
+        let foto = ficha.fotoRuta as string
+        try {
+          const base = new URL(o.basePublica ?? '')
+          if (['http:', 'https:'].includes(base.protocol)) foto = new URL(foto, base).href
+        } catch { /* Mismo origen: la ruta relativa funciona en la web pública. */ }
+        return { ...perfil, foto, datosDemo: true, historiaConfirmada: false }
+      })
   }
 
   /** Todos los perfiles (también los ocultos), compartiendo una sola carga entre peticiones simultáneas */
@@ -105,7 +122,7 @@ export function crearRag(o: OpcionesRag): ServicioRag {
     },
 
     async porId(id) {
-      return (await todos()).find((p) => p.id === id) ?? null
+      return (await visibles()).find((p) => p.id === id) ?? null
     },
 
     async urgentes(limite = 3) {

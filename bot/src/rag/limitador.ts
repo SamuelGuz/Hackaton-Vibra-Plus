@@ -26,5 +26,9 @@ export function crearLimitador(maximo: number, ventanaMs: number, ahora: () => n
 
 /** IP del cliente detrás de un proxy (Render, Fly, Cloudflare…); 'desconocida' si no hay cabecera */
 export function ipDe(cabeceras: { get(n: string): string | null | undefined }): string {
-  return cabeceras.get('x-forwarded-for')?.split(',')[0].trim() || cabeceras.get('cf-connecting-ip') || 'desconocida'
+  const cadena = cabeceras.get('x-forwarded-for')
+  // El primer elemento suele ser controlable por el cliente. El proxy confiable
+  // agrega su dirección al final; usarla evita que cambiar el prefijo salte el límite.
+  const ips = cadena?.split(',').map((x) => x.trim()).filter(Boolean)
+  return ips?.at(-1) || cabeceras.get('cf-connecting-ip') || 'desconocida'
 }

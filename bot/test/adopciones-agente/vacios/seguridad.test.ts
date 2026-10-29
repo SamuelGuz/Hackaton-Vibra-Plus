@@ -103,7 +103,7 @@ describe('lo que llega al modelo', () => {
 
   it('[S-21] el teléfono de quien escribe no se le manda a Gemini', async () => {
     e.t.llm.responder(crudo())
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     const l = e.t.llm.llamadas[0]
     expect(l.sistema + JSON.stringify(l.mensajes)).not.toContain(TEL)
   })

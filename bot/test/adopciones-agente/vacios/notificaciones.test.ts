@@ -81,8 +81,8 @@ describe('quién entra al agente (app.ts)', () => {
   it('[N-07] el mismo wamid entregado dos veces por Meta se atiende una sola vez (un solo Gemini, una sola respuesta)', async () => {
     const app = montarApp(e.t)
     e.t.llm.responder(crudo({ respuesta: 'Una sola vez' }))
-    await webhook(app, TEL, 'wamid.dup', 'hola')
-    await webhook(app, TEL, 'wamid.dup', 'hola')
+    await webhook(app, TEL, 'wamid.dup', 'cuéntame de los peluditos')
+    await webhook(app, TEL, 'wamid.dup', 'cuéntame de los peluditos')
     await app.ociosa()
     expect(e.t.llm.llamadas).toHaveLength(1)
     expect(e.alTelefono(TEL)).toEqual(['Una sola vez'])

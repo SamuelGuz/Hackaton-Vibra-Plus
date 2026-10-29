@@ -17,7 +17,7 @@ import { ESQUEMA_AGENTE } from './esquema.js'
 import { construirSistema } from './prompt.js'
 import { crearAlmacenSesiones, MAX_MENSAJES_HISTORIAL, type AlmacenSesiones } from './sesiones.js'
 import { confirmacionVisita, ofertaPadrinazgo, textosAgente } from './textos.js'
-import type { AccionAgente, CanalAgente, Sesion } from './tipos.js'
+import type { AccionAgente, CanalAgente, Intencion, Sesion } from './tipos.js'
 
 export const MAX_TEXTO = 1000
 /** Tope de un audio (2 MiB): una nota de voz de un par de minutos pesa mucho menos */
@@ -70,6 +70,7 @@ export interface ResultadoConversacion {
   guionVoz: string
   perritos: PerritoPublico[]
   accion: AccionAgente
+  intencion: Intencion
 }
 
 function conTiempoLimite<T>(p: Promise<T>, ms: number): Promise<T> {
@@ -85,7 +86,7 @@ function conTiempoLimite<T>(p: Promise<T>, ms: number): Promise<T> {
 /** La solicitud de esta conversación (una por clave: 'wa:<teléfono>' o 'web:<sesión>'). Si la base falla, la charla sigue. */
 async function guardarSolicitud(
   deps: Deps,
-  p: PeticionConversacion,
+  p: Pick<PeticionConversacion, 'clave' | 'canal'>,
   d: { animalId: string; evaluacion: Sesion['evaluacion']; fecha: Date },
 ): Promise<void> {
   try {
@@ -108,6 +109,25 @@ async function guardarSolicitud(
   } catch (e) {
     console.error('No se pudo guardar la solicitud de adopción:', e)
   }
+}
+
+/**
+ * Propone la visita del sábado: la deja en la base como PROPUESTA y avisa a la administración.
+ * Devuelve el texto para la persona, o null si el aviso no le llegó a nadie (entonces no se le promete y se reintenta después).
+ * La usan la conversación con la IA y el formulario por botones (recepcion.ts).
+ */
+export async function proponerVisita(
+  p: Pick<PeticionConversacion, 'deps' | 'ctx' | 'clave' | 'canal'>,
+  sesion: Sesion,
+  perro: PerritoPublico,
+  evaluacion: Sesion['evaluacion'],
+): Promise<string | null> {
+  const fecha = proximoSabado10(p.deps.ahora())
+  await guardarSolicitud(p.deps, p, { animalId: perro.id, evaluacion, fecha })
+  const aviso = await avisarAdministradoras(p.deps, { perro: perro.nombre, evaluacion, fecha, contacto: p.canal })
+  if (aviso.enviados === 0) return null
+  sesion.visitas.set(perro.id, fecha)
+  return confirmacionVisita(perro.nombre, fecha, p.canal, p.ctx.whatsappPublico)
 }
 
 /** El RAG es un apoyo: si falla, la charla sigue sin esos datos en vez de caerse */
@@ -136,7 +156,7 @@ export function responderConversacion(p: PeticionConversacion): Promise<Resultad
 }
 
 async function atenderTurno(p: PeticionConversacion, sesion: Sesion): Promise<ResultadoConversacion> {
-  const { deps, ctx } = p
+  const { ctx } = p
   const textoPersona = p.texto?.trim().slice(0, MAX_TEXTO) ?? ''
 
   // El animal que la persona venía viendo queda en foco desde el primer turno
@@ -189,19 +209,8 @@ async function atenderTurno(p: PeticionConversacion, sesion: Sesion): Promise<Re
     !sesion.visitas.has(enFoco.id) &&
     puedeAgendarVisita({ evaluacion, intencion: r.intencion, alertaBienestar: sesion.alertaBienestar, perroAdoptable: enFoco.adoptable })
   ) {
-    const fecha = proximoSabado10(deps.ahora())
-    // Queda en la base como visita PROPUESTA (falta que la coordinación la confirme), aunque el aviso no salga
-    await guardarSolicitud(deps, p, { animalId: enFoco.id, evaluacion, fecha })
-    const aviso = await avisarAdministradoras(deps, {
-      perro: enFoco.nombre,
-      evaluacion,
-      fecha,
-      contacto: p.canal,
-    })
-    // Si no le llegó a nadie, la visita no existe: no se le promete a la persona y se reintenta en el siguiente turno
-    if (aviso.enviados > 0) {
-      sesion.visitas.set(enFoco.id, fecha)
-      const confirmacion = confirmacionVisita(enFoco.nombre, fecha, p.canal, ctx.whatsappPublico)
+    const confirmacion = await proponerVisita(p, sesion, enFoco, evaluacion)
+    if (confirmacion) {
       respuesta = `${respuesta}\n\n${confirmacion}`
       guionVoz = `${guionVoz} ${aGuionVoz(confirmacion)}`
       accion = 'visita_agendada'
@@ -210,7 +219,9 @@ async function atenderTurno(p: PeticionConversacion, sesion: Sesion): Promise<Re
 
   if (accion === 'ninguna' && debeOfrecerPadrinazgo({ intencion: r.intencion, suitability: evaluacion.suitability, turnos: sesion.turnos, conexion: r.conexionEmocional })) {
     accion = 'padrinazgo'
-    if (!sesion.padrinazgoOfrecido && !mencionaPadrinazgo(respuesta)) {
+    // Por WhatsApp con datos de donación, whatsapp.ts manda esos datos aparte (con el padrinazgo): no se repite aquí
+    const vanLosDatos = p.canal.tipo === 'whatsapp' && Boolean(ctx.donaciones)
+    if (!sesion.padrinazgoOfrecido && !vanLosDatos && !mencionaPadrinazgo(respuesta)) {
       const oferta = ofertaPadrinazgo(enFoco?.nombre ?? null, p.canal, ctx.whatsappPublico)
       respuesta = `${respuesta}\n\n${oferta}`
       guionVoz = `${guionVoz} ${aGuionVoz(oferta)}`
@@ -233,5 +244,5 @@ async function atenderTurno(p: PeticionConversacion, sesion: Sesion): Promise<Re
   sesion.historial.push({ rol: 'user', texto: transcripcion || '(nota de voz)' }, { rol: 'model', texto: respuesta })
   if (sesion.historial.length > MAX_MENSAJES_HISTORIAL) sesion.historial.splice(0, sesion.historial.length - MAX_MENSAJES_HISTORIAL)
 
-  return { transcripcion, respuesta, guionVoz, perritos, accion }
+  return { transcripcion, respuesta, guionVoz, perritos, accion, intencion: r.intencion }
 }

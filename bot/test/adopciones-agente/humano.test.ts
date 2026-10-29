@@ -34,7 +34,7 @@ const texto = (s: string) => ({ tipo: 'texto' as const, texto: s })
 
 describe('agente con quien quiere adoptar', () => {
   it('marca leído y muestra "escribiendo…" apenas llega, espera y después responde', async () => {
-    await atenderInteresadoExterno(t.deps, TEL, texto('hola'), t.ctx, { mensajeId: 'wamid.ABC' })
+    await atenderInteresadoExterno(t.deps, TEL, texto('cuéntame de los peluditos'), t.ctx, { mensajeId: 'wamid.ABC' })
     const respuesta = 'Mira, te cuento la historia de Toby. Lo encontraron bajo un puente 🐶'
     expect(pasos).toEqual(['escribiendo wamid.ABC', `pausa ${pausaParaEscribir(respuesta, 0)}`, 'enviar'])
   })
@@ -51,12 +51,12 @@ describe('agente con quien quiere adoptar', () => {
     t.wa.escribiendo = async () => {
       throw new Error('Meta dijo 400')
     }
-    await atenderInteresadoExterno(t.deps, TEL, texto('hola'), t.ctx, { mensajeId: 'wamid.ABC' })
+    await atenderInteresadoExterno(t.deps, TEL, texto('cuéntame de los peluditos'), t.ctx, { mensajeId: 'wamid.ABC' })
     expect(t.wa.enviados.map((e) => e.telefono)).toEqual([TEL])
   })
 
   it('sin id del mensaje (la página web) no hay "escribiendo…", pero sí la pausa', async () => {
-    await atenderInteresadoExterno(t.deps, TEL, texto('hola'), t.ctx)
+    await atenderInteresadoExterno(t.deps, TEL, texto('cuéntame de los peluditos'), t.ctx)
     expect(pasos.filter((p) => p.startsWith('escribiendo'))).toEqual([])
     expect(pasos.filter((p) => p.startsWith('pausa'))).toHaveLength(1)
   })

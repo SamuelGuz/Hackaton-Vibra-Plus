@@ -14,6 +14,34 @@ export const textosAgente = {
   soloTextoOVoz: 'Gracias por escribirme 🐾 Por ahora solo puedo leer mensajes de texto o escuchar una nota de voz. ¿Me cuentas con palabras qué tipo de compañero buscas?',
   /** Lo que se le manda a Gemini cuando el turno de la persona es un audio */
   marcadorAudio: '(La persona te mandó una nota de voz: transcríbela en "transcripcion" y respóndele.)',
+
+  // ---------- Recepción por botones (recepcion.ts) ----------
+  bienvenida: '¡Hola! 👋 Qué alegría que nos escribas. Soy el asistente de la Fundación Huellitas 🐾\n\n¿En qué te podemos ayudar? Elige una opción 👇',
+  menuOtraVez: '¿En qué más te ayudo? Elige una opción 👇',
+  web: (url: string) => `🌐 Conoce a todos nuestros peluditos y nuestra historia en ${url}\nSi te queda cualquier duda, pregúntame aquí mismo 💬`,
+  lista: 'Estos peluditos están buscando hogar 🐾 Toca *Ver peluditos* y elige uno para conocerlo.\n\nSi buscas algo especial (tamaño, que se lleve con niños, para apartamento), escríbemelo y te digo cuál encaja.',
+  sinAnimales: 'Ahora mismo no tengo peluditos para mostrarte por aquí 🙈 Pero puedes ayudarnos de otras formas, o escribirme tu duda.',
+  soloApadrinar: (perro: string) => `💛 ${perro} se queda con nosotros por su salud, pero puedes apadrinarlo.`,
+  nombre: '¡Ya casi! ¿Cómo te llamas? ✍️',
+  visitaSinAviso: (nombre: string) =>
+    `¡Gracias, ${nombre}! 🐾 Ya tengo todo. Alguien del equipo te va a escribir por aquí para coordinar la visita.`,
+  visitaYaPropuesta: (nombre: string, perro: string) =>
+    `${nombre}, tu visita para conocer a ${perro} ya está propuesta 🐾 Alguien del equipo te escribe para confirmarla.`,
+  mejorApadrinar: (nombre: string, perro: string, porTiempo: boolean) =>
+    `Gracias por contarme con sinceridad, ${nombre} 💛 ${porTiempo ? `${perro} necesita compañía buena parte del día` : `Cuidar a ${perro} trae gastos de comida y veterinario`}, así que quizás este no es el momento de adoptar. ` +
+    `Pero igual puedes cambiarle la vida: apadrinándolo desde ${PADRINAZGO_DESDE} al mes, o donando comida 🐾`,
+  preguntaArriendo: (nombre: string, perro: string) =>
+    `${nombre}, antes de seguir: pregúntale al dueño o a la administración si permiten mascotas 🙏 Así ${perro} no corre el riesgo de tener que volver. ¿Ya sabes que sí te dejan?`,
+  preguntaPresupuesto: (nombre: string, perro: string) =>
+    `${nombre}, un peludito como ${perro} gasta en comida, vacunas y alguna visita al veterinario cada año. Piénsalo con calma 💛 ¿Cuentas con eso?`,
+  graciasDonar: '💛 ¡Gracias por querer ayudar a los peluditos! Así puedes donar:',
+  apadrinarA: (perro: string) => `💛 ¡Qué lindo que quieras apadrinar a ${perro}! Así puedes hacerlo:`,
+  plataPorChat: '*Para donar plata:* escríbeme aquí "quiero donar" y alguien del equipo te pasa los datos de pago.',
+  comidaPorChat: '*Para donar comida o insumos:* escríbeme aquí y coordinamos la entrega.',
+  mandaComprobante: '🧾 Cuando dones, mándame aquí la foto del comprobante y le aviso al equipo para que lo confirme.',
+  infoDudas: 'Si tienes cualquier duda, escríbemela aquí y te respondo 💬',
+  escribeDuda: '¡Claro! Escríbeme tu pregunta o mándame una nota de voz 💬',
+  mandaFotoComprobante: '¡Gracias! 💛 Mándame la foto o el pantallazo del comprobante y le aviso al equipo para que lo confirme 🧾',
 } as const
 
 /** 573001234567 → +573001234567 */

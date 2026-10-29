@@ -116,6 +116,21 @@ export interface ContextoExterno {
   voz?: Voz
   /** Espera antes de responder por WhatsApp, como una persona que escribe (adopciones-agente/humano.ts); sin ella, de una vez */
   pausaHumana?: (ms: number) => Promise<void>
+  /** Página pública (p. ej. https://huellitasrefugio.lat): se le comparte una vez a quien escribe */
+  sitioWeb?: string
+  /** Datos para donar que se muestran tal cual. Lo que falte no se inventa: se ofrece pasarlo por el chat. */
+  donaciones?: DatosDonacion
+}
+
+export interface DatosDonacion {
+  nequi?: string
+  /** Llave Bre-B */
+  llave?: string
+  /** Cuenta bancaria, como se quiera mostrar: "Bancolombia ahorros 123-456789-00" */
+  cuenta?: string
+  titular?: string
+  /** Para coordinar donaciones de comida o insumos */
+  telefono?: string
 }
 
 // ---------- Ampliaciones (T-RAG2): perfil más rico y motor de preguntas ----------

@@ -22,10 +22,20 @@ export function armarExterno(env: Env, deps: Pick<Deps, 'repo' | 'ahora'>, opcio
   const whatsappPublico = soloDigitos(env.WA_NUMERO_BOT)
   // Las campañas solo se envían si hay Resend o SMTP configurado; si no, se generan y se ven, pero no salen
   const config = leerConfigCorreo(env as NodeJS.ProcessEnv, env.PANEL_URL ?? '', whatsappPublico)
+  const donaciones = {
+    nequi: env.DONACIONES_NEQUI?.trim() || undefined,
+    llave: env.DONACIONES_LLAVE?.trim() || undefined,
+    cuenta: env.DONACIONES_CUENTA?.trim() || undefined,
+    titular: env.DONACIONES_TITULAR?.trim() || undefined,
+    telefono: env.DONACIONES_TELEFONO?.trim() || undefined,
+  }
   return {
     rag,
     llm,
     whatsappPublico,
+    // La página pública se le comparte una vez a quien escribe; los datos de donación se muestran tal cual
+    sitioWeb: env.SITIO_WEB_URL?.trim().replace(/\/$/, '') || undefined,
+    donaciones: Object.values(donaciones).some(Boolean) ? donaciones : undefined,
     respuestas: crearRespuestas({ rag, datos, conocimiento: CONOCIMIENTO, llm, ahora: deps.ahora }),
     // Con quien quiere adoptar, el agente responde como una persona que escribe (el equipo no)
     pausaHumana: opciones.pausaHumana ?? pausaReal,

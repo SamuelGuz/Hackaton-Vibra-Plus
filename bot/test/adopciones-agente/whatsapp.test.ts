@@ -124,20 +124,20 @@ describe('conversación por WhatsApp', () => {
   describe('si Gemini falla', () => {
     it('manda un mensaje cálido, no lanza y lo deja en el log', async () => {
       t.llm.responder(new Error('Gemini 503'))
-      await expect(escribir('Hola')).resolves.toBeUndefined()
+      await expect(escribir('cuéntame de los peluditos')).resolves.toBeUndefined()
       expect(t.wa.enviados).toEqual([{ telefono: TEL, salida: { tipo: 'texto', texto: textosAgente.falla } }])
       expect(consola.error).toHaveBeenCalled()
     })
 
     it('una respuesta sin "respuesta" cuenta como falla', async () => {
       t.llm.responder({ intencion: 'adoptar' })
-      await escribir('Hola')
+      await escribir('cuéntame de los peluditos')
       expect(alTelefono(TEL)).toEqual([textosAgente.falla])
     })
 
     it('el turno fallido no queda en el historial', async () => {
       t.llm.responder(new Error('caído'), crudo())
-      await escribir('Hola')
+      await escribir('cuéntame de los peluditos')
       await escribir('¿Sigues ahí?')
       expect(t.llm.llamadas[1].mensajes).toEqual([{ rol: 'user', texto: '¿Sigues ahí?' }])
     })
@@ -147,7 +147,7 @@ describe('conversación por WhatsApp', () => {
       t.wa.enviar = async () => {
         throw new Error('WhatsApp 131047')
       }
-      await expect(escribir('Hola')).resolves.toBeUndefined()
+      await expect(escribir('cuéntame de los peluditos')).resolves.toBeUndefined()
       expect(consola.error).toHaveBeenCalled()
     })
 
@@ -156,7 +156,7 @@ describe('conversación por WhatsApp', () => {
         throw new Error('RAG caído')
       }
       t.llm.responder(crudo({ perrito_id_foco: null, respuesta: 'Cuéntame más' }))
-      await escribir('Hola')
+      await escribir('cuéntame de los peluditos')
       expect(alTelefono(TEL)).toEqual(['Cuéntame más'])
       expect(consola.error).toHaveBeenCalled()
     })
@@ -177,7 +177,7 @@ describe('conversación por WhatsApp', () => {
     it('otro número no se afecta, y pasada la ventana vuelve a atender', async () => {
       t.llm.responder(crudo())
       for (let i = 0; i < 31; i++) await escribir(`m ${i}`)
-      await escribir('hola', '573229990000')
+      await escribir('cuéntame de los peluditos', '573229990000')
       expect(t.llm.llamadas).toHaveLength(31)
       t.repo.ahora = new Date(AHORA.getTime() + 61 * 60_000)
       await escribir('ya volví')
@@ -188,10 +188,10 @@ describe('conversación por WhatsApp', () => {
   describe('memoria de la conversación', () => {
     it('el segundo turno incluye lo hablado antes, tal como lo vio la persona', async () => {
       t.llm.responder(crudo({ respuesta: 'Primera respuesta' }), crudo({ respuesta: 'Segunda respuesta' }))
-      await escribir('Hola')
+      await escribir('cuéntame de los peluditos')
       await escribir('Vivo en apartamento')
       expect(t.llm.llamadas[1].mensajes).toEqual([
-        { rol: 'user', texto: 'Hola' },
+        { rol: 'user', texto: 'cuéntame de los peluditos' },
         { rol: 'model', texto: 'Primera respuesta' },
         { rol: 'user', texto: 'Vivo en apartamento' },
       ])
@@ -215,7 +215,7 @@ describe('conversación por WhatsApp', () => {
 
     it('tras 6 horas sin hablar, la sesión empieza de cero', async () => {
       t.llm.responder(crudo())
-      await escribir('Hola')
+      await escribir('cuéntame de los peluditos')
       t.repo.ahora = new Date(AHORA.getTime() + 5 * 3_600_000)
       await escribir('sigo aquí')
       expect(t.llm.llamadas[1].mensajes).toHaveLength(3)
@@ -313,7 +313,7 @@ describe('conversación por WhatsApp', () => {
       ['no puede adoptar', excelente({ intencion: 'no_puede_adoptar' })],
     ])('no agenda si %s aunque el score sea alto', async (_caso, respuesta) => {
       t.llm.responder(respuesta)
-      await escribir('hola')
+      await escribir('cuéntame de los peluditos')
       expect(alTelefono(CAROLINA.telefono)).toEqual([])
       expect(t.wa.enviados.every((e) => e.telefono === TEL)).toBe(true)
       expect(alTelefono(TEL)[0]).not.toContain('sábado')
@@ -464,7 +464,7 @@ describe('conversación por WhatsApp', () => {
 
   it('nunca expone puntajes ni la evaluación en lo que se manda a la persona', async () => {
     t.llm.responder(excelente({ nombre: 'Ana' }))
-    await escribir('hola')
+    await escribir('cuéntame de los peluditos')
     for (const m of alTelefono(TEL)) {
       expect(m).not.toMatch(/score|puntaje|suitability|riesgo/i)
     }
@@ -472,7 +472,7 @@ describe('conversación por WhatsApp', () => {
 
   it('el prompt prohíbe revelar puntajes, prometer adopción o pedir datos sensibles', async () => {
     t.llm.responder(crudo())
-    await escribir('hola')
+    await escribir('cuéntame de los peluditos')
     const { sistema } = t.llm.llamadas[0]
     expect(sistema).toMatch(/NUNCA[^\n]*(puntaje|evaluando)/i)
     expect(sistema).toMatch(/NUNCA[^\n]*(prometas|aprobada)/i)
@@ -482,7 +482,7 @@ describe('conversación por WhatsApp', () => {
 
   it('el perfil completo de cada candidato (necesidades médicas incluidas) llega a Gemini', async () => {
     t.llm.responder(crudo())
-    await escribir('hola')
+    await escribir('cuéntame de los peluditos')
     expect(t.llm.llamadas[0].sistema).toContain(MATEO.necesidadesMedicas[0])
   })
 })

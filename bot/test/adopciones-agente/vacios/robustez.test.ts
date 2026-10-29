@@ -28,7 +28,7 @@ describe('respuestas inservibles del modelo', () => {
   for (const [nombre, valor] of inservibles) {
     it(`[R-01] ${nombre}: la persona recibe el mensaje de falla amable y el turno no se cuenta`, async () => {
       e.t.llm.responder(valor, crudo({ respuesta: 'Ya sí' }))
-      await e.escribir('hola')
+      await e.escribir('cuéntame de los peluditos')
       expect(e.alTelefono(TEL)).toEqual([textosAgente.falla])
       await e.escribir('hola otra vez')
       expect(e.t.llm.llamadas[1].sistema).toContain('MENSAJE NÚMERO 1')
@@ -53,7 +53,7 @@ describe('respuestas inservibles del modelo', () => {
       }
       return crudo({ respuesta: 'Ya volví' }) as T
     }
-    const turno = e.escribir('hola')
+    const turno = e.escribir('cuéntame de los peluditos')
     await vi.advanceTimersByTimeAsync(25_001)
     await turno
     expect(e.alTelefono(TEL)).toEqual([textosAgente.falla])
@@ -75,7 +75,7 @@ describe('valores fuera de rango o con forma rara', () => {
 
   it('[R-05] campos extra y desconocidos en la respuesta se ignoran', async () => {
     e.t.llm.responder({ ...crudo(), puntaje_secreto: 1000, admin: true, __proto__: { x: 1 } })
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     expect(e.alTelefono(TEL)).toHaveLength(1)
   })
 
@@ -83,7 +83,7 @@ describe('valores fuera de rango o con forma rara', () => {
     const r = crudo() as Record<string, unknown>
     delete r.evaluacion
     e.t.llm.responder(r)
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     expect(e.alTelefono(TEL)).toHaveLength(1)
     expect(e.avisos()).toEqual([])
   })
@@ -102,7 +102,7 @@ describe('valores fuera de rango o con forma rara', () => {
     r.perrito_id_foco = 5
     r.perritos_mencionados = [5, 12]
     e.t.llm.responder(r)
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     expect(e.alTelefono(TEL)).toHaveLength(1)
   })
 
@@ -124,19 +124,19 @@ describe('valores fuera de rango o con forma rara', () => {
 describe('largos y recortes', () => {
   it('[R-11] una respuesta del modelo de 10.000 caracteres se recorta a 3500', async () => {
     e.t.llm.responder(crudo({ respuesta: 'a'.repeat(10_000) }))
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     expect(e.alTelefono(TEL)[0]).toHaveLength(3500)
   })
 
   brecha('[R-12] el recorte de 3500 corta en un límite de frase/palabra, no en mitad de una palabra', async () => {
     e.t.llm.responder(crudo({ respuesta: `${'Toby es muy cariñoso. '.repeat(300)}` }))
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     expect(e.alTelefono(TEL)[0]).toMatch(/[.!?…]$/)
   })
 
   brecha('[R-13] el código impone la brevedad que pide el prompt (≈600 caracteres): hoy una respuesta de 3000 pasa tal cual', async () => {
     e.t.llm.responder(crudo({ respuesta: 'Toby es muy cariñoso. '.repeat(140) }))
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     expect(e.alTelefono(TEL)[0].length).toBeLessThanOrEqual(1500)
   })
 })
@@ -144,7 +144,7 @@ describe('largos y recortes', () => {
 describe('tope de sesiones (500) y límite por teléfono', () => {
   it('[R-14] la sesión 501 expulsa a la menos reciente; el almacén nunca pasa de 500', async () => {
     e.t.llm.responder(crudo())
-    for (let i = 0; i < 501; i++) await e.escribir('hola', `5731155${String(10000 + i)}`)
+    for (let i = 0; i < 501; i++) await e.escribir('cuéntame de los peluditos', `5731155${String(10000 + i)}`)
     const sesiones = obtenerAgente(e.t.deps).sesiones
     expect(sesiones.tamano()).toBe(500)
     expect(sesiones.tiene('wa:57311551' + '0000')).toBe(false)
@@ -153,10 +153,10 @@ describe('tope de sesiones (500) y límite por teléfono', () => {
 
   it('[R-15] el mensaje 30 de la hora pasa y el 31 recibe el aviso de límite (una sola vez); el 32 queda en silencio', async () => {
     e.t.llm.responder(crudo({ respuesta: 'ok' }))
-    for (let i = 0; i < 30; i++) await e.escribir('hola')
+    for (let i = 0; i < 30; i++) await e.escribir('cuéntame de los peluditos')
     expect(e.alTelefono(TEL)).toHaveLength(30)
-    await e.escribir('hola')
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
+    await e.escribir('cuéntame de los peluditos')
     expect(e.alTelefono(TEL)).toHaveLength(31)
     expect(e.alTelefono(TEL).at(-1)).toBe(textosAgente.limite)
   })

@@ -30,7 +30,7 @@ describe('la visita que propone el agente queda guardada', () => {
 
   it('la misma conversación no crea otra solicitud', async () => {
     e.t.llm.responder(excelente({ nombre: 'Ana' }))
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     await e.escribir('sigo aquí')
     expect(e.t.repo.adopcion).toHaveLength(1)
   })
@@ -43,7 +43,7 @@ describe('la visita que propone el agente queda guardada', () => {
 
   it('a la persona se le dice que la visita es una propuesta por confirmar, no una cita hecha', async () => {
     e.t.llm.responder(excelente({ nombre: 'Ana' }))
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     const respuesta = e.alTelefono(TEL).join('\n')
     expect(respuesta).toContain('te propongo una visita')
     expect(respuesta).toContain('por confirmar')
@@ -55,7 +55,7 @@ describe('la visita que propone el agente queda guardada', () => {
       throw new Error('base caída')
     }
     e.t.llm.responder(excelente({ nombre: 'Ana' }))
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     expect(e.alTelefono(TEL).length).toBeGreaterThan(0)
     expect(e.avisos()[0]).toContain('Le propuse visita, por confirmar.')
   })

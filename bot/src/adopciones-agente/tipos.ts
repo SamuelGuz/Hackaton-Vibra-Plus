@@ -71,6 +71,20 @@ export interface Sesion {
   ultimoUso: number
   /** Cola para atender los mensajes de una misma sesión uno a la vez */
   cola: Promise<void>
+  /** Ya se le mostró el menú de bienvenida (WhatsApp) */
+  bienvenida: boolean
+  /** Ya se le compartió la página web: se manda una sola vez */
+  webEnviada: boolean
+  /** Ya se le mostraron los datos para donar */
+  donacionMostrada: boolean
+  /** Formulario de adopción por botones en curso (WhatsApp) */
+  formulario: Formulario | null
+}
+
+/** Las 3 preguntas con botones y el nombre. Las respuestas quedan en `Sesion.evaluacion`. */
+export interface Formulario {
+  animalId: string
+  respuestas: { vivienda?: 'propia' | 'arriendo' | 'nose'; tiempo?: 'mucho' | 'medio' | 'poco'; presupuesto?: 'si' | 'nose' | 'no' }
 }
 
 export type CanalAgente = { tipo: 'whatsapp'; telefono: string } | { tipo: 'web' }

@@ -53,7 +53,7 @@ describe('foco del animal', () => {
   it('[C-05] sin animales en el RAG, el prompt dice que no hay nada que mostrar y no inventar', async () => {
     e.t.rag.perritos = []
     e.t.llm.responder(crudo({ perrito_id_foco: null, perritos_mencionados: [] }))
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     expect(e.t.llm.llamadas[0].sistema).toMatch(/no hay animales para mostrar: no inventes ninguno/)
   })
 })
@@ -211,17 +211,17 @@ describe('lo que el esquema no puede expresar', () => {
 describe('"hola" repetido y fechas', () => {
   it('[C-27] "hola" después de más de 6 h: conversación nueva (mensaje número 1, sin historial)', async () => {
     e.t.llm.responder(crudo(), crudo())
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     e.t.repo.ahora = new Date(AHORA.getTime() + 6 * HORA + 60_000)
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     expect(e.t.llm.llamadas[1].sistema).toContain('MENSAJE NÚMERO 1')
   })
 
   it('[C-28] "hola" dentro de las 6 h sigue la misma conversación', async () => {
     e.t.llm.responder(crudo(), crudo())
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     e.t.repo.ahora = new Date(AHORA.getTime() + 5 * HORA)
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     expect(e.t.llm.llamadas[1].sistema).toContain('MENSAJE NÚMERO 2')
   })
 

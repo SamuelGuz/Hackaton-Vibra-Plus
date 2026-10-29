@@ -40,13 +40,13 @@ describe('datos personales que la persona escribe', () => {
 describe('aviso de privacidad y consentimiento', () => {
   brecha('[P-04] el primer mensaje que recibe una persona nueva incluye aviso de tratamiento de datos / cómo pedir su borrado', async () => {
     e.t.llm.responder(crudo())
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     expect(e.alTelefono(TEL).join('\n')).toMatch(/datos personales|privacidad|pol[ií]tica de|habeas|Ley 1581|autoriz/i)
   })
 
   brecha('[P-05] el prompt le indica al agente qué decir si le preguntan qué hace con sus datos', async () => {
     e.t.llm.responder(crudo())
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     expect(e.t.llm.llamadas[0].sistema).toMatch(/datos personales|privacidad|tratamiento de (sus )?datos/i)
   })
 })
@@ -89,14 +89,14 @@ describe('qué se guarda y por cuánto tiempo', () => {
     e.t.llm.responder(crudo({ respuesta: 'Uno' }), crudo({ respuesta: 'Dos' }))
     await e.escribir('hola, soy Ana')
     e.t.repo.ahora = new Date(AHORA.getTime() + 7 * HORA)
-    await e.escribir('hola')
-    expect(e.t.llm.llamadas[1].mensajes).toEqual([{ rol: 'user', texto: 'hola' }])
+    await e.escribir('cuéntame de los peluditos')
+    expect(e.t.llm.llamadas[1].mensajes).toEqual([{ rol: 'user', texto: 'cuéntame de los peluditos' }])
     expect(e.t.llm.llamadas[1].sistema).toContain('MENSAJE NÚMERO 1')
   })
 
   brecha('[P-11] una sesión caducada se borra de memoria sola (sin esperar a que la persona vuelva ni a llegar a 500)', async () => {
     e.t.llm.responder(crudo())
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     e.t.repo.ahora = new Date(AHORA.getTime() + 7 * HORA)
     // nadie vuelve a escribir: se pide el tamaño tal como está
     expect(obtenerAgente(e.t.deps).sesiones.tamano()).toBe(0)
@@ -123,7 +123,7 @@ describe('qué se guarda y por cuánto tiempo', () => {
     e.t.wa.enviar = async () => {
       throw new Error('Meta 500')
     }
-    await e.escribir('hola')
+    await e.escribir('cuéntame de los peluditos')
     const logs = e.consola.error.mock.calls.flat().map(String).join(' ')
     expect(logs).not.toContain(TEL)
   })
@@ -133,7 +133,7 @@ describe('integración con app.ts (quien escribe sin ser del equipo)', () => {
   it('[P-15] un desconocido recibe respuesta del agente y no el aviso "no estás registrado"', async () => {
     const app = montarApp(e.t)
     e.t.llm.responder(crudo({ respuesta: 'Mira, te cuento la historia de Toby' }))
-    await webhook(app, TEL, 'wamid.1', 'hola')
+    await webhook(app, TEL, 'wamid.1', 'cuéntame de los peluditos')
     await app.ociosa()
     expect(e.alTelefono(TEL)).toEqual(['Mira, te cuento la historia de Toby'])
   })
@@ -141,7 +141,7 @@ describe('integración con app.ts (quien escribe sin ser del equipo)', () => {
   brecha('[P-16] el adoptante curioso NO queda anotado en "solicitudes para unirse al equipo" (con su nombre de perfil de WhatsApp)', async () => {
     const app = montarApp(e.t)
     e.t.llm.responder(crudo())
-    await webhook(app, TEL, 'wamid.1', 'hola')
+    await webhook(app, TEL, 'wamid.1', 'cuéntame de los peluditos')
     await app.ociosa()
     expect(e.t.repo.solicitudes).toEqual([])
   })

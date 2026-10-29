@@ -33,6 +33,10 @@ export function crearAlmacenSesiones(opc: { ttlMs?: number; maxSesiones?: number
       visitas: new Map(),
       ultimoUso: t,
       cola: Promise.resolve(),
+      bienvenida: false,
+      webEnviada: false,
+      donacionMostrada: false,
+      formulario: null,
     }
   }
 

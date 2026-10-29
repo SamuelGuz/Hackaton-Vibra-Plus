@@ -160,5 +160,9 @@ export function convertir(crudo: RespuestaCruda, datos: DatosAlbergue, ahora: Da
 
   const confianza = Math.min(1, Math.max(0, Number(crudo.confianza) || 0))
   const informe = TIPOS_INFORME.includes(crudo.informe as TipoInforme) ? (crudo.informe as TipoInforme) : undefined
-  return { transcripcion: crudo.transcripcion ?? '', acciones, confianza, futuras, factura, informe }
+  return { transcripcion: sinEco(crudo.transcripcion ?? ''), acciones, confianza, futuras, factura, informe }
 }
+
+/** Algunos modelos de respaldo "transcriben" la lista interna que se les pasa en vez de lo que dijo la persona */
+const ECO_DEL_CONTEXTO = /HORA ACTUAL:|ANIMALES \(id|DOSIS DE HOY:|CLÍNICAS \(id|tratamiento_id \d/
+const sinEco = (t: string) => (ECO_DEL_CONTEXTO.test(t) ? '' : t)

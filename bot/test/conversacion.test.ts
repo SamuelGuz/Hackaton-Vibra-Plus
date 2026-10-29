@@ -154,11 +154,11 @@ describe('audios', () => {
     expect(t.wa.ultimoTexto()).toContain('ya la reportó Andrea')
   })
 
-  it('si Gemini falla, no se cae: dice que no entendió y muestra el menú', async () => {
+  it('si Gemini falla, no se cae: pide repetir el audio y muestra el menú', async () => {
     t.ia.respuesta = new Error('cuota agotada')
     await decir(audio())
     expect(t.repo.registros).toHaveLength(0)
-    expect(t.wa.ultimoTexto()).toContain('No te entendí bien')
+    expect(t.wa.ultimoTexto()).toContain('No pude escuchar bien tu audio')
     expect(t.wa.ultimo().tipo).toBe('lista')
   })
 

@@ -7,6 +7,7 @@ import { enviarInforme } from './informe.js'
 import { bajarYGuardar, entenderSeguro } from './medios.js'
 import { yaReportada } from './medicina.js'
 import { mostrarMenu } from './menu.js'
+import { opcionDelMenu, temaDeTexto } from './intencion.js'
 
 /** Quita las dosis que alguien ya reportó hoy y las repetidas dentro del mismo mensaje. */
 export async function sinDosisRepetidas(c: Ctx, acciones: Accion[]): Promise<{ acciones: Accion[]; avisos: string[] }> {
@@ -36,14 +37,22 @@ export async function sinDosisRepetidas(c: Ctx, acciones: Accion[]): Promise<{ a
 export async function registrarEntendido(
   c: Ctx,
   e: Entendido | null,
-  origen: { tipoEntrada: NuevoRegistro['tipoEntrada']; mediaUrl?: string | null },
+  /** `escrito`: lo que la persona escribió, para buscar el tema si la IA no anotó nada */
+  origen: { tipoEntrada: NuevoRegistro['tipoEntrada']; mediaUrl?: string | null; escrito?: string },
 ): Promise<Estado> {
-  if (!e) return mostrarMenu(c, textos.noEntendi)
+  const esAudio = origen.tipoEntrada === 'audio'
+  if (!e) {
+    // Sin IA igual se intenta con lo escrito
+    const tema = origen.escrito ? temaDeTexto(origen.escrito) : null
+    if (tema) return opcionDelMenu(c, tema, origen.escrito)
+    return mostrarMenu(c, esAudio ? textos.noPudeEscuchar : textos.noEntendi)
+  }
   const { acciones, avisos } = await sinDosisRepetidas(c, e.acciones)
   if (acciones.length === 0) {
     if (e.informe && !avisos.length) return enviarInforme(c, e.informe)
     if (avisos.length) return mostrarMenu(c, avisos.join('\n'))
-    return mostrarMenu(c, e.futuras > 0 ? textos.futura : textos.noEntendi)
+    if (e.futuras > 0) return mostrarMenu(c, textos.futura)
+    return sinNadaQueAnotar(c, origen.escrito ?? e.transcripcion, esAudio)
   }
   return guardarYPreguntar(c, {
     acciones,
@@ -56,8 +65,23 @@ export async function registrarEntendido(
   })
 }
 
+/**
+ * La IA entendió las palabras pero no hay nada que anotar ("le di una medicina a un perro": ¿a cuál?).
+ * En vez de "no te entendí": se muestra lo que escuchó y se abre el camino del tema, o el menú si no hay tema.
+ */
+async function sinNadaQueAnotar(c: Ctx, dicho: string, esAudio: boolean): Promise<Estado> {
+  const t = dicho.trim()
+  const escuche = esAudio && t ? textos.escuche(t) : null
+  const tema = t ? temaDeTexto(t) : null
+  if (tema) {
+    if (escuche) await c.enviar({ tipo: 'texto', texto: escuche })
+    return opcionDelMenu(c, tema, t)
+  }
+  return mostrarMenu(c, escuche ? `${escuche}\n\n${textos.noSupeQueAnotar}` : textos.noEntendi)
+}
+
 export async function libreTexto(c: Ctx, texto: string): Promise<Estado> {
-  return registrarEntendido(c, await entenderSeguro(c, { texto, pista: 'libre' }), { tipoEntrada: 'texto' })
+  return registrarEntendido(c, await entenderSeguro(c, { texto, pista: 'libre' }), { tipoEntrada: 'texto', escrito: texto })
 }
 
 export async function libreMedia(c: Ctx, mediaId: string, tipo: 'audio' | 'imagen', texto?: string): Promise<Estado> {

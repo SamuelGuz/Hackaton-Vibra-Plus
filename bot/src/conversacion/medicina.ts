@@ -4,23 +4,60 @@ import type { DatosAlbergue } from '../panel-tipos.js'
 import { botones, textos } from '../textos.js'
 import type { Accion, Estado, Fila } from '../tipos.js'
 import { dosisDeHoy } from '../datos/calculos.js'
+import { buscarAnimal } from './animal.js'
 import type { Ctx } from './ctx.js'
 import { guardarYPreguntar, preguntarAlgoMas } from './confirmar.js'
+import { esNo, esSi, normal } from './elegir.js'
 
 const MAX_FILAS = 9
 
-export async function empezarMedicina(c: Ctx): Promise<Estado> {
+type Dosis = ReturnType<typeof dosisDeHoy>[number]
+
+function pendientesDeHoy(d: DatosAlbergue, ahora: Date): Dosis[] {
+  return (
+    dosisDeHoy(d, ahora)
+      .filter((x) => x.estado !== 'dada' && !x.reporte)
+      // Las atrasadas primero: son las que más importan
+      .sort((a, b) => Number(b.estado === 'atrasada') - Number(a.estado === 'atrasada') || a.hora.localeCompare(b.hora))
+  )
+}
+
+/** Las dosis que nombra el texto, por el animal ("Mateo", "Tobi") o por la medicina ("el fenobarbital") */
+function dosisQueNombra(d: DatosAlbergue, pendientes: Dosis[], texto: string): Dosis[] {
+  const animales = new Set(buscarAnimal(d, texto).map((a) => a.id))
+  const t = ` ${normal(texto)} `
+  const nombraMedicina = (x: Dosis) => normal(x.tratamiento.medicamento).split(' ').some((p) => p.length >= 4 && t.includes(p))
+  const delAnimal = pendientes.filter((x) => animales.has(x.tratamiento.animalId))
+  if (delAnimal.length === 0) return pendientes.filter(nombraMedicina)
+  const ademasMedicina = delAnimal.filter(nombraMedicina)
+  return ademasMedicina.length ? ademasMedicina : delAnimal
+}
+
+/** Lista de dosis pendientes. Con `pista` (lo que se escribió o dijo), solo las que nombra; si es una sola, la elige. */
+export async function empezarMedicina(c: Ctx, pista?: string): Promise<Estado> {
   const d = await c.datos()
-  const nombre = (id: string) => d.animales.find((a) => a.id === id)?.nombre ?? '?'
-  const pendientes = dosisDeHoy(d, c.ahora)
-    .filter((x) => x.estado !== 'dada' && !x.reporte)
-    // Las atrasadas primero: son las que más importan
-    .sort((a, b) => Number(b.estado === 'atrasada') - Number(a.estado === 'atrasada') || a.hora.localeCompare(b.hora))
-
+  const pendientes = pendientesDeHoy(d, c.ahora)
   if (pendientes.length === 0) return preguntarAlgoMas(c, textos.medicinaNinguna)
+  const nombradas = pista ? dosisQueNombra(d, pendientes, pista) : []
+  if (nombradas.length === 1) return elegirDosis(c, idDosis(nombradas[0]))
+  return mostrarDosis(c, d, nombradas.length ? nombradas : pendientes)
+}
 
+/** Lo que se escribió o dijo en el paso "¿a quién le diste?". Null si no nombra ninguna dosis pendiente. */
+export async function dosisEscrita(c: Ctx, texto: string): Promise<Estado | null> {
+  const d = await c.datos()
+  const nombradas = dosisQueNombra(d, pendientesDeHoy(d, c.ahora), texto)
+  if (nombradas.length === 0) return null
+  if (nombradas.length === 1) return elegirDosis(c, idDosis(nombradas[0]))
+  return mostrarDosis(c, d, nombradas)
+}
+
+const idDosis = (x: Dosis) => `d:${x.tratamiento.id}:${x.hora}`
+
+async function mostrarDosis(c: Ctx, d: DatosAlbergue, pendientes: Dosis[]): Promise<Estado> {
+  const nombre = (id: string) => d.animales.find((a) => a.id === id)?.nombre ?? '?'
   const filas: Fila[] = pendientes.slice(0, MAX_FILAS).map((x) => ({
-    id: `d:${x.tratamiento.id}:${x.hora}`,
+    id: idDosis(x),
     titulo: `${nombre(x.tratamiento.animalId)} · ${horaBonita(x.hora)}`,
     descripcion: `${x.tratamiento.medicamento} · ${x.tratamiento.dosis}${x.estado === 'atrasada' ? ' · ¡atrasada!' : ''}`,
   }))
@@ -65,6 +102,13 @@ export async function elegirDosis(c: Ctx, id: string): Promise<Estado> {
 
   const accion: Accion = { tipo: 'dosis', animalId: t.animalId, tratamientoId: t.id, hora }
   return guardarYPreguntar(c, { acciones: [accion], tipoEntrada: 'boton' })
+}
+
+/** "Sí, es otra" / "No, ya está" escrito o dicho. Null si no es ni sí ni no. */
+export function duplicadaEscrita(c: Ctx, texto: string): Promise<Estado> | null {
+  if (esNo(texto)) return responderDuplicada(c, 'dup:no')
+  if (esSi(texto) || /\botra\b/.test(normal(texto))) return responderDuplicada(c, 'dup:si')
+  return null
 }
 
 export async function responderDuplicada(c: Ctx, id: string): Promise<Estado> {

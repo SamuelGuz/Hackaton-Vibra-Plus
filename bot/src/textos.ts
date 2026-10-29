@@ -29,6 +29,9 @@ export const textos = {
     `¡Hola, ${nombre}! 👋 Ya estás en el equipo del Refugio Yesenia.\n\nEscríbeme *hola* para empezar.`,
 
   noEntendi: 'No te entendí bien 🙈 ¿Qué hiciste? Elige en la lista o cuéntamelo otra vez.',
+  noSupeQueAnotar: 'No supe qué anotar con eso 🤔 Elige en la lista o cuéntame qué hiciste, con nombres y cantidades.',
+  noPudeEscuchar: 'No pude escuchar bien tu audio 😓 ¿Me lo mandas otra vez o me lo escribes?',
+  tocaOEscribe: 'No la encontré en la lista 🙈 Toca una opción o escríbela tal como sale.',
   soloAudiosFotosTexto: 'Por ahora entiendo audios, fotos y mensajes escritos 🙂',
   algoFallo: 'Uy, algo me falló de mi lado 😓 No se guardó nada. Intentemos otra vez.',
   seMePerdio: 'Se me perdió el hilo 😅 Empecemos de nuevo.',

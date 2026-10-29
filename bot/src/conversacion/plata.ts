@@ -5,6 +5,7 @@ import { botones, CATEGORIAS, textos } from '../textos.js'
 import type { Accion, Estado, Fila, TipoPlata } from '../tipos.js'
 import { puedeManejarPlata, puedeVerPlata, type Ctx } from './ctx.js'
 import { guardarYPreguntar, preguntarAlgoMas } from './confirmar.js'
+import { esNo, esSi, filaPorTexto } from './elegir.js'
 import { entenderSeguro } from './medios.js'
 import { parsearMonto } from './numeros.js'
 
@@ -54,6 +55,62 @@ export async function elegirCategoria(c: Ctx, e: PasoPlata<'plata_categoria'>, i
     return { paso: 'plata_clinica', tipo: e.tipo, monto: e.monto, categoria: abono ? 'veterinaria' : categoria, abono }
   }
   return pedirFoto(c, { tipo: e.tipo, monto: e.monto, categoria, abono: false, clinicaId: null })
+}
+
+/** Palabras con que la gente dice cada categoría, además del título de la lista */
+const PALABRAS_CATEGORIA: Record<string, string[]> = {
+  'cat:donacion': ['donacion', 'donaron', 'donativo', 'regalaron'],
+  'cat:padrino': ['padrino', 'padrina', 'apadrin'],
+  'cat:rifa': ['rifa', 'evento', 'bazar', 'venta'],
+  'cat:otro': ['otra cosa', 'otro'],
+  'cat:comida': ['comida', 'bulto', 'costal', 'concentrado', 'purina'],
+  'cat:veterinaria': ['veterinari', 'medicina', 'vacuna', 'consulta', 'cirugia'],
+  'cat:abono': ['abono', 'abonar', 'abone', 'deuda'],
+  'cat:limpieza': ['limpieza', 'jabon', 'cloro', 'desinfectante'],
+  'cat:servicios': ['servicio', 'agua', 'luz', 'internet', 'gas', 'arriendo'],
+  'cat:transporte': ['transporte', 'taxi', 'gasolina', 'bus', 'pasaje', 'uber'],
+}
+
+/** La categoría escrita o dicha. Si no se entiende, se vuelve a mostrar la lista sin perder el monto. */
+export async function categoriaEscrita(c: Ctx, e: PasoPlata<'plata_categoria'>, texto: string): Promise<Estado> {
+  const filas = CATEGORIAS[e.tipo]
+  const fila = filaPorTexto(texto, filas, PALABRAS_CATEGORIA)
+  if (fila) return elegirCategoria(c, e, fila.id)
+  await c.enviar({ tipo: 'lista', texto: `${textos.tocaOEscribe}\n\n${textos.plataCategoria(e.tipo, e.monto)}`, boton: textos.plataCategoriaBoton, filas })
+  return e
+}
+
+/** La clínica escrita o dicha ("San Roque"), o null si no nombra ninguna */
+async function clinicaPorTexto(c: Ctx, texto: string): Promise<string | null> {
+  const d = await c.datos()
+  return filaPorTexto(texto, filasClinicas(c, d, 'k'))?.id.slice(2) ?? null
+}
+
+export async function clinicaPlataEscrita(c: Ctx, e: PasoPlata<'plata_clinica'>, texto: string): Promise<Estado | null> {
+  const id = await clinicaPorTexto(c, texto)
+  if (id) return elegirClinicaPlata(c, e, `pk:${id}`)
+  if (!e.abono && esNo(texto)) return elegirClinicaPlata(c, e, 'pk:ninguna')
+  return null
+}
+
+export async function clinicaFacturaEscrita(c: Ctx, e: PasoPlata<'factura_clinica'>, texto: string): Promise<Estado | null> {
+  const id = await clinicaPorTexto(c, texto)
+  return id ? elegirClinicaFactura(c, e, `fk:${id}`) : null
+}
+
+/** "Sin foto" / "ya te la mando" escrito o dicho, o null si no es ninguna de las dos */
+export function fotoEscrita(c: Ctx, e: PasoPlata<'plata_foto'>, texto: string): Promise<Estado> | null {
+  if (esNo(texto)) return guardarPlata(c, e, null)
+  if (esSi(texto) || /\b(foto|mando|envio)\b/.test(texto.toLowerCase())) return pedirQueMandeFoto(c, e)
+  return null
+}
+
+/** En vez de la foto de la factura, escribió o dijo el valor ("320 mil") o que no tiene foto */
+export function facturaSinFotoEscrita(c: Ctx, texto: string): Promise<Estado> | null {
+  const monto = parsearMonto(texto)
+  if (monto) return seguirFactura(c, { soporte: null, monto, clinicaId: null, concepto: '' })
+  if (esNo(texto)) return facturaSinFoto(c)
+  return null
 }
 
 /** Botón 'pk:<clinica|ninguna>' */

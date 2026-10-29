@@ -40,6 +40,7 @@ function contexto(datos: DatosAlbergue, ahora: Date): string {
   const clinicas = datos.clinicas.map((c) => `${c.id}: ${c.nombre}`)
   const hora = ahora.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Bogota' })
   return [
+    'DATOS DEL REFUGIO (solo de referencia para los ids; NO es lo que dijo la persona y nunca va en la transcripción):',
     `HORA ACTUAL: ${hora}`,
     `ANIMALES (id: nombre):\n${animales.join('\n')}`,
     `DOSIS DE HOY:\n${dosis.join('\n') || '(ninguna)'}`,

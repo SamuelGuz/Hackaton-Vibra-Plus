@@ -81,6 +81,8 @@ export type Estado =
   | { paso: 'animal' }
   | { paso: 'animal_nombre' }
   | { paso: 'animal_nota'; animalId: string }
+  /** Se preguntó "¿Está bien?": se puede responder tocando, escribiendo "sí" o en audio */
+  | { paso: 'confirmar'; registroId: string }
 
 // ---------- IA ----------
 

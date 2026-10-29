@@ -19,7 +19,7 @@ export interface PorGuardar {
   avisos?: string[]
 }
 
-/** Guarda de una vez (por confirmar) y pregunta. La conversación queda libre: los botones llevan el id. */
+/** Guarda de una vez (por confirmar) y pregunta "¿Está bien?". Se responde tocando, escribiendo o en audio. */
 export async function guardarYPreguntar(c: Ctx, g: PorGuardar): Promise<Estado> {
   const d = await c.datos()
   const id = await c.deps.repo.crearRegistro({
@@ -45,7 +45,8 @@ export async function guardarYPreguntar(c: Ctx, g: PorGuardar): Promise<Estado> 
     texto: partes.join('\n\n'),
     botones: [botones.si(id), botones.corregir(id), botones.borrar(id)],
   })
-  return { paso: 'menu' }
+  // Los botones llevan el id, así que siguen sirviendo después; el paso es para responder escribiendo o en audio
+  return { paso: 'confirmar', registroId: String(id) }
 }
 
 export async function preguntarAlgoMas(c: Ctx, texto: string): Promise<Estado> {

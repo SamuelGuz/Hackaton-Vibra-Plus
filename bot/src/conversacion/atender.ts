@@ -1,35 +1,40 @@
 // Punto de entrada de la conversación: decide qué hacer con cada mensaje según el paso en que va la persona.
 //
 // Casi todos los botones llevan en su id lo que necesitan (d:<tratamiento>:<hora>, si:<registro>…),
-// así un botón viejo del chat sigue sirviendo. El paso guardado solo importa para lo que se escribe,
-// se dice en audio o se manda en foto.
+// así un botón viejo del chat sigue sirviendo. El paso guardado sirve para lo que se escribe,
+// se dice en audio o se manda en foto: en cada pregunta se puede tocar, escribir o hablar.
 
 import { textos } from '../textos.js'
-import type { Accion, Deps, Entrada, Estado, Registro, Usuario } from '../tipos.js'
-import { elegirAnimal, empezarAnimal, guardarNota, nombreEscrito } from './animal.js'
+import type { Accion, Deps, Entendido, Entrada, Estado, Registro, Usuario } from '../tipos.js'
+import { elegirAnimal, guardarNota, nombreEscrito } from './animal.js'
 import { cantidadEscrita, elegirCantidad, elegirEspecie, empezarComida, especieDeTexto } from './comida.js'
 import { responder, type Respuesta } from './confirmar.js'
 import { crearCtx, type Ctx } from './ctx.js'
-import { elegirInforme, enviarInforme, informePedido } from './informe.js'
+import { respuestaAConfirmar } from './elegir.js'
+import { enviarInforme, informePedido } from './informe.js'
+import { opcionDelMenu } from './intencion.js'
 import { libreMedia, libreTexto, registrarEntendido } from './libre.js'
-import { elegirDosis, empezarMedicina, responderDuplicada } from './medicina.js'
+import { dosisEscrita, duplicadaEscrita, elegirDosis, empezarMedicina, responderDuplicada } from './medicina.js'
 import { bajarYGuardar, entenderSeguro } from './medios.js'
-import { abrirPanel, mostrarMenu } from './menu.js'
-import { parsearMonto, sinTildes } from './numeros.js'
+import { mostrarMenu } from './menu.js'
+import { sinTildes } from './numeros.js'
 import {
+  categoriaEscrita,
+  clinicaFacturaEscrita,
+  clinicaPlataEscrita,
   elegirCategoria,
   elegirClinicaFactura,
   elegirClinicaPlata,
-  empezarFactura,
   empezarPlata,
   facturaConFoto,
   facturaMontoEscrito,
   facturaSinFoto,
+  facturaSinFotoEscrita,
+  fotoEscrita,
   guardarPlata,
   montoEscrito,
   pedirQueMandeFoto,
 } from './plata.js'
-import { verHoy } from './resumen.js'
 
 /** Si nadie responde en este tiempo, la conversación vuelve al inicio sin decir nada */
 export const MINUTOS_PARA_OLVIDAR = 30
@@ -80,32 +85,6 @@ function despachar(c: Ctx, estado: Estado, entrada: Entrada): Promise<Estado> {
   }
 }
 
-function opcionDelMenu(c: Ctx, opcion: string): Promise<Estado> {
-  switch (opcion) {
-    case 'med':
-      return empezarMedicina(c)
-    case 'bulto':
-      return empezarComida(c, false)
-    case 'llego':
-      return empezarComida(c, true)
-    case 'entro':
-      return empezarPlata(c, 'ingreso')
-    case 'salio':
-      return empezarPlata(c, 'gasto')
-    case 'factura':
-      return empezarFactura(c)
-    case 'animal':
-      return empezarAnimal(c)
-    case 'hoy':
-      return verHoy(c)
-    case 'panel':
-      return abrirPanel(c)
-    case 'informe':
-      return elegirInforme(c)
-    default:
-      return mostrarMenu(c)
-  }
-}
 
 /** Después de "Corregir": se abre el camino guiado de lo que estaba mal, con lo que ya se sabe. */
 async function empezarCorreccion(c: Ctx, a: Accion, r: Registro): Promise<Estado> {
@@ -168,56 +147,109 @@ async function boton(c: Ctx, estado: Estado, id: string): Promise<Estado> {
   return mostrarMenu(c, textos.seMePerdio)
 }
 
-function texto(c: Ctx, estado: Estado, t: string): Promise<Estado> {
+/** Lo que acompaña a un audio: lo que la IA sacó y dónde quedó guardado */
+interface DelAudio {
+  e: Entendido
+  mediaUrl: string
+}
+
+/** El monto que la IA sacó del audio, o el texto para que se lea de ahí */
+function montoDicho(t: string, a?: DelAudio): string {
+  const mov = a?.e.acciones.find((x) => x.tipo === 'movimiento' || x.tipo === 'deuda')
+  const monto = mov?.tipo === 'movimiento' ? mov.movimiento.monto : mov?.tipo === 'deuda' ? mov.monto : null
+  return monto ? String(monto) : t
+}
+
+/**
+ * Lo escrito o dicho como respuesta a la pregunta del paso en que va la persona.
+ * Null si no la responde: entonces se toma como un registro libre.
+ */
+async function respuestaDelPaso(c: Ctx, estado: Estado, t: string, a?: DelAudio): Promise<Estado | null> {
   switch (estado.paso) {
+    case 'menu':
+      return null
+    case 'confirmar': {
+      const r = respuestaAConfirmar(t)
+      return r ? responder(c, r, estado.registroId, empezarCorreccion) : null
+    }
+    case 'medicina':
+      return dosisEscrita(c, t)
+    case 'medicina_duplicada':
+      return duplicadaEscrita(c, t)
     case 'comida_especie': {
       const especie = especieDeTexto(t)
-      return especie ? elegirEspecie(c, estado.llegada, especie) : libreTexto(c, t)
+      return especie ? elegirEspecie(c, estado.llegada, especie) : null
     }
-    case 'comida_cantidad':
-      return cantidadEscrita(c, estado.especie, t)
+    case 'comida_cantidad': {
+      const inv = a?.e.acciones.find((x) => x.tipo === 'inventario')
+      return cantidadEscrita(c, estado.especie, inv?.tipo === 'inventario' ? String(Math.abs(inv.cambio)) : t)
+    }
     case 'plata_monto':
-      return montoEscrito(c, estado, t)
+      return montoEscrito(c, estado, montoDicho(t, a))
+    case 'plata_categoria':
+      return categoriaEscrita(c, estado, t)
+    case 'plata_clinica':
+      return clinicaPlataEscrita(c, estado, t)
+    case 'plata_foto':
+      return fotoEscrita(c, estado, t)
+    case 'factura_foto':
+      return facturaSinFotoEscrita(c, montoDicho(t, a))
     case 'factura_monto':
-      return facturaMontoEscrito(c, estado, t)
+      return facturaMontoEscrito(c, estado, montoDicho(t, a))
+    case 'factura_clinica':
+      return clinicaFacturaEscrita(c, estado, t)
     case 'animal':
     case 'animal_nombre':
       return nombreEscrito(c, t)
     case 'animal_nota':
-      return guardarNota(c, estado.animalId, t)
-    case 'plata_foto':
-      return /\b(no|sin)\b/i.test(t) ? guardarPlata(c, estado, null) : libreTexto(c, t)
-    default: {
-      const informe = informePedido(t)
-      return informe ? enviarInforme(c, informe) : libreTexto(c, t)
-    }
+      return a
+        ? guardarNota(c, estado.animalId, t, { otras: a.e.acciones, mediaUrl: a.mediaUrl, audio: true })
+        : guardarNota(c, estado.animalId, t)
   }
 }
 
-/** En los pasos que esperan un número o una nota, el audio responde esa pregunta. Si no, es un registro libre. */
+async function texto(c: Ctx, estado: Estado, t: string): Promise<Estado> {
+  const respuesta = await respuestaDelPaso(c, estado, t)
+  if (respuesta) return respuesta
+  const informe = informePedido(t)
+  return informe ? enviarInforme(c, informe) : libreTexto(c, t)
+}
+
+/** El primer mensaje que se mande empieza con "🎧 Escuché: «…»", para que la persona vea qué se entendió */
+function conEscuche(c: Ctx, dicho: string): Ctx {
+  let primero = true
+  return {
+    ...c,
+    enviar(s) {
+      if (!primero || !('texto' in s) || typeof s.texto !== 'string') return c.enviar(s)
+      primero = false
+      return c.enviar({ ...s, texto: `${textos.escuche(dicho)}\n\n${s.texto}` })
+    },
+  }
+}
+
+/**
+ * Un audio es como escribir lo que dice: primero se mira si responde la pregunta del paso.
+ * Si no, se usa lo que la IA anotó. En la lista de dosis gana lo de la IA, que ya trae animal, medicina y hora.
+ */
 async function audio(c: Ctx, estado: Estado, mediaId: string): Promise<Estado> {
   const m = await bajarYGuardar(c, mediaId)
   const e = await entenderSeguro(c, { media: { datos: m.datos, mime: m.mime }, pista: 'libre' })
-  const dicho = e?.transcripcion?.trim() ?? ''
-
-  switch (estado.paso) {
-    case 'comida_cantidad': {
-      const inv = e?.acciones.find((a) => a.tipo === 'inventario')
-      return cantidadEscrita(c, estado.especie, inv?.tipo === 'inventario' ? String(Math.abs(inv.cambio)) : dicho)
-    }
-    case 'plata_monto':
-    case 'factura_monto': {
-      const mov = e?.acciones.find((a) => a.tipo === 'movimiento' || a.tipo === 'deuda')
-      const monto = mov?.tipo === 'movimiento' ? mov.movimiento.monto : mov?.tipo === 'deuda' ? mov.monto : parsearMonto(dicho)
-      const valor = monto ? String(monto) : dicho
-      return estado.paso === 'plata_monto' ? montoEscrito(c, estado, valor) : facturaMontoEscrito(c, estado, valor)
-    }
-    case 'animal_nota':
-      if (!dicho) return mostrarMenu(c, textos.noEntendi)
-      return guardarNota(c, estado.animalId, dicho, { otras: e?.acciones, mediaUrl: m.url, audio: true })
-    default:
-      return registrarEntendido(c, e, { tipoEntrada: 'audio', mediaUrl: m.url })
+  if (!e) {
+    if (estado.paso === 'menu' || estado.paso === 'confirmar') return mostrarMenu(c, textos.noPudeEscuchar)
+    // A mitad de una pregunta no se pierde lo que se llevaba
+    await c.enviar({ tipo: 'texto', texto: textos.noPudeEscuchar })
+    return estado
   }
+  const dicho = e.transcripcion.trim()
+  if (PARA_VOLVER.has(normal(dicho))) return mostrarMenu(c)
+
+  const ganaLaIa = estado.paso === 'medicina' && e.acciones.length > 0
+  if (dicho && !ganaLaIa) {
+    const respuesta = await respuestaDelPaso(conEscuche(c, dicho), estado, dicho, { e, mediaUrl: m.url })
+    if (respuesta) return respuesta
+  }
+  return registrarEntendido(c, e, { tipoEntrada: 'audio', mediaUrl: m.url })
 }
 
 async function imagen(c: Ctx, estado: Estado, mediaId: string, pie?: string): Promise<Estado> {

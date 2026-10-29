@@ -1,0 +1,9 @@
+node_modules/
+dist/
+artifacts/
+fuentes/
+.claude/
+.env
+.env.*
+!.env.example
+*.local

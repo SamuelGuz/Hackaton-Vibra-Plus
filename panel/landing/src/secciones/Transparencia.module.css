@@ -1,0 +1,86 @@
+/* Chapter 6: a superficie panel on bone; three dogs sit on its top edge. */
+
+.seccion {
+  background: var(--color-fondo);
+}
+
+.panel {
+  position: relative;
+  /* room above the panel for the dogs that sit on its edge */
+  margin-top: max(var(--esp-8), 7rem);
+  padding: var(--esp-7) var(--esp-5);
+  border-radius: var(--radio-xl);
+  background: var(--color-superficie);
+}
+
+.recorte {
+  position: absolute;
+  bottom: 100%;
+  translate: 0 18%;
+  inset-inline-end: var(--esp-5);
+  width: min(60vw, 22rem);
+  pointer-events: none;
+  z-index: var(--z-recorte);
+  filter: drop-shadow(var(--sombra-recorte));
+}
+
+.rejilla {
+  position: relative;
+  z-index: var(--z-contenido);
+  display: grid;
+  gap: var(--esp-7);
+}
+
+.compromisos {
+  display: grid;
+  gap: var(--esp-3);
+  align-content: center;
+}
+
+.compromiso {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--esp-4);
+  align-items: center;
+  padding: var(--esp-4) var(--esp-5);
+  border-radius: calc(var(--radio-xl) - var(--esp-4));
+  background: var(--color-crema);
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-medio);
+  line-height: 1.35;
+}
+
+.check {
+  color: var(--color-exito);
+}
+
+@media (min-width: 37.5em) {
+  .panel {
+    padding: var(--esp-8) var(--esp-7);
+  }
+}
+
+@media (min-width: 56.25em) {
+  .panel {
+    margin-top: max(var(--esp-9), 12rem);
+    padding: var(--esp-9) var(--esp-8);
+  }
+
+  .recorte {
+    inset-inline-end: var(--esp-8);
+  }
+
+  .rejilla {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--hueco);
+    align-items: center;
+  }
+
+  .texto {
+    grid-column: 1 / span 6;
+  }
+
+  .compromisos {
+    grid-column: 8 / span 5;
+  }
+}

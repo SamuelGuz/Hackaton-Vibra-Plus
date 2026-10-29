@@ -1,0 +1,340 @@
+/* Hero 2 — "Rescate real". Tokens only (src/estilos/tokens.css), rules in docs/DESIGN.md. */
+
+.hero {
+  position: relative;
+  min-height: calc(100svh - var(--alto-nav));
+  padding-block: var(--esp-6) var(--esp-8);
+  background-color: var(--color-fondo);
+  color: var(--color-tinta);
+}
+
+.rejilla {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--esp-6);
+}
+
+/* ---------------- Headline: the mistake, crossed out, then the truth ---------------- */
+
+.titulo {
+  margin: 0;
+}
+
+.error {
+  display: block;
+  max-width: 24ch;
+  margin-bottom: var(--esp-3);
+  font-size: var(--texto-xl);
+  font-weight: var(--peso-display);
+  line-height: var(--interlineado-ajustado);
+  letter-spacing: -0.01em;
+  text-decoration-line: line-through;
+  text-decoration-thickness: 0.12em;
+  text-decoration-color: var(--color-acento-fuerte);
+  animation: tachar var(--dur-revelar) var(--ease-expo) 300ms both;
+}
+
+@keyframes tachar {
+  from {
+    text-decoration-color: transparent;
+  }
+  to {
+    text-decoration-color: var(--color-acento-fuerte);
+  }
+}
+
+.verdad {
+  display: block;
+  max-width: 14ch;
+  font-size: min(var(--texto-display), calc(var(--texto-3xl) * 1.35));
+  font-weight: var(--peso-max);
+  font-stretch: 85%;
+  line-height: var(--interlineado-display);
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+}
+
+/* ---------------- Lead, actions, what the smallest gift buys ---------------- */
+
+.cuerpo {
+  margin-top: var(--esp-5);
+}
+
+.lead {
+  max-width: 44ch;
+  font-size: var(--texto-lg);
+  line-height: 1.45;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-3) var(--esp-6);
+  margin-top: var(--esp-6);
+}
+
+.enlace {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  font-weight: var(--peso-semi);
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+  transition: text-decoration-thickness var(--dur-hover) var(--ease-salida);
+}
+
+.enlace:hover {
+  text-decoration-thickness: 0.14em;
+}
+
+.nota {
+  margin-top: var(--esp-4);
+  font-size: var(--texto-sm);
+  line-height: 1.4;
+  color: var(--color-tinta-suave);
+}
+
+.nota strong {
+  color: var(--color-tinta);
+}
+
+/* ---------------- Photo ---------------- */
+
+.figura {
+  margin: 0;
+}
+
+.marco {
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radio-xl);
+  background-color: var(--color-superficie);
+}
+
+.foto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 55% 30%;
+}
+
+.pie {
+  margin-top: var(--esp-3);
+  font-size: var(--texto-xs);
+  line-height: 1.4;
+  color: var(--color-tinta-suave);
+}
+
+.lugar {
+  display: block;
+  margin-top: var(--esp-1);
+  font-weight: var(--peso-medio);
+  color: var(--color-tinta);
+}
+
+.porConfirmar {
+  display: inline-block;
+  padding-inline: var(--esp-2);
+  border-radius: var(--radio-sm);
+  background-color: var(--color-superficie);
+  font-weight: var(--peso-semi);
+  color: var(--color-tinta-suave);
+  white-space: nowrap;
+}
+
+/* ---------------- The notebook: mistakes, her day, the new plan ---------------- */
+
+.cuaderno {
+  padding: var(--esp-5);
+  border-radius: var(--radio-lg);
+  background-color: var(--color-superficie);
+}
+
+.cuadernoTitulo {
+  max-width: 20ch;
+  font-size: var(--texto-xl);
+  line-height: var(--interlineado-ajustado);
+}
+
+.pestanas {
+  display: flex;
+  gap: var(--esp-1);
+  width: 100%;
+  margin-top: var(--esp-4);
+  padding: var(--esp-1);
+  border-radius: var(--radio-pill);
+  background-color: var(--color-crema);
+}
+
+.pestana {
+  flex: 1 1 0;
+  min-height: 3rem;
+  padding-inline: var(--esp-3);
+  border-radius: var(--radio-pill);
+  background-color: transparent;
+  color: var(--color-tinta);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-semi);
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-hover) var(--ease-salida),
+    color var(--dur-hover) var(--ease-salida);
+}
+
+.pestana:hover {
+  background-color: var(--color-superficie);
+}
+
+.pestana[aria-selected='true'] {
+  background-color: var(--color-tinta);
+  color: var(--color-crema);
+}
+
+.paneles {
+  display: grid;
+  margin-top: var(--esp-5);
+}
+
+/* Panels share one grid cell, so switching never moves the layout. */
+.panel {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity var(--dur-ui) var(--ease-salida),
+    visibility 0s linear var(--dur-ui);
+}
+
+.panel[data-activo='true'] {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.panelTitulo {
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-display);
+}
+
+.lista {
+  display: grid;
+  gap: var(--esp-4);
+  margin: var(--esp-4) 0 0;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--esp-3);
+  align-items: start;
+  max-width: var(--medida-texto);
+  line-height: 1.45;
+}
+
+.panel[data-activo='true'] .item {
+  animation: entrar var(--dur-revelar) var(--ease-expo) both;
+  animation-delay: calc(var(--n, 0) * var(--escalonado-item));
+}
+
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--dist-revelar) / 2));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.item svg {
+  flex-shrink: 0;
+  margin-top: 0.15em;
+}
+
+.icono-x {
+  color: var(--color-acento-fuerte);
+}
+
+.icono-check {
+  color: var(--color-exito);
+}
+
+.icono-punto {
+  color: var(--color-tinta-suave);
+}
+
+.cuaderno > .enlace {
+  margin-top: var(--esp-5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .error,
+  .panel[data-activo='true'] .item {
+    animation: none;
+  }
+}
+
+/* ---------------- sm: 600px ---------------- */
+
+@media (min-width: 37.5em) {
+  .pestanas {
+    width: fit-content;
+  }
+
+  .pestana {
+    flex: 0 0 auto;
+    padding-inline: var(--esp-5);
+  }
+
+  .cuaderno {
+    padding: var(--esp-6);
+  }
+}
+
+/* ---------------- md: 900px — text left, photo right across both rows ---------------- */
+
+@media (min-width: 56.25em) {
+  .hero {
+    padding-block: var(--esp-7) var(--esp-9);
+  }
+
+  .rejilla {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--hueco);
+    row-gap: var(--esp-7);
+    align-items: start;
+  }
+
+  .texto {
+    grid-column: 1 / 8;
+    grid-row: 1;
+  }
+
+  .cuaderno {
+    grid-column: 1 / 8;
+    grid-row: 2;
+  }
+
+  .figura {
+    display: flex;
+    flex-direction: column;
+    grid-column: 8 / 13;
+    grid-row: 1 / 3;
+    align-self: stretch;
+  }
+
+  .marco {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 28rem;
+    aspect-ratio: auto;
+  }
+
+  .foto {
+    position: absolute;
+    inset: 0;
+  }
+}

@@ -1,0 +1,138 @@
+/* Footer on the ink field: a designed close, the name returning at full width. */
+
+.pie {
+  padding-top: var(--esp-9);
+  background: var(--color-tinta);
+  color: var(--color-crema);
+  overflow: clip;
+}
+
+.rejilla {
+  display: grid;
+  gap: var(--esp-7);
+}
+
+.lema {
+  max-width: 22ch;
+  font-family: var(--fuente-display);
+  font-size: var(--texto-2xl);
+  font-weight: var(--peso-display);
+  line-height: 1.1;
+  letter-spacing: var(--tracking-titulo);
+  text-wrap: balance;
+}
+
+.columna {
+  display: grid;
+  align-content: start;
+  gap: var(--esp-4);
+}
+
+.titulo {
+  font-family: var(--fuente-texto);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-semi);
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
+.lista {
+  display: grid;
+  gap: var(--esp-1);
+}
+
+.enlace {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  font-weight: var(--peso-medio);
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+  transition: text-decoration-thickness var(--dur-hover) var(--ease-salida);
+}
+
+.enlace:hover {
+  text-decoration-thickness: 0.14em;
+}
+
+.datos {
+  display: grid;
+  gap: var(--esp-4);
+}
+
+.datos dt {
+  font-size: var(--texto-sm);
+}
+
+.datos dd {
+  margin: 0;
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-semi);
+}
+
+.datos dd.pendiente,
+.pendiente {
+  font-size: var(--texto-base);
+  font-weight: var(--peso-medio);
+  opacity: 0.8;
+}
+
+.notas p {
+  font-size: var(--texto-sm);
+  line-height: 1.5;
+}
+
+.cierre {
+  margin-top: var(--esp-9);
+  padding-bottom: var(--esp-6);
+}
+
+.nombre {
+  max-width: none;
+  font-family: var(--fuente-display);
+  font-size: clamp(4.25rem, 21vw, 19rem);
+  font-weight: 600;
+  font-stretch: 85%;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.legal {
+  margin-top: var(--esp-4);
+  font-size: var(--texto-xs);
+}
+
+@media (min-width: 37.5em) {
+  .rejilla {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lema {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 56.25em) {
+  .rejilla {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--hueco);
+  }
+
+  .lema {
+    grid-column: 1 / span 5;
+  }
+
+  .colEnlaces {
+    grid-column: 7 / span 2;
+  }
+
+  .colContacto {
+    grid-column: 9 / span 4;
+  }
+
+  .notas {
+    grid-column: 7 / span 6;
+  }
+}

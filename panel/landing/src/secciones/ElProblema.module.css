@@ -1,0 +1,76 @@
+/* Chapter 1 on the bone ground: the argument left, the day in figures right. */
+
+.seccion {
+  background: var(--color-fondo);
+}
+
+.rejilla {
+  display: grid;
+  gap: var(--esp-8);
+}
+
+.texto {
+  position: relative;
+  z-index: var(--z-contenido);
+}
+
+.cifras {
+  display: grid;
+  gap: var(--esp-7);
+}
+
+.cifra {
+  display: grid;
+  gap: var(--esp-2);
+}
+
+.figura {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 var(--esp-2);
+  font-family: var(--fuente-display);
+  font-size: var(--texto-3xl);
+  font-weight: var(--peso-max);
+  line-height: 1;
+  letter-spacing: var(--tracking-titulo);
+  font-stretch: 85%;
+}
+
+.unidad {
+  font-size: var(--texto-xl);
+  font-weight: var(--peso-display);
+  letter-spacing: -0.01em;
+}
+
+.etiqueta {
+  max-width: 34ch;
+  font-size: var(--texto-base);
+  font-weight: var(--peso-medio);
+  line-height: 1.4;
+}
+
+@media (min-width: 37.5em) {
+  .cifras {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--hueco);
+  }
+}
+
+@media (min-width: 56.25em) {
+  .rejilla {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--hueco);
+    align-items: end;
+  }
+
+  .texto {
+    grid-column: 1 / span 6;
+  }
+
+  .cifras {
+    grid-column: 8 / span 5;
+    grid-template-columns: 1fr;
+    gap: var(--esp-7);
+  }
+}

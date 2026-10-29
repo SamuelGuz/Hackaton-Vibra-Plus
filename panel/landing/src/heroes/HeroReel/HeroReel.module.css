@@ -1,0 +1,55 @@
+.hero {
+  --u: min(calc(100vw / 1440), calc(100svh / 1080));
+  overflow: clip;
+  background: var(--color-fondo);
+  min-height: calc(100svh - var(--alto-nav));
+}
+.frame { position: relative; width: calc(1440 * var(--u)); height: calc(1080 * var(--u) - var(--alto-nav)); min-height: calc(930 * var(--u)); margin-inline: auto; }
+.badge { position: absolute; top: calc(43 * var(--u)); left: 50%; translate: -50% 0; white-space: nowrap; border-radius: var(--radio-pill); background: var(--color-superficie); color: var(--color-verde); padding: calc(8 * var(--u)) calc(18 * var(--u)); font-size: max(0.8125rem, calc(16.6 * var(--u))); font-weight: 500; animation: appear 600ms var(--ease-expo) both; }
+.title { position: absolute; inset: calc(104 * var(--u)) 0 auto; text-align: center; font-family: var(--fuente-display); font-size: calc(88 * var(--u)); font-weight: 700; line-height: calc(92 / 88); letter-spacing: -0.035em; }
+.title span { display: block; animation: rise 800ms var(--ease-expo) both; }
+.title span + span { letter-spacing: -0.022em; animation-delay: 70ms; }
+.lead { position: absolute; top: calc(322 * var(--u)); left: 50%; translate: -50% 0; width: calc(520 * var(--u)); font-size: calc(20.8 * var(--u)); line-height: calc(32 / 20.8); text-align: center; color: var(--color-tinta-suave); animation: appear 800ms 120ms var(--ease-expo) both; }
+.carousel { position: absolute; top: calc(450 * var(--u)); left: 50%; translate: -50% 0; width: 100%; height: calc(370 * var(--u)); touch-action: pan-y; cursor: grab; user-select: none; overflow: clip; animation: rise 900ms 160ms var(--ease-expo) both; }
+.carousel[data-dragging='true'] { cursor: grabbing; }
+.card { position: absolute; top: 0; left: 0; background: var(--color-superficie); overflow: hidden; will-change: transform; }
+.card img, .card video { display: block; width: 100%; height: 100%; max-width: none; object-fit: cover; pointer-events: none; }
+.card:has(video) { background: var(--fondo-hero); }
+.card video { object-fit: contain; }
+.videoMark { position: absolute; bottom: var(--esp-3); left: var(--esp-3); display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: var(--radio-pill); color: var(--color-verde); background: var(--color-crema); }
+.videoMark svg { width: 1rem; fill: currentColor; }
+.doodle { position: absolute; top: calc(305 * var(--u)); left: calc(248 * var(--u)); width: calc(58 * var(--u)); color: var(--color-verde); transform: rotate(-8deg); }
+.doodle svg, .note svg, .actionNote svg { width: 100%; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.note { position: absolute; top: calc(240 * var(--u)); right: calc(75 * var(--u)); width: calc(155 * var(--u)); color: var(--color-verde); font: 600 calc(32 * var(--u)) / 0.95 var(--fuente-nota); transform: rotate(14deg); }
+.note svg { margin-top: var(--esp-3); height: calc(120 * var(--u)); }
+.note path, .doodle path, .actionNote path { stroke-dasharray: 300; stroke-dashoffset: 300; animation: draw 1100ms 250ms var(--ease-expo) forwards; }
+.action { position: absolute; top: calc(829 * var(--u)); left: 50%; translate: -50% 0; }
+.buttonRing { padding: var(--esp-2); border: 1px dashed var(--color-verde); border-radius: var(--radio-pill); }
+.buttonRing a { min-height: calc(58 * var(--u)); padding-inline: calc(30 * var(--u)); font-size: max(0.875rem, calc(17 * var(--u))); font-weight: 500; white-space: nowrap; }
+.actionNote { position: absolute; top: calc(20 * var(--u)); right: calc(100% + 28 * var(--u)); width: calc(114 * var(--u)); color: var(--color-verde); font: 600 calc(30 * var(--u)) / 0.9 var(--fuente-nota); transform: rotate(15deg); }
+.actionNote svg { position: absolute; top: calc(20 * var(--u)); left: calc(90 * var(--u)); width: calc(65 * var(--u)); transform: rotate(-20deg); }
+.meta { position: absolute; top: calc(947 * var(--u)); inset-inline: 0; display: flex; justify-content: center; align-items: center; gap: var(--esp-5); color: var(--color-tinta-suave); font-size: var(--texto-xs); }
+.meta button { display: inline-flex; align-items: center; gap: var(--esp-2); min-height: 3rem; font-size: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+@keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+@keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@media (max-width: 51.25em) {
+  .hero { min-height: auto; }
+  .frame { width: 100%; height: auto; min-height: 0; padding-block: var(--esp-6) var(--esp-8); }
+  .badge, .title, .lead, .carousel, .action, .meta { position: relative; top: auto; left: auto; right: auto; translate: none; }
+  .badge { width: max-content; max-width: calc(100% - 2 * var(--margen)); margin-inline: auto; padding: var(--esp-2) var(--esp-4); font-size: var(--texto-xs); white-space: normal; text-align: center; }
+  .title { margin: var(--esp-5) var(--margen) 0; font-size: clamp(38px, 6.8vw, 56px); line-height: 1.04; }
+  .lead { width: auto; max-width: 34ch; margin: var(--esp-5) auto 0; padding-inline: var(--esp-5); font-size: var(--texto-base); line-height: 1.6; }
+  .carousel { width: 100%; height: clamp(200px, 45vw, 300px); margin-top: var(--esp-6); }
+  .doodle, .note { display: none; }
+  .action { width: max-content; margin: var(--esp-6) auto 0; }
+  .buttonRing a { min-height: 3rem; padding-inline: var(--esp-5); font-size: var(--texto-base); }
+  .actionNote { top: 0; right: calc(100% - var(--esp-3)); width: 66px; font-size: 23px; }
+  .actionNote svg { width: 44px; top: 30px; left: 36px; }
+  .meta { flex-direction: column; gap: 0; margin: var(--esp-5) var(--margen) 0; text-align: center; font-size: 0.75rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .frame *, .frame *::before { animation: none; }
+  .note path, .doodle path, .actionNote path { stroke-dashoffset: 0; }
+  .card { will-change: auto; }
+}

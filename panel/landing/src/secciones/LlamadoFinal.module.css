@@ -1,0 +1,75 @@
+/* Chapter 7: the closing statement, large, with the dogs looking up. */
+
+.seccion {
+  background: var(--color-fondo);
+}
+
+.rejilla {
+  display: grid;
+  gap: var(--esp-4) var(--hueco);
+}
+
+.figura {
+  margin-top: var(--esp-6);
+}
+
+.texto {
+  position: relative;
+  z-index: var(--z-contenido);
+}
+
+.titulo {
+  position: relative;
+  z-index: var(--z-contenido);
+  max-width: 14ch;
+  font-size: var(--texto-display);
+  font-weight: var(--peso-max);
+  line-height: var(--interlineado-display);
+  letter-spacing: var(--tracking-display);
+  font-stretch: 90%;
+}
+
+.figura {
+  margin-inline: 0;
+  margin-bottom: 0;
+}
+
+.marco {
+  overflow: hidden;
+  border-radius: var(--radio-xl);
+  background: var(--color-crema);
+  aspect-ratio: 4 / 3;
+}
+
+/* Taller than the frame so the ±24px parallax never shows an edge. */
+.desplazable {
+  height: calc(100% + 3rem);
+  margin-top: -1.5rem;
+}
+
+.foto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 56.25em) {
+  .rejilla {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--hueco);
+    align-items: center;
+  }
+
+  .titulo {
+    grid-column: 1 / -1;
+    max-width: 16ch;
+  }
+
+  .texto {
+    grid-column: 1 / span 5;
+  }
+
+  .figura {
+    grid-column: 7 / span 6;
+  }
+}

@@ -1,0 +1,332 @@
+/* Chapter 4: the donation field on verde monte (paper text 10.7:1). */
+
+.seccion {
+  background: var(--color-secundario);
+  color: var(--color-secundario-tinta);
+}
+
+.cabecera {
+  position: relative;
+  z-index: var(--z-contenido);
+}
+
+/* ---------- Tier choice (real radios) ---------- */
+
+.opciones {
+  margin-top: var(--esp-7);
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.rejillaOpciones {
+  display: grid;
+  gap: var(--hueco);
+}
+
+.opcion {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--esp-3);
+  min-height: 3rem;
+  padding: var(--esp-6);
+  padding-inline-end: calc(var(--esp-6) + var(--esp-6));
+  border-radius: var(--radio-lg);
+  background: var(--color-crema);
+  color: var(--color-tinta);
+  cursor: pointer;
+  transition: transform var(--dur-hover) var(--ease-salida);
+}
+
+.opcion:hover {
+  transform: translateY(-2px);
+}
+
+.opcion:active {
+  transform: scale(var(--escala-presion));
+  transition-duration: var(--dur-presion);
+}
+
+/* The suggested tier is filled caramelo: not scaled, not badged. */
+.sugerida {
+  background: var(--color-caramelo);
+  color: var(--color-caramelo-tinta);
+}
+
+/* The native radio stays in the accessibility tree and keyboard order. */
+.radio {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.opcion:has(.radio:focus-visible) {
+  outline: 0.1875rem solid var(--color-crema);
+  outline-offset: 0.1875rem;
+}
+
+.opcion:has(.radio:checked) {
+  outline: 0.1875rem solid var(--color-acento);
+  outline-offset: 0.1875rem;
+}
+
+.opcion:has(.radio:checked):has(.radio:focus-visible) {
+  outline-color: var(--color-crema);
+}
+
+/* Drawn radio mark, top end corner. */
+.punto {
+  position: absolute;
+  inset-block-start: var(--esp-6);
+  inset-inline-end: var(--esp-5);
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radio-pill);
+  box-shadow: inset 0 0 0 0.125rem currentColor;
+  transition: box-shadow var(--dur-hover) var(--ease-salida);
+}
+
+.opcion:has(.radio:checked) .punto {
+  box-shadow: inset 0 0 0 0.4375rem currentColor;
+}
+
+.monto {
+  font-family: var(--fuente-display);
+  font-size: var(--texto-2xl);
+  font-weight: var(--peso-max);
+  line-height: 1;
+  letter-spacing: var(--tracking-titulo);
+}
+
+.compra {
+  font-size: var(--texto-base);
+  font-weight: var(--peso-medio);
+  line-height: 1.45;
+}
+
+.pista {
+  margin-top: var(--esp-5);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-medio);
+}
+
+/* ---------- Payment panel ---------- */
+
+.panel {
+  position: relative;
+  margin-top: calc(var(--esp-9) + var(--esp-4));
+  padding: var(--esp-6) var(--esp-5);
+  border-radius: var(--radio-xl);
+  background: var(--color-crema);
+  color: var(--color-tinta);
+}
+
+/* The beagle looks over the top edge of the panel, paws on the seam. */
+.beagle {
+  position: absolute;
+  bottom: 100%;
+  translate: 0 18%;
+  inset-inline-start: var(--esp-5);
+  width: min(55vw, 18rem);
+  pointer-events: none;
+  z-index: var(--z-recorte);
+  filter: drop-shadow(var(--sombra-recorte));
+}
+
+.panelRejilla {
+  position: relative;
+  z-index: var(--z-contenido);
+  display: grid;
+  gap: var(--esp-7);
+}
+
+.panelTitulo {
+  font-size: var(--texto-xl);
+}
+
+.panelCompra {
+  margin-top: var(--esp-2);
+  font-weight: var(--peso-medio);
+}
+
+.listaPasos {
+  display: grid;
+  gap: var(--esp-2);
+  margin-top: var(--esp-5);
+  padding-inline-start: 1.25em;
+}
+
+.listaPasos li::marker {
+  font-family: var(--fuente-display);
+  font-weight: var(--peso-max);
+}
+
+.medios {
+  display: grid;
+  gap: var(--esp-3);
+  margin-top: var(--esp-6);
+}
+
+.medio {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3) var(--esp-4);
+  padding: var(--esp-4);
+  border-radius: calc(var(--radio-xl) - var(--esp-5));
+  background: var(--color-superficie);
+}
+
+.medioDatos {
+  display: grid;
+  gap: var(--esp-1);
+}
+
+.medioNombre {
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-semi);
+}
+
+.medioNumero {
+  font-family: var(--fuente-display);
+  font-size: var(--texto-xl);
+  font-weight: var(--peso-display);
+  line-height: 1.1;
+}
+
+.medioTitular {
+  font-size: var(--texto-sm);
+  color: var(--color-tinta-suave);
+}
+
+.copiar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 3rem;
+  padding: var(--esp-3) var(--esp-5);
+  border-radius: var(--radio-pill);
+  background: var(--color-tinta);
+  color: var(--color-crema);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-semi);
+  transition:
+    transform var(--dur-hover) var(--ease-salida),
+    background-color var(--dur-hover) var(--ease-salida);
+}
+
+.copiar:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.copiar:active:not(:disabled) {
+  transform: scale(var(--escala-presion));
+}
+
+.copiar:disabled {
+  background: transparent;
+  color: var(--color-tinta-suave);
+}
+
+.copiar:focus-visible {
+  outline-color: var(--color-acento-fuerte);
+}
+
+.notaPendiente {
+  margin-top: var(--esp-3);
+  font-size: var(--texto-sm);
+  color: var(--color-tinta-suave);
+}
+
+.aviso {
+  min-height: 1.5em;
+  margin-top: var(--esp-3);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-semi);
+  color: var(--color-exito);
+}
+
+/* ---------- The message the donor receives ---------- */
+
+.mensaje {
+  margin: 0;
+  display: grid;
+  align-content: start;
+  gap: var(--esp-4);
+}
+
+.mensajeTitulo {
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-semi);
+}
+
+.burbuja,
+.burbujaVacia {
+  max-width: 28rem;
+  padding: var(--esp-5);
+  border-radius: var(--radio-lg);
+  border-end-start-radius: var(--radio-sm);
+  background: var(--color-secundario);
+  color: var(--color-secundario-tinta);
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-medio);
+  line-height: 1.4;
+}
+
+.burbuja p {
+  max-width: none;
+}
+
+.burbujaVacia {
+  background: var(--color-superficie);
+  color: var(--color-tinta);
+}
+
+.panel :focus-visible {
+  outline-color: var(--color-acento-fuerte);
+}
+
+@media (min-width: 37.5em) {
+  .rejillaOpciones {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .panel {
+    padding: var(--esp-7);
+  }
+
+  .beagle {
+    inset-inline-start: var(--esp-7);
+  }
+}
+
+@media (min-width: 56.25em) {
+  .panelRejilla {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--esp-8);
+  }
+
+  .mensaje {
+    padding-top: var(--esp-6);
+  }
+}
+
+@media (min-width: 75em) {
+  .rejillaOpciones {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .panel {
+    padding: var(--esp-8);
+  }
+}
+
+.medioPendiente {
+  font-size: var(--texto-base);
+  font-weight: var(--peso-medio);
+  color: var(--color-tinta-suave);
+}

@@ -1,0 +1,228 @@
+/*
+ * Hero 1 — "creativo".
+ * The punchline of the h1 is set as a wall of type; a beagle peeks over its last line from
+ * behind the letters (letters always paint above the dog, so no text is ever covered).
+ * All beagle geometry is in em of the punchline size, so it scales with the type.
+ */
+
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100svh - var(--alto-nav));
+  padding-block: var(--esp-6) var(--esp-8);
+  background-color: var(--color-fondo);
+  color: var(--color-tinta);
+}
+
+.interior {
+  width: 100%;
+}
+
+/* ---------------- Headline ---------------- */
+
+.titulo {
+  /* Lets the punchline size itself to the column width (cqi) so it never overflows. */
+  container-type: inline-size;
+  font-size: var(--texto-2xl);
+  text-wrap: wrap;
+}
+
+.planteamiento {
+  display: block;
+  max-width: 18ch;
+  font-size: var(--texto-2xl);
+  font-weight: var(--peso-display);
+  line-height: var(--interlineado-titulo);
+  letter-spacing: var(--tracking-titulo);
+  text-wrap: balance;
+}
+
+.remate {
+  /* Tuning knobs for the beagle, in em of the punchline. */
+  /* Measured in Bricolage 800 at 85% width: "Comen" ≈ 2.4–2.6em, "de la generosidad." ≈
+     6.1–6.65em, so the dog (2.75em) rests on the word with both paws and never passes its end. */
+  --ancho-perro: 2.75em;      /* beagle width */
+  --hueco-perro: 0.45em;      /* gap after the first punchline line */
+  --linea-base: 0.74em;       /* line top → baseline of the last line (clip edge) */
+  --apoyo-perro: 0.3em;       /* line top → where the paws rest (just under the x-height top) */
+
+  display: block;
+  margin-block-start: var(--esp-4);
+  /* Optical sizing makes small sizes wider (≈6.65em at 360px vs 6.1em at 1440px). */
+  font-size: min(var(--texto-mega), 14.6cqi);
+  font-weight: var(--peso-max);
+  font-stretch: 85%;
+  line-height: var(--interlineado-display);
+  letter-spacing: -0.04em;
+}
+
+.linea {
+  position: relative;
+  z-index: var(--z-contenido);
+  display: block;
+  white-space: nowrap;
+}
+
+/* First punchline line: text, then the beagle in the space the shorter line leaves free.
+   The line grows upward to fit the dog's head, so it never collides with the setup line. */
+.lineaConPerro {
+  display: flex;
+  align-items: flex-end;
+}
+
+.asomo {
+  position: relative;
+  flex: 0 1 var(--ancho-perro);
+  min-width: 0;
+  margin-inline-start: var(--hueco-perro);
+  /* Reach down into the last line, to its baseline; the clip edge sits there. */
+  margin-block-end: calc(-1 * var(--linea-base));
+  padding-block-end: calc(var(--linea-base) - var(--apoyo-perro));
+  /* Clip only the bottom edge: the dog rises from behind the word, never below it. */
+  clip-path: inset(-100vmax -100vmax 0 -100vmax);
+  pointer-events: none;
+  user-select: none;
+}
+
+.capa {
+  display: block;
+}
+
+.beagle {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------------- Lead, actions, butcher's ticket ---------------- */
+
+.pie {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-7);
+  margin-block-start: var(--esp-5);
+}
+
+.bajada {
+  max-width: 38ch;
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-medio);
+  line-height: 1.45;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  margin-block-start: var(--esp-6);
+}
+
+.accionPrincipal {
+  display: inline-flex;
+}
+
+.tiquete {
+  --ancho-gatos: clamp(8.5rem, 7rem + 6vw, 11rem);
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 100%;
+  max-width: 26rem;
+}
+
+.gatos {
+  position: relative;
+  z-index: var(--z-base);
+  width: var(--ancho-gatos);
+  height: auto;
+  margin-inline-end: var(--esp-5);
+  /* The ticket covers the bottom ~18% of the cats: they lie behind it. */
+  margin-block-end: calc(var(--ancho-gatos) * -0.2);
+  pointer-events: none;
+  user-select: none;
+}
+
+.recibo {
+  position: relative;
+  z-index: var(--z-recorte);
+  display: grid;
+  gap: var(--esp-3);
+  width: 100%;
+  padding: var(--esp-5);
+  border-radius: var(--radio-lg);
+  background-color: var(--color-superficie);
+}
+
+.cuenta {
+  font-size: var(--texto-base);
+  line-height: var(--interlineado-ajustado);
+}
+
+.cifra {
+  display: block;
+  margin-block-end: var(--esp-2);
+  font-family: var(--fuente-display);
+  font-size: var(--texto-2xl);
+  font-weight: var(--peso-max);
+  line-height: 1;
+  letter-spacing: var(--tracking-titulo);
+}
+
+.enlace {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  min-height: 3rem;
+  margin-block: calc(-1 * var(--esp-2));
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-semi);
+  text-decoration-thickness: 0.08em;
+  transition: text-decoration-thickness var(--dur-hover) var(--ease-salida);
+}
+
+.enlace:hover {
+  text-decoration-thickness: 0.14em;
+}
+
+/* ---------------- md: 900px ---------------- */
+
+@media (min-width: 56.25em) {
+  .hero {
+    padding-block: var(--esp-6) var(--esp-8);
+  }
+
+  .pie {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--hueco);
+    /* Top-aligned so the actions stay in the first screen; the ticket may run past the fold. */
+    align-items: start;
+    margin-block-start: var(--esp-6);
+  }
+
+  .apoyo {
+    grid-column: 1 / span 6;
+  }
+
+  .tiquete {
+    --ancho-gatos: 9.5rem;
+
+    grid-column: 8 / -1;
+    max-width: none;
+  }
+
+  /* Wide and short on desktop: figure beside what it buys, so the ticket stays near the fold. */
+  .cuenta {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--esp-5);
+    align-items: center;
+  }
+
+  .cifra {
+    margin-block-end: 0;
+  }
+}

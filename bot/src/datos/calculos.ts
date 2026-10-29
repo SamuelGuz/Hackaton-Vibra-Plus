@@ -95,3 +95,25 @@ export function dosisDeHoy(datos: DatosAlbergue, ahora: Date = new Date()): Dosi
   }
   return lista.sort((a, b) => a.hora.localeCompare(b.hora))
 }
+
+const ESTADOS_EN_EL_REFUGIO = new Set(['cuarentena', 'tratamiento', 'adoptable', 'hogar_temporal'])
+
+/** AAAA-MM-DD + días */
+function fechaMas(ahora: Date, dias: number): string {
+  const d = new Date(ahora)
+  d.setDate(d.getDate() + dias)
+  return fechaLocal(d)
+}
+
+/** Vacunas de los animales del refugio que vencen en los próximos `dias` (o ya vencieron), de la más urgente a la menos */
+export function vacunasPorVencer(datos: DatosAlbergue, ahora: Date, dias = 7) {
+  const hoy = fechaLocal(ahora)
+  const limite = fechaMas(ahora, dias)
+  return (datos.vacunas ?? [])
+    .flatMap((v) => {
+      const animal = datos.animales.find((a) => a.id === v.animalId)
+      if (!animal || !ESTADOS_EN_EL_REFUGIO.has(animal.estado) || v.vence > limite) return []
+      return [{ animalId: v.animalId, animal: animal.nombre, vacuna: v.vacuna, vence: v.vence, vencida: v.vence < hoy }]
+    })
+    .sort((a, b) => a.vence.localeCompare(b.vence) || a.animal.localeCompare(b.animal))
+}

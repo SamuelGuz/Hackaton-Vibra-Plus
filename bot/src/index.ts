@@ -15,6 +15,7 @@ import { armarExterno } from './externo.js'
 import { crearDibujante } from './informes/dibujar.js'
 import type { Deps, Ia } from './tipos.js'
 import { crearWa } from './wa/cliente.js'
+import { iniciarDespertador, telefonosDelResumen } from './scheduler.js'
 
 const SEGUNDOS_REVISAR_BUZON = 15
 
@@ -88,3 +89,10 @@ const retomar = () =>
     .catch((e) => console.error('No se pudo revisar el buzón:', e))
 void retomar()
 setInterval(retomar, SEGUNDOS_REVISAR_BUZON * 1000)
+
+// El despertador: a las 7:00 a. m. manda la foto con lo del día. RESUMEN_MATUTINO=apagado lo deja quieto.
+if (process.env.RESUMEN_MATUTINO === 'apagado') console.log('Resumen de la mañana apagado')
+else {
+  iniciarDespertador(deps, () => telefonosDelResumen(process.env, repo))
+  console.log('Resumen de la mañana: 7:00 a. m. (hora de Bogotá)')
+}

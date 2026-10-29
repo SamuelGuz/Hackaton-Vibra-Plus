@@ -196,6 +196,9 @@ export interface Repo {
   /** Aplica solo lo que viene. false si no existe. */
   cambiarSolicitudAdopcion(id: string, cambio: CambioSolicitud): Promise<boolean>
 
+  /** Marca `fecha` (AAAA-MM-DD) como hecha para `clave`. true solo la primera vez: así una tarea del día corre una vez. */
+  reclamarDia(clave: string, fecha: string): Promise<boolean>
+
   // ---------- Seguimientos después de la adopción ----------
   /** Los 5 seguimientos de cada adopción activa, con el resultado de los que ya se llamaron */
   seguimientosAdopcion(): Promise<SeguimientoDeAdopcion[]>

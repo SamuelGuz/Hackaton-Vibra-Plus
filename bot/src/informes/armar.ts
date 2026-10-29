@@ -1,5 +1,5 @@
 // Los informes que el bot manda como imagen. Cada uno es una hoja HTML armada con los datos del refugio.
-import { bultosEnBodega, diasDeComida, dosisDeHoy, nivelClinica, nivelComida, plataEnCaja, type Nivel } from '../datos/calculos.js'
+import { bultosEnBodega, diasDeComida, dosisDeHoy, nivelClinica, nivelComida, plataEnCaja, vacunasPorVencer, type Nivel } from '../datos/calculos.js'
 import { diasHablados, fechaLocal, horaBonita, horaDe, pesos } from '../formato.js'
 import type { DatosAlbergue, Especie, EstadoAnimal } from '../panel-tipos.js'
 import { barras, cifras, columnas, hoja, numeroGrande, renglones, tarjeta, type Tono } from './plantilla.js'
@@ -292,4 +292,108 @@ export function armarInforme(tipo: TipoInforme, d: DatosAlbergue, ahora: Date, v
     case 'animales':
       return animales(d, ahora)
   }
+}
+
+// ---------- Resumen de la mañana (lo manda el despertador a las 7:00) ----------
+
+/** Una visita propuesta o una llamada agendada para hoy */
+export interface Cita {
+  /** HH:MM */
+  hora: string
+  tipo: 'visita' | 'llamada'
+  /** Nombre corto del interesado, o "Un interesado" si quien recibe el resumen no ve adoptantes */
+  quien: string
+  animal: string | null
+}
+
+/** Lo que el resumen de la mañana trae además de los datos del refugio */
+export interface ExtrasMatutino {
+  citas: Cita[]
+  /** Seguimientos de adopción de hoy: "Firulais (Día 5)" */
+  seguimientos: { animal: string; dia: number; atrasado: boolean }[]
+}
+
+const fechaCorta = (fecha: string) => diaDelMes(fecha)
+
+function tarjetaDosisPendientes(d: DatosAlbergue, ahora: Date): string {
+  const nombre = (id: string) => d.animales.find((a) => a.id === id)?.nombre ?? '¿?'
+  const faltan = dosisDeHoy(d, ahora).filter((x) => x.estado !== 'dada')
+  if (faltan.length === 0) return tarjeta('Medicinas de hoy', '<p class="sub">Hoy no quedan medicinas por dar 🎉</p>')
+  const filas = faltan.slice(0, MAX_DOSIS).map((x) => ({
+    hora: horaBonita(x.hora),
+    titulo: `${nombre(x.tratamiento.animalId)} · ${x.tratamiento.medicamento}`,
+    detalle: x.tratamiento.dosis,
+    chip: x.estado === 'atrasada' ? 'Atrasada' : 'Pendiente',
+    tono: (x.estado === 'atrasada' ? 'urgente' : 'neutro') as Tono,
+  }))
+  const resto = faltan.length - filas.length
+  return tarjeta(
+    'Medicinas de hoy',
+    renglones(filas) + (resto > 0 ? `<p class="sub">…y ${plural(resto, 'dosis más', 'dosis más')}</p>` : ''),
+    plural(faltan.length, 'dosis por dar', 'dosis por dar'),
+  )
+}
+
+function tarjetaVacunas(d: DatosAlbergue, ahora: Date): string {
+  const lista = vacunasPorVencer(d, ahora)
+  if (lista.length === 0) return ''
+  return tarjeta(
+    'Vacunas por vencer',
+    renglones(
+      lista.map((v) => ({
+        hora: fechaCorta(v.vence),
+        titulo: v.animal,
+        detalle: v.vacuna,
+        chip: v.vencida ? 'Vencida' : 'Esta semana',
+        tono: (v.vencida ? 'urgente' : 'ojo') as Tono,
+      })),
+    ),
+    'Hay que ponerles el refuerzo',
+  )
+}
+
+function tarjetaCitas(citas: Cita[]): string {
+  if (citas.length === 0) return ''
+  return tarjeta(
+    'Visitas y llamadas',
+    renglones(
+      citas.map((c) => ({
+        hora: horaBonita(c.hora),
+        titulo: c.tipo === 'visita' ? `Visita de ${c.quien}` : `Llamar a ${c.quien}`,
+        detalle: c.animal ? `Por ${c.animal}` : 'Adopción',
+        chip: c.tipo === 'visita' ? 'Por confirmar' : 'Llamada',
+        tono: (c.tipo === 'visita' ? 'ojo' : 'neutro') as Tono,
+      })),
+    ),
+    'Agendadas para hoy',
+  )
+}
+
+function tarjetaSeguimientos(seguimientos: ExtrasMatutino['seguimientos']): string {
+  if (seguimientos.length === 0) return ''
+  return tarjeta(
+    'Seguimientos de adopción',
+    renglones(
+      seguimientos.map((s) => ({
+        hora: `Día ${s.dia}`,
+        titulo: s.animal,
+        detalle: 'Llamar al adoptante',
+        chip: s.atrasado ? 'Atrasado' : 'Hoy',
+        tono: (s.atrasado ? 'urgente' : 'neutro') as Tono,
+      })),
+    ),
+    'Cómo le va en su casa',
+  )
+}
+
+/** La hoja de la mañana: medicinas, comida, vacunas, visitas y seguimientos. Sin plata: le puede llegar a cualquiera. */
+export function armarInformeMatutino(d: DatosAlbergue, ahora: Date, extras: ExtrasMatutino): string {
+  const cuerpo = [
+    tarjetaDosisPendientes(d, ahora),
+    tarjetaComida(d, ahora),
+    tarjetaVacunas(d, ahora),
+    tarjetaCitas(extras.citas),
+    tarjetaSeguimientos(extras.seguimientos),
+  ]
+  return hoja('Buenos días · lo de hoy', ahora, cuerpo.filter(Boolean))
 }

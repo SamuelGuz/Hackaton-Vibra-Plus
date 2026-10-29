@@ -40,7 +40,7 @@ Supuestos:
 | T1 | S1 | Kilos: tipo, IA, regex, flujo de botones, cálculo, Postgres (007), panel | inline | hecha: RED 4 pruebas → GREEN; Postgres 14/14 |
 | T2 | S3 | Auto-confirmación de audios claros | inline | hecha: RED 4 → GREEN; suite 689 |
 | T3 | S2 | Seguimientos: repo, WhatsApp, botones, `/api/seguimientos/hoy` | inline | hecha: RED 9 → GREEN; Postgres 15/15; suite 715 |
-| T4 | S4 | Vacunas y citas, informe de la mañana, `enviarResumenMatutino`, despertador | inline | pendiente |
+| T4 | S4 | Vacunas y citas, informe de la mañana, `enviarResumenMatutino`, despertador | inline | hecha: RED (módulo faltante) → GREEN 11; Postgres 17/17; suite 728 |
 | T5 | S5 | `GET /api/publico/meta-del-dia` | inline | pendiente |
 | T6 | S6 | Suite "como Yesenia" | inline | pendiente |
 

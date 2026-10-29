@@ -113,6 +113,10 @@ export const textos = {
   animalVarios: 'Encontré varios. ¿Cuál es?',
   animalNota: (nombre: string) => `¿Qué le notaste a *${nombre}*? Escríbelo o mándame un audio 🎤`,
 
+  // Resumen de la mañana (7:00)
+  buenosDias: (nombre: string) => `🌅 Buenos días, ${nombre}. Esto es lo de hoy 👆`,
+  vacunasTitulo: '💉 Vacunas que vencen esta semana:',
+
   // Seguimientos de adopción (días 2, 5, 15, 30 y 90)
   seguimientosTitulo: '📞 Hoy toca llamar a los adoptantes de:',
   seguimientosToca: 'Cuando llames, toca cómo te fue 👇',

@@ -231,6 +231,13 @@ export class RepoFalso implements Repo {
     return true
   }
 
+  dias = new Map<string, string>()
+  async reclamarDia(clave: string, fecha: string) {
+    if ((this.dias.get(clave) ?? '') >= fecha) return false
+    this.dias.set(clave, fecha)
+    return true
+  }
+
   /** Adopciones entregadas y cómo salieron las llamadas (tablas adopciones y checkins) */
   entregas: Entrega[] = []
   resultadosSeguimiento: ResultadoSeguimiento[] = []

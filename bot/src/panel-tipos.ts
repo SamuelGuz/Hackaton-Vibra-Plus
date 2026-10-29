@@ -118,6 +118,13 @@ export interface Nota {
   quien: string
 }
 
+/** Una vacuna puesta y cuándo toca el refuerzo (eventos_salud de tipo 'vacuna'; `vence` en AAAA-MM-DD) */
+export interface Vacuna {
+  animalId: string
+  vacuna: string
+  vence: string
+}
+
 export interface ConfigComida {
   kgPorBulto: Record<Especie, number>
   consumoDiarioKg: Record<Especie, number>
@@ -139,4 +146,6 @@ export interface DatosAlbergue {
   notas: Nota[]
   configComida: ConfigComida
   vidasCambiadas: number
+  /** Solo la manda el bot: la última de cada vacuna por animal */
+  vacunas?: Vacuna[]
 }

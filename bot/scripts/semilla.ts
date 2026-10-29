@@ -294,6 +294,20 @@ async function main() {
       [animal.Bruno, momento(2, '11:20'), bienestar],
     )
 
+    // Vacunas: valor = cuándo toca el refuerzo. La de Rocky vence esta semana y la de Kira ya venció (alerta de la mañana).
+    const vacunas: [string, string, number, number][] = [
+      ['Rocky', 'Rabia', -362, 3],
+      ['Kira', 'Moquillo (refuerzo)', -370, -5],
+      ['Luna', 'Triple felina', -100, 265],
+    ]
+    for (const [nombre, vacuna, puesta, vence] of vacunas) {
+      await q(
+        `INSERT INTO eventos_salud (animal_id, tipo, detalle, valor, fecha_hora, estado, creado_por)
+         VALUES ($1, 'vacuna', $2, $3, $4, 'confirmado', $5)`,
+        [animal[nombre], vacuna, dias(vence), momento(-puesta, '10:00'), bienestar],
+      )
+    }
+
     // Lo que dejó el bot por confirmar esta mañana (aparece en la bandeja del panel)
     const amoxicilina = tratamiento['Mateo/Amoxicilina']
     const r1 = await q(

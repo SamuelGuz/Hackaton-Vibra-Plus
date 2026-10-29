@@ -374,6 +374,16 @@ export function crearRepoPg(pool: Pool): RepoPg {
       return r.rowCount === 1
     },
 
+    async reclamarDia(clave, fecha) {
+      // En config, que ya existe: solo gana quien la mueve a una fecha más nueva
+      const r = await pool.query(
+        `INSERT INTO config (clave, valor, descripcion) VALUES ($1, $2, 'Último día en que el bot hizo esta tarea')
+         ON CONFLICT (clave) DO UPDATE SET valor = EXCLUDED.valor WHERE config.valor < EXCLUDED.valor`,
+        [clave, fecha],
+      )
+      return r.rowCount === 1
+    },
+
     async seguimientosAdopcion() {
       const [entregas, llamadas] = await Promise.all([
         pool.query<{ id: number; solicitud_id: number | null; animal_id: number; animal: string; fecha_entrega: string; adoptante: string; telefono: string | null }>(

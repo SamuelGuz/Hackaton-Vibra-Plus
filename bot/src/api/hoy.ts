@@ -77,6 +77,8 @@ export interface FilasHoy {
   catalogo: { especie: Especie; kg_por_unidad: number; consumo_diario_kg_por_animal: number }[]
   aCargo: { especie: Especie; n: number }[]
   adopciones: number
+  /** La última de cada vacuna por animal; `valor` es la fecha del refuerzo (AAAA-MM-DD) */
+  vacunas?: { animal_id: number; detalle: string; valor: string }[]
 }
 
 const CARGO: Record<Rol, { cargo: string; color: string }> = {
@@ -236,6 +238,7 @@ export function armarHoy(f: FilasHoy): DatosAlbergue {
       diasUrgente: numero(c.dias_urgente, 4),
     },
     vidasCambiadas: numero(c.vidas_cambiadas, 0) + f.adopciones,
+    vacunas: (f.vacunas ?? []).map((v) => ({ animalId: id(v.animal_id), vacuna: v.detalle, vence: v.valor })),
   }
 }
 
@@ -306,7 +309,7 @@ export async function cargarFilas(pool: Pool, ahora: Date): Promise<FilasHoy> {
     .filter((x): x is string => Boolean(x))
     .sort()[0]
 
-  const [usuarios, animales, tratamientos, eventos, clinicas, registros, catalogo, aCargo, adopciones] = await Promise.all([
+  const [usuarios, animales, tratamientos, eventos, clinicas, registros, catalogo, aCargo, adopciones, vacunas] = await Promise.all([
     pool.query(`SELECT id, nombre, rol FROM usuarios WHERE activo ORDER BY id`),
     pool.query(
       `SELECT a.id, a.nombre, a.especie, a.estado, a.foto_url, a.fecha_ingreso, a.alias, a.advertencias, a.caracter,
@@ -342,6 +345,12 @@ export async function cargarFilas(pool: Pool, ahora: Date): Promise<FilasHoy> {
        WHERE estado IN ('cuarentena','tratamiento','adoptable','hogar_temporal') GROUP BY especie`,
     ),
     pool.query(`SELECT count(*)::int AS n FROM adopciones WHERE estado = 'activa'`),
+    pool.query(
+      `SELECT DISTINCT ON (animal_id, lower(detalle)) animal_id, detalle, valor
+       FROM eventos_salud
+       WHERE tipo = 'vacuna' AND estado IN ${CONFIRMADOS} AND detalle IS NOT NULL AND valor ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+       ORDER BY animal_id, lower(detalle), fecha_hora DESC`,
+    ),
   ])
 
   return {
@@ -355,6 +364,7 @@ export async function cargarFilas(pool: Pool, ahora: Date): Promise<FilasHoy> {
     catalogo: catalogo.rows,
     aCargo: aCargo.rows,
     adopciones: adopciones.rows[0]?.n ?? 0,
+    vacunas: vacunas.rows,
   }
 }
 

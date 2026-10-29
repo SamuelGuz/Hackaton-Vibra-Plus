@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { crearPool, type Pool } from '../src/datos/db.js'
 import { crearRepoPg, type RepoPg } from '../src/datos/repo-pg.js'
-import { diasDeComida, dosisDeHoy } from '../src/datos/calculos.js'
+import { diasDeComida, dosisDeHoy, vacunasPorVencer } from '../src/datos/calculos.js'
 import { pendientesDeHoy } from '../src/adopcion/seguimientos.js'
 
 const URL_PRUEBA = process.env.TEST_DATABASE_URL
@@ -146,6 +146,22 @@ describe.skipIf(!URL_PRUEBA)('repositorio sobre Postgres', () => {
     expect(filas.rows).toEqual([{ riesgo: 'verde', programado_para: firulais.fecha }])
     expect(await repo.registrarSeguimiento('99999999', 5, 'verde', 1, ahora)).toBe(false)
     expect(await repo.registrarSeguimiento('no-es-id', 5, 'verde', 1, ahora)).toBe(false)
+  })
+
+  it('vacunas: llega la última de cada una y la alerta de la semana trae la de Rocky y la vencida de Kira', async () => {
+    const d = await repo.hoy(ahora)
+    expect(d.vacunas).toHaveLength(3)
+    expect(vacunasPorVencer(d, ahora).map((v) => [v.animal, v.vencida])).toEqual([
+      ['Kira', true],
+      ['Rocky', false],
+    ])
+  })
+
+  it('el resumen de la mañana se reclama una sola vez por día', async () => {
+    expect(await repo.reclamarDia('prueba_dia', '2026-10-27')).toBe(true)
+    expect(await repo.reclamarDia('prueba_dia', '2026-10-27')).toBe(false)
+    expect(await repo.reclamarDia('prueba_dia', '2026-10-26')).toBe(false)
+    expect(await repo.reclamarDia('prueba_dia', '2026-10-28')).toBe(true)
   })
 
   it('una factura con foto sube la deuda de la clínica al confirmarse', async () => {

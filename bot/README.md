@@ -32,6 +32,15 @@ Está pensado para gente que no se lleva con la tecnología:
 
 Escribir *seguimientos* (o "¿a quién toca llamar?") muestra los seguimientos de adopción del día (días 2, 5, 15, 30 y 90 después de la entrega, y los atrasados) y un mensaje por llamada con **🟢 Todo bien**, **🟡 Ojo / Revisar** y **🔴 Problemas**. Las fechas salen de la tabla `adopciones` y los resultados quedan en `checkins`. El teléfono del adoptante solo lo ven administración y adopciones.
 
+## Resumen de la mañana
+
+A las **7:00 a. m.** (hora de Bogotá) el bot manda, sin que nadie lo pida, una foto con las medicinas que faltan, los días de comida, las vacunas que vencen esta semana (o ya vencieron), las visitas y llamadas de adopción agendadas para hoy y los seguimientos que tocan. Después manda la alerta de vacunas y un mensaje con 🟢 🟡 🔴 por cada seguimiento ([`src/scheduler.ts`](src/scheduler.ts), `enviarResumenMatutino(deps, telefono)` en [`src/conversacion/informe.ts`](src/conversacion/informe.ts)).
+
+- Va a los números de `RESUMEN_MATUTINO_TELEFONOS` o, si está vacío, a la administración activa. `RESUMEN_MATUTINO=apagado` lo apaga.
+- Si el bot estaba apagado a las 7, lo manda al prender, hasta las 11. Sale una vez por día aunque haya dos copias del bot (el día queda en `config`).
+- WhatsApp solo deja escribirle primero a quien le escribió al bot en las últimas 24 horas. Si no, Meta lo rechaza y queda en el registro del bot.
+- Una vacuna es un `eventos_salud` de tipo `vacuna`, con la fecha del refuerzo en `valor` (AAAA-MM-DD).
+
 Todas las frases están en [`src/textos.ts`](src/textos.ts), para ajustar el tono sin tocar la lógica.
 
 ## Arrancar en el PC

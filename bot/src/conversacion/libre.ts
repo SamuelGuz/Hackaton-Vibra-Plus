@@ -69,6 +69,9 @@ export async function registrarEntendido(
     if (deLaIa.length === 0) return preguntarAlgoMas(c, textos.noPuedePlata)
   }
   const entendido = e
+  // Si además preguntó algo ("abrí un bulto, ¿cuánta comida queda?"), la respuesta va arriba de lo anotado
+  const respuesta = entendido.respuesta?.trim() ?? ''
+  if (respuesta) notas.unshift(`💬 ${respuesta}`)
   const porGuardar = {
     tipoEntrada: origen.tipoEntrada,
     mediaUrl: origen.mediaUrl,
@@ -101,6 +104,8 @@ export async function registrarEntendido(
   if (entendido.informe && !avisos.length) return enviarInforme(c, entendido.informe)
   // Solo traía una dosis que ya dio otra persona: se frena y se pregunta, no se repite sola
   if (avisos.length) return preguntarSiEsOtra(c, avisos)
+  // Preguntó, saludó o agradeció: se le contesta, sin "No te entendí" ni el menú completo
+  if (respuesta) return preguntarAlgoMas(c, respuesta)
   if (entendido.futuras > 0) return mostrarMenu(c, textos.futura)
   return sinNadaQueAnotar(c, origen.escrito ?? entendido.transcripcion, esAudio)
 }

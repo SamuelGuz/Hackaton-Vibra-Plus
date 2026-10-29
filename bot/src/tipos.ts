@@ -95,6 +95,8 @@ export interface EntradaIa {
   media?: { datos: Buffer; mime: string }
   /** Pista de lo que se espera, p. ej. 'factura' cuando se pidió la foto de una factura */
   pista?: 'factura' | 'libre'
+  /** Más datos del refugio para responder preguntas (solicitudes, seguimientos, caja), ya filtrados según quién escribe */
+  extra?: string
   datos: DatosAlbergue
   ahora: Date
 }
@@ -111,6 +113,8 @@ export interface Entendido {
   factura?: { monto: number | null; clinicaId: string | null; concepto: string }
   /** La persona pidió ver un informe o una gráfica en vez de anotar algo */
   informe?: TipoInforme
+  /** Si preguntó algo, saludó o agradeció: lo que se le contesta. Vacío si solo contó lo que hizo. */
+  respuesta?: string
 }
 
 // ---------- Dependencias (reales o falsas en las pruebas) ----------

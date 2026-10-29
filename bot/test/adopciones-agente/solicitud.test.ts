@@ -57,6 +57,6 @@ describe('la visita que propone el agente queda guardada', () => {
     e.t.llm.responder(excelente({ nombre: 'Ana' }))
     await e.escribir('hola')
     expect(e.alTelefono(TEL).length).toBeGreaterThan(0)
-    expect(e.avisos()[0]).toContain('Le propuse visita el sábado')
+    expect(e.avisos()[0]).toContain('Le propuse visita, por confirmar.')
   })
 })

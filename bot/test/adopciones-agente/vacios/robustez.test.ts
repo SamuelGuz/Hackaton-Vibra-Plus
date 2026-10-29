@@ -66,7 +66,7 @@ describe('valores fuera de rango o con forma rara', () => {
   it('[R-04] puntaje 250 se acota a 100 (y se ve en el aviso); -5 se acota a 0 y no agenda', async () => {
     e.t.llm.responder(excelente({ suitability: 250, nombre: 'Ana' }))
     await e.escribir('a')
-    expect(e.avisos()[0]).toContain('Score 100%')
+    expect(e.avisos()[0]).toContain('(idoneidad 100/100)')
     const otro = escenario()
     otro.t.llm.responder(excelente({ suitability: -5 }))
     await otro.escribir('a')

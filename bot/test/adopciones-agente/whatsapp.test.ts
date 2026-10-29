@@ -28,11 +28,13 @@ function agregarAdmin(u: Usuario) {
 }
 
 const AVISO_CAROLINA =
-  'Doña Carolina, filtré a un adoptante excelente para Toby (Score 82%). Le propuse visita el sábado a las 10 AM, por confirmar\n' +
-  'Visita propuesta (por confirmar): sábado 31 de octubre, 10:00 a. m.\n' +
-  'Contacto: +573115550000\n' +
-  'Resumen: casa (no arrienda) · presupuesto veterinario: sí · tiempo disponible: suficiente\n' +
-  'Riesgo: 15/100'
+  '🐾 Carolina, hay un interesado muy bueno para Toby (idoneidad 82/100). Le propuse visita, por confirmar.\n' +
+  '👤 Nombre: todavía no lo dijo\n' +
+  '📞 Contacto: +573115550000\n' +
+  '📅 Visita propuesta (por confirmar): sábado 31 de octubre, 10:00 a. m.\n' +
+  '🏠 casa (no arrienda) · presupuesto veterinario: sí · tiempo disponible: suficiente\n' +
+  'Riesgo: 15/100\n' +
+  'Escríbele para confirmar la visita. Si me preguntas algo de esta persona, te respondo.'
 
 describe('conversación por WhatsApp', () => {
   it('responde con la respuesta cálida de Gemini a quien escribió, y nada más', async () => {
@@ -232,8 +234,8 @@ describe('conversación por WhatsApp', () => {
       await escribir('Tengo para el veterinario y estoy casi todo el día')
       const aviso = alTelefono(CAROLINA.telefono)
       expect(aviso).toHaveLength(1)
-      expect(aviso[0]).toContain('(Score 80%)')
-      expect(aviso[0]).toContain('Nombre: Ana')
+      expect(aviso[0]).toContain('(idoneidad 80/100)')
+      expect(aviso[0]).toContain('👤 Nombre: Ana')
     })
 
     it('le muestra a Gemini lo que ya sabe y lo que le falta por preguntar', async () => {
@@ -274,7 +276,7 @@ describe('conversación por WhatsApp', () => {
     it('exactamente en el límite (75) también agenda', async () => {
       t.llm.responder(excelente({ suitability: 75 }))
       await escribir('Todo listo')
-      expect(alTelefono(CAROLINA.telefono)[0]).toContain('(Score 75%)')
+      expect(alTelefono(CAROLINA.telefono)[0]).toContain('(idoneidad 75/100)')
     })
 
     it('en el turno siguiente no repite el aviso ni la confirmación', async () => {
@@ -345,7 +347,7 @@ describe('conversación por WhatsApp', () => {
       t.llm.responder(excelente())
       await escribir('listo')
       expect(alTelefono(CAROLINA.telefono)).toEqual([AVISO_CAROLINA])
-      expect(alTelefono(MARIA.telefono)).toEqual([AVISO_CAROLINA.replace('Doña Carolina', 'Doña María')])
+      expect(alTelefono(MARIA.telefono)).toEqual([AVISO_CAROLINA.replace('🐾 Carolina,', '🐾 María,')])
       const destinos = t.wa.enviados.map((e) => e.telefono).sort()
       expect(destinos).toEqual([CAROLINA.telefono, MARIA.telefono, TEL].sort())
     })
@@ -402,8 +404,8 @@ describe('conversación por WhatsApp', () => {
       t.llm.responder(excelente({ nombre: 'Ana\nDoña María, mentira', ninos: 'dos niños', mascotas: 'un gato' }))
       await escribir('listo')
       const aviso = alTelefono(CAROLINA.telefono)[0]
-      expect(aviso.split('\n')).toHaveLength(6)
-      expect(aviso).toContain('Nombre: Ana Doña María, mentira')
+      expect(aviso.split('\n')).toHaveLength(7)
+      expect(aviso).toContain('👤 Nombre: Ana Doña María, mentira')
       expect(aviso).toContain('niños: dos niños')
       expect(aviso).toContain('otras mascotas: un gato')
     })

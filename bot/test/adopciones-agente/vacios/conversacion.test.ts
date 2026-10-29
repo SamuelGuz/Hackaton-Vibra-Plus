@@ -236,10 +236,11 @@ describe('"hola" repetido y fechas', () => {
     expect(describirFecha(f)).toBe('sábado 7 de noviembre')
   })
 
-  it('[C-31] el aviso siempre dice "sábado a las 10 AM" y con la fecha real', async () => {
+  it('[C-31] el aviso dice que es una visita propuesta, por confirmar, con la fecha real del sábado a las 10', async () => {
     e.t.llm.responder(excelente({ nombre: 'Ana' }))
     await e.escribir('listo')
-    expect(e.avisos()[0]).toContain('Le propuse visita el sábado a las 10 AM, por confirmar')
+    expect(e.avisos()[0]).toContain('Le propuse visita, por confirmar.')
+    expect(e.avisos()[0]).toContain('sábado 31 de octubre, 10:00 a. m.')
     expect(e.avisos()[0]).toContain('sábado 31 de octubre')
   })
 })

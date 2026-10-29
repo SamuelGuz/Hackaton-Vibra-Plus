@@ -27,7 +27,8 @@ Montos en pesos enteros: "50 mil" = 50000, "un millón y medio" = 1500000, "$150
 - informe: si la persona pide VER algo ("mándame el informe", "cómo vamos de plata", "una gráfica de la comida", \
 "qué medicinas faltan"), pon cuál (general, plata, comida, medicinas o animales) y no anotes acciones por eso.
 - Si no entiendes nada útil, devuelve acciones vacías y confianza baja. Nunca inventes ids.
-- transcripcion: lo que dijo la persona tal cual. Si es una foto, lo que dice en una frase.`
+- transcripcion: lo que dijo la persona tal cual. Si es una foto, lo que dice en una frase.
+- respuesta: si la persona PREGUNTA algo, saluda, agradece o conversa, contéstale aquí en 1 a 3 frases, cálido y directo, usando solo los DATOS DEL REFUGIO. Si el dato no está, dilo y sugiere mirarlo en el panel. Si solo cuenta lo que hizo, déjala vacía.`
 
 function contexto(datos: DatosAlbergue, ahora: Date): string {
   const hoy = fechaLocal(ahora)
@@ -52,6 +53,7 @@ function contexto(datos: DatosAlbergue, ahora: Date): string {
 /** Los textos que acompañan al audio o la foto, en orden */
 export function textosDe(e: EntradaIa): string[] {
   const textos = [contexto(e.datos, e.ahora)]
+  if (e.extra) textos.push(e.extra)
   if (e.pista === 'factura') textos.push('La persona está mandando la foto de una FACTURA de una clínica.')
   if (e.texto) textos.push(`MENSAJE:\n${quitarDatosSensibles(e.texto)}`)
   return textos

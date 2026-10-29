@@ -39,6 +39,10 @@ export const ESQUEMA: Schema = {
         required: ['tipo', 'ya_ocurrio'],
       },
     },
+    respuesta: {
+      type: Type.STRING,
+      description: 'Si la persona pregunta, saluda, agradece o conversa: tu respuesta corta con los DATOS. Si solo cuenta lo que hizo: vacío',
+    },
     informe: {
       type: Type.STRING,
       enum: ['ninguno', ...TIPOS_INFORME],
@@ -70,6 +74,7 @@ export interface RespuestaCruda {
   confianza: number
   acciones: AccionCruda[]
   informe?: string
+  respuesta?: string
 }
 
 function minutos(hora: string): number {
@@ -174,7 +179,8 @@ export function convertir(crudo: RespuestaCruda, datos: DatosAlbergue, ahora: Da
 
   const confianza = Math.min(1, Math.max(0, Number(crudo.confianza) || 0))
   const informe = TIPOS_INFORME.includes(crudo.informe as TipoInforme) ? (crudo.informe as TipoInforme) : undefined
-  return { transcripcion: sinEco(crudo.transcripcion ?? ''), acciones, confianza, futuras, factura, informe }
+  const respuesta = typeof crudo.respuesta === 'string' ? sinEco(crudo.respuesta.trim()).slice(0, 1200) : ''
+  return { transcripcion: sinEco(crudo.transcripcion ?? ''), acciones, confianza, futuras, factura, informe, respuesta }
 }
 
 /** Algunos modelos de respaldo "transcriben" la lista interna que se les pasa en vez de lo que dijo la persona */

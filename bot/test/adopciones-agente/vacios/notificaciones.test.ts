@@ -108,7 +108,7 @@ describe('contenido del aviso', () => {
     expect(e.avisos()[0]).not.toMatch(/sin tel[eé]fono/i)
   })
 
-  brecha('[N-10] el aviso no trata de "Doña" a una administradora cuyo nombre es de hombre (p. ej. Luis)', async () => {
+  it('[N-10] el aviso no trata de "Doña" a una administradora cuyo nombre es de hombre (p. ej. Luis)', async () => {
     const LUIS_ADMIN: Usuario = { id: 5, nombre: 'Luis', rol: 'admin', telefono: '573000000005' }
     e.agregarAdmin(LUIS_ADMIN)
     e.t.llm.responder(excelente({ nombre: 'Ana' }))

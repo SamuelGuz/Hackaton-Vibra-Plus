@@ -16,10 +16,6 @@ export interface Administradora {
   telefono: string
 }
 
-function tratamiento(nombre: string): string {
-  return /^(don|doña|dona)\s/i.test(nombre) ? nombre : `Doña ${nombre}`
-}
-
 function resumen(e: Evaluacion): string {
   const vivienda = e.viviendaTipo === 'desconocido' ? 'vivienda' : e.viviendaTipo
   const arriendo = e.permisoArriendo === 'si' ? 'arrienda, con permiso para mascotas' : e.permisoArriendo === 'no_aplica' ? 'no arrienda' : null
@@ -36,14 +32,15 @@ function resumen(e: Evaluacion): string {
 
 /** El mensaje que recibe cada administradora */
 export function armarAviso(nombreAdmin: string, d: DatosAviso): string {
+  // Sin "Doña": el nombre del equipo puede ser de hombre. Es una propuesta, no una cita: no hay cupos guardados todavía.
   return [
-    // Es una propuesta, no una cita: no hay cupos guardados todavía (plan, Fase 2.5)
-    `${tratamiento(nombreAdmin)}, filtré a un adoptante excelente para ${d.perro} (Score ${d.evaluacion.suitability}%). Le propuse visita el sábado a las 10 AM, por confirmar`,
-    `Visita propuesta (por confirmar): ${describirFecha(d.fecha)}, ${HORA_VISITA}`,
-    d.contacto.tipo === 'whatsapp' ? `Contacto: ${telefonoBonito(d.contacto.telefono)}` : 'Contacto: llamada web (sin teléfono)',
-    ...(d.evaluacion.nombre ? [`Nombre: ${d.evaluacion.nombre}`] : []),
-    `Resumen: ${resumen(d.evaluacion)}`,
+    `🐾 ${nombreAdmin}, hay un interesado muy bueno para ${d.perro} (idoneidad ${d.evaluacion.suitability}/100). Le propuse visita, por confirmar.`,
+    `👤 Nombre: ${d.evaluacion.nombre ?? 'todavía no lo dijo'}`,
+    d.contacto.tipo === 'whatsapp' ? `📞 Contacto: ${telefonoBonito(d.contacto.telefono)}` : '📞 Contacto: llamada web (sin teléfono)',
+    `📅 Visita propuesta (por confirmar): ${describirFecha(d.fecha)}, ${HORA_VISITA}`,
+    `🏠 ${resumen(d.evaluacion)}`,
     `Riesgo: ${d.evaluacion.risk}/100`,
+    'Escríbele para confirmar la visita. Si me preguntas algo de esta persona, te respondo.',
   ].join('\n')
 }
 

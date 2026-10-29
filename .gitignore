@@ -2,3 +2,5 @@ credentials.txt
 node_modules/
 /bot/test/rag/_dbg.ts
 /bot/test/rag/_explorar.ts
+
+ECC/

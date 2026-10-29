@@ -24,6 +24,17 @@ export function cuerpoMensaje(telefono: string, s: Salida, mediaId?: string): Re
     case 'imagen':
       if (!mediaId) throw new Error('La imagen se sube primero a Meta')
       return { ...base, type: 'image', image: { id: mediaId, caption: recortar(s.texto, 1024) } }
+    case 'plantilla':
+      return {
+        ...base,
+        type: 'template',
+        template: {
+          name: s.nombre,
+          language: { code: s.idioma },
+          // Meta rechaza saltos de línea, tabulaciones y más de cuatro espacios seguidos dentro de un parámetro
+          components: [{ type: 'body', parameters: s.parametros.map((p) => ({ type: 'text', text: recortar(p.replace(/\s+/g, ' ').trim(), 1024) })) }],
+        },
+      }
     case 'texto':
       return { ...base, type: 'text', text: { body: recortar(s.texto, 4096), preview_url: true } }
     case 'botones':

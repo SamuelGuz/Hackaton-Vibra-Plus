@@ -50,6 +50,12 @@ export async function atenderOfertaComida(deps: Deps, telefono: string, texto: s
   return true
 }
 
+/** `APOYO_PLANTILLA=nombre|idioma` (p. ej. `pedido_ayuda|es_CO`): plantilla aprobada en Meta con un parámetro en el cuerpo. */
+function plantillaApoyo(): { nombre: string; idioma: string } | null {
+  const [nombre, idioma, resto] = (process.env.APOYO_PLANTILLA ?? '').split('|').map(p => p.trim())
+  return nombre && idioma && resto === undefined && /^[a-z0-9_]+$/.test(nombre) && /^[a-z]{2}(_[A-Z]{2})?$/.test(idioma) ? { nombre, idioma } : null
+}
+
 interface CampanaApoyo {
   id: string; texto: string; paso: 'borrador' | 'contactos' | 'confirmar' | 'enviado'; contactos: string[]; enviados: string[]
 }
@@ -112,11 +118,16 @@ async function ejecutarAyuda(deps: Deps, u: Usuario, entrada: Entrada, solicitud
   if (entrada.tipo === 'boton' && entrada.id.startsWith('apoyo:cancelar:')) { await deps.repo.borrarMemoria?.(key); await enviar({ tipo: 'texto', texto: 'Cancelé el pedido de envío; no se enviará a los contactos pendientes' }); return }
   if (entrada.tipo === 'boton' && entrada.id.startsWith('apoyo:enviar:')) {
     if (!['confirmar', 'enviado'].includes(c.paso)) { await enviar({ tipo: 'texto', texto: 'Primero revisa los contactos y la vista previa del mensaje' }); return }
+    const plantilla = plantillaApoyo()
     for (const telefono of c.contactos) {
       if (c.enviados.includes(telefono)) continue
-      try { await deps.wa.enviar(telefono, { tipo: 'texto', texto: c.texto }); c.enviados.push(telefono); await guardar(deps, key, c) } catch { /* El resumen informa la entrega parcial. */ }
+      const salida: Salida = plantilla
+        ? { tipo: 'plantilla', nombre: plantilla.nombre, idioma: plantilla.idioma, parametros: [c.texto], texto: c.texto }
+        : { tipo: 'texto', texto: c.texto }
+      try { await deps.wa.enviar(telefono, salida); c.enviados.push(telefono); await guardar(deps, key, c) } catch { /* El resumen informa la entrega parcial. */ }
     }
     c.paso = c.enviados.length === c.contactos.length ? 'enviado' : 'confirmar'; await guardar(deps, key, c)
     await enviar({ tipo: 'texto', texto: `Se entregaron ${c.enviados.length} de ${c.contactos.length} mensajes${c.paso === 'confirmar' ? '; los demás siguen pendientes y puedes reintentar' : '; un nuevo toque no repetirá los envíos'}` })
+    if (c.paso === 'confirmar' && !plantilla) await enviar({ tipo: 'texto', texto: 'Sin plantilla aprobada, WhatsApp solo entrega a quien te escribió en las últimas 24 horas. Para llegar a los demás hay que configurar una plantilla (APOYO_PLANTILLA)' })
   }
 }

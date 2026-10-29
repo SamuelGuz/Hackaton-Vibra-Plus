@@ -56,6 +56,8 @@ export type Salida =
   | { tipo: 'lista'; texto: string; boton: string; filas: Fila[] }
   /** Imagen con un pie de foto corto (máximo 1024). PNG salvo que diga otro `mime` (p. ej. la foto de un comprobante). */
   | { tipo: 'imagen'; png: Buffer; mime?: string; texto: string }
+  /** Plantilla aprobada por Meta: lo único que WhatsApp deja enviar fuera de la ventana de 24 h. `texto` es solo la vista previa para registros y pruebas. */
+  | { tipo: 'plantilla'; nombre: string; idioma: string; parametros: string[]; texto: string }
 
 // ---------- Estado de la conversación ----------
 

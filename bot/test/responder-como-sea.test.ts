@@ -139,6 +139,35 @@ describe('plata: categoría, clínica y foto', () => {
   })
 })
 
+describe('números sueltos y tildes', () => {
+  it('esperando la foto de la factura, "son 2 facturas" no se toma como un monto de $2', async () => {
+    await decir(boton('m:factura'))
+    t.ia.responder({ transcripcion: 'son 2 facturas' })
+    await decir(texto('son 2 facturas'))
+    expect(paso()).not.toBe('factura_clinica')
+    expect(t.repo.registros).toHaveLength(0)
+  })
+
+  it('esperando la foto de la factura, "$320.000" o "320000" sí son el monto', async () => {
+    await decir(boton('m:factura'))
+    await decir(texto('$320.000'))
+    expect(paso()).toBe('factura_clinica')
+    await decir(boton('m:factura'))
+    await decir(texto('320000'))
+    expect(paso()).toBe('factura_clinica')
+  })
+
+  it('"ya te la envío" (con tilde) espera la foto', async () => {
+    await decir(boton('m:entro'), CAROLINA)
+    await decir(texto('50 mil'), CAROLINA)
+    await decir(boton('cat:donacion'), CAROLINA)
+    await decir(texto('ya te la envío'), CAROLINA)
+    expect(paso(CAROLINA)).toBe('plata_foto')
+    expect(t.repo.registros).toHaveLength(0)
+    expect(t.ia.llamadas).toHaveLength(0)
+  })
+})
+
 describe('factura sin foto', () => {
   it('se puede escribir el monto en vez de mandar la foto, y la clínica por nombre', async () => {
     await decir(boton('m:factura'))

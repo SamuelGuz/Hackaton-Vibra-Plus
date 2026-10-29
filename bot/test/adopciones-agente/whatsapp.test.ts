@@ -28,8 +28,8 @@ function agregarAdmin(u: Usuario) {
 }
 
 const AVISO_CAROLINA =
-  'Doña Carolina, filtré a un adoptante excelente para Toby (Score 82%). Viene el sábado a las 10 AM\n' +
-  'Fecha: sábado 31 de octubre, 10:00 a. m.\n' +
+  'Doña Carolina, filtré a un adoptante excelente para Toby (Score 82%). Le propuse visita el sábado a las 10 AM, por confirmar\n' +
+  'Visita propuesta (por confirmar): sábado 31 de octubre, 10:00 a. m.\n' +
   'Contacto: +573115550000\n' +
   'Resumen: casa (no arrienda) · presupuesto veterinario: sí · tiempo disponible: suficiente\n' +
   'Riesgo: 15/100'
@@ -291,14 +291,14 @@ describe('conversación por WhatsApp', () => {
       t.repo.ahora = new Date('2026-10-31T08:00:00-05:00')
       t.llm.responder(excelente())
       await escribir('listo')
-      expect(alTelefono(CAROLINA.telefono)[0]).toContain('Fecha: sábado 31 de octubre, 10:00 a. m.')
+      expect(alTelefono(CAROLINA.telefono)[0]).toContain('Visita propuesta (por confirmar): sábado 31 de octubre, 10:00 a. m.')
     })
 
     it('un sábado ya pasadas las 10:00 la visita es el sábado siguiente', async () => {
       t.repo.ahora = new Date('2026-10-31T11:00:00-05:00')
       t.llm.responder(excelente())
       await escribir('listo')
-      expect(alTelefono(CAROLINA.telefono)[0]).toContain('Fecha: sábado 7 de noviembre, 10:00 a. m.')
+      expect(alTelefono(CAROLINA.telefono)[0]).toContain('Visita propuesta (por confirmar): sábado 7 de noviembre, 10:00 a. m.')
     })
 
     it.each([

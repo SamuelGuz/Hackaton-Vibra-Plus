@@ -5,7 +5,7 @@ import { botones, CATEGORIAS, textos } from '../textos.js'
 import type { Accion, Estado, Fila, TipoPlata } from '../tipos.js'
 import { puedeManejarPlata, puedeVerPlata, type Ctx } from './ctx.js'
 import { guardarYPreguntar, preguntarAlgoMas } from './confirmar.js'
-import { esNo, esSi, filaPorTexto } from './elegir.js'
+import { esNo, esSi, filaPorTexto, normal } from './elegir.js'
 import { entenderSeguro } from './medios.js'
 import { parsearMonto } from './numeros.js'
 
@@ -101,13 +101,22 @@ export async function clinicaFacturaEscrita(c: Ctx, e: PasoPlata<'factura_clinic
 /** "Sin foto" / "ya te la mando" escrito o dicho, o null si no es ninguna de las dos */
 export function fotoEscrita(c: Ctx, e: PasoPlata<'plata_foto'>, texto: string): Promise<Estado> | null {
   if (esNo(texto)) return guardarPlata(c, e, null)
-  if (esSi(texto) || /\b(foto|mando|envio)\b/.test(texto.toLowerCase())) return pedirQueMandeFoto(c, e)
+  if (esSi(texto) || /\b(foto|mando|envio)\b/.test(normal(texto))) return pedirQueMandeFoto(c, e)
   return null
+}
+
+/**
+ * El texto ES un monto, no un mensaje que trae un número de paso ("son 2 facturas"):
+ * dice mil, pesos, millón o lleva $, o es solo un número de al menos 1.000.
+ */
+function pareceMonto(texto: string): boolean {
+  if (texto.includes('$') || /\b(mil|millon\w*|pesos?|lucas?|palos?)\b/.test(normal(texto))) return true
+  return /^[\d .,]+$/.test(texto.trim()) && (parsearMonto(texto) ?? 0) >= 1000
 }
 
 /** En vez de la foto de la factura, escribió o dijo el valor ("320 mil") o que no tiene foto */
 export function facturaSinFotoEscrita(c: Ctx, texto: string): Promise<Estado> | null {
-  const monto = parsearMonto(texto)
+  const monto = pareceMonto(texto) ? parsearMonto(texto) : null
   if (monto) return seguirFactura(c, { soporte: null, monto, clinicaId: null, concepto: '' })
   if (esNo(texto)) return facturaSinFoto(c)
   return null

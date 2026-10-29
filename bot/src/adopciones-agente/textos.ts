@@ -33,16 +33,16 @@ export function ofertaPadrinazgo(perro: string | null, canal: CanalAgente, whats
   return `Y si hoy no puedes adoptar, igual puedes cambiar una vida: ser Padrino ${de} cuesta desde ${PADRINAZGO_DESDE} al mes, o también puedes ayudarnos donando comida. Sin presiones: cualquier ayuda cuenta 💛 ${cierre}`
 }
 
-/** Confirmación de la visita agendada. No promete la adopción: la decide el equipo después de conocerse. */
+/** La visita que se propone: queda por confirmar con el equipo. No promete la adopción: la decide el equipo después de conocerse. */
 export function confirmacionVisita(perro: string, fecha: Date, canal: CanalAgente, whatsappPublico: string | null): string {
   const contacto =
     canal.tipo === 'whatsapp'
-      ? 'Una de nuestras administradoras te escribirá para confirmarte la dirección.'
+      ? 'Una de nuestras administradoras te escribirá para confirmarla y darte la dirección.'
       : whatsappPublico
         ? `Para confirmar la dirección y el cupo, escríbenos por WhatsApp al ${telefonoBonito(whatsappPublico)}.`
         : 'Pregunta por la dirección y los detalles en los canales de la fundación.'
   return (
-    `¡Y tengo una buena noticia! 🎉 Me encantaría que conozcas a ${perro} en persona: te dejé una visita para el ${describirFecha(fecha)} a las ${HORA_VISITA} en la fundación. ` +
+    `¡Y tengo una buena noticia! 🎉 Me encantaría que conozcas a ${perro} en persona: te propongo una visita el ${describirFecha(fecha)} a las ${HORA_VISITA} en la fundación, por confirmar. ` +
     `${contacto} Recuerda que la decisión de la adopción la toma el equipo de la fundación después de conocerse 🐾`
   )
 }

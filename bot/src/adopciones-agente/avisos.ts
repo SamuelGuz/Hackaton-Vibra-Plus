@@ -37,8 +37,9 @@ function resumen(e: Evaluacion): string {
 /** El mensaje que recibe cada administradora */
 export function armarAviso(nombreAdmin: string, d: DatosAviso): string {
   return [
-    `${tratamiento(nombreAdmin)}, filtré a un adoptante excelente para ${d.perro} (Score ${d.evaluacion.suitability}%). Viene el sábado a las 10 AM`,
-    `Fecha: ${describirFecha(d.fecha)}, ${HORA_VISITA}`,
+    // Es una propuesta, no una cita: no hay cupos guardados todavía (plan, Fase 2.5)
+    `${tratamiento(nombreAdmin)}, filtré a un adoptante excelente para ${d.perro} (Score ${d.evaluacion.suitability}%). Le propuse visita el sábado a las 10 AM, por confirmar`,
+    `Visita propuesta (por confirmar): ${describirFecha(d.fecha)}, ${HORA_VISITA}`,
     d.contacto.tipo === 'whatsapp' ? `Contacto: ${telefonoBonito(d.contacto.telefono)}` : 'Contacto: llamada web (sin teléfono)',
     ...(d.evaluacion.nombre ? [`Nombre: ${d.evaluacion.nombre}`] : []),
     `Resumen: ${resumen(d.evaluacion)}`,

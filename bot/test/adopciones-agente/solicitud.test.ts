@@ -41,6 +41,15 @@ describe('la visita que propone el agente queda guardada', () => {
     expect(e.t.repo.adopcion).toHaveLength(0)
   })
 
+  it('a la persona se le dice que la visita es una propuesta por confirmar, no una cita hecha', async () => {
+    e.t.llm.responder(excelente({ nombre: 'Ana' }))
+    await e.escribir('hola')
+    const respuesta = e.alTelefono(TEL).join('\n')
+    expect(respuesta).toContain('te propongo una visita')
+    expect(respuesta).toContain('por confirmar')
+    expect(respuesta).not.toContain('te dejé una visita')
+  })
+
   it('si la base falla, la conversación sigue y el aviso a la coordinación sale igual', async () => {
     e.t.repo.guardarSolicitudAdopcion = async () => {
       throw new Error('base caída')
@@ -48,6 +57,6 @@ describe('la visita que propone el agente queda guardada', () => {
     e.t.llm.responder(excelente({ nombre: 'Ana' }))
     await e.escribir('hola')
     expect(e.alTelefono(TEL).length).toBeGreaterThan(0)
-    expect(e.avisos()[0]).toContain('Viene el sábado')
+    expect(e.avisos()[0]).toContain('Le propuse visita el sábado')
   })
 })

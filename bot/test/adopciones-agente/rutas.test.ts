@@ -121,8 +121,8 @@ describe('POST /api/publico/agente-voz', () => {
       expect(j.guionVoz).toContain('sábado 31 de octubre')
       expect(j.guionVoz).not.toMatch(/\p{Extended_Pictographic}/u)
       expect(avisos()).toEqual([
-        'Doña Carolina, filtré a un adoptante excelente para Toby (Score 82%). Viene el sábado a las 10 AM\n' +
-          'Fecha: sábado 31 de octubre, 10:00 a. m.\n' +
+        'Doña Carolina, filtré a un adoptante excelente para Toby (Score 82%). Le propuse visita el sábado a las 10 AM, por confirmar\n' +
+          'Visita propuesta (por confirmar): sábado 31 de octubre, 10:00 a. m.\n' +
           'Contacto: llamada web (sin teléfono)\n' +
           'Nombre: Ana\n' +
           'Resumen: casa (no arrienda) · presupuesto veterinario: sí · tiempo disponible: suficiente\n' +

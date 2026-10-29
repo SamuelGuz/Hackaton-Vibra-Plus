@@ -239,7 +239,7 @@ describe('"hola" repetido y fechas', () => {
   it('[C-31] el aviso siempre dice "sábado a las 10 AM" y con la fecha real', async () => {
     e.t.llm.responder(excelente({ nombre: 'Ana' }))
     await e.escribir('listo')
-    expect(e.avisos()[0]).toContain('Viene el sábado a las 10 AM')
+    expect(e.avisos()[0]).toContain('Le propuse visita el sábado a las 10 AM, por confirmar')
     expect(e.avisos()[0]).toContain('sábado 31 de octubre')
   })
 })

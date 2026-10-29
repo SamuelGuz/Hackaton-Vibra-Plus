@@ -6,6 +6,7 @@ import type { ConfigExterno } from './app.js'
 import { crearCorreo, leerConfigCorreo } from './campanas/index.js'
 import { CONOCIMIENTO } from './rag/conocimiento-data.js'
 import { crearLlmGemini, crearRag, crearRespuestas } from './rag/index.js'
+import { crearLlmConRespaldo } from './rag/llm-respaldo.js'
 import type { Llm } from './rag/tipos.js'
 import type { Deps } from './tipos.js'
 
@@ -14,9 +15,17 @@ type Env = Record<string, string | undefined>
 /** "+57 300 111 2233" → "573001112233", para los botones wa.me; null si no hay número */
 const soloDigitos = (numero: string | undefined) => numero?.replace(/\D/g, '') || null
 
-export function armarExterno(env: Env, deps: Pick<Deps, 'repo' | 'ahora'>, opciones: { llm?: Llm; voz?: Voz; pausaHumana?: (ms: number) => Promise<void> } = {}): ConfigExterno | undefined {
+export function armarExterno(
+  env: Env,
+  deps: Pick<Deps, 'repo' | 'ahora'>,
+  opciones: { llm?: Llm; voz?: Voz; pausaHumana?: (ms: number) => Promise<void>; fetchRespaldo?: typeof fetch } = {},
+): ConfigExterno | undefined {
   if (!env.GEMINI_API_KEY) return undefined
-  const llm = opciones.llm ?? crearLlmGemini({ apiKey: env.GEMINI_API_KEY, modelo: env.GEMINI_MODEL || 'gemini-2.5-flash' })
+  const gemini = opciones.llm ?? crearLlmGemini({ apiKey: env.GEMINI_API_KEY, modelo: env.GEMINI_MODEL || 'gemini-2.5-flash' })
+  // Con OPENROUTER_API_KEY, si Gemini se queda sin cupo el agente y los comprobantes siguen respondiendo
+  const llm = env.OPENROUTER_API_KEY
+    ? crearLlmConRespaldo(gemini, { apiKey: env.OPENROUTER_API_KEY, modelo: env.OPENROUTER_MODEL || 'google/gemini-2.5-flash', fetch: opciones.fetchRespaldo })
+    : gemini
   const datos = () => deps.repo.hoy(deps.ahora())
   const rag = crearRag({ datos, llm, ahora: deps.ahora })
   const whatsappPublico = soloDigitos(env.WA_NUMERO_BOT)

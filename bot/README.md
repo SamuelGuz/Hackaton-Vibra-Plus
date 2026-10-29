@@ -85,6 +85,8 @@ Crear la llave en [aistudio.google.com](https://aistudio.google.com/apikey) y po
 
 De respaldo, con una llave de [openrouter.ai](https://openrouter.ai/keys) en `OPENROUTER_API_KEY`: si Gemini falla, el mismo mensaje se manda a OpenRouter (`OPENROUTER_MODEL`, por defecto `google/gemini-2.5-flash`; debe aceptar audio e imágenes). Si a Gemini se le acaba la cuota, se salta 10 minutos y todo va directo a OpenRouter. Basta con una de las dos llaves ([`src/ia/respaldo.ts`](src/ia/respaldo.ts)).
 
+El frente externo (agente de adopciones, campañas y lector de comprobantes) usa el mismo respaldo cuando hay `OPENROUTER_API_KEY` ([`src/rag/llm-respaldo.ts`](src/rag/llm-respaldo.ts)); los embeddings y la voz siguen solo con Gemini. Si la IA no responde del todo, el equipo igual recibe con los datos del panel la respuesta a lo común (comida, medicinas, vacunas, caja, adopciones) y un "con gusto" cuando da las gracias.
+
 Privacidad: el plan gratis de Gemini usa los datos para entrenar. Por eso, a los textos se les quitan antes teléfonos y cédulas ([`src/ia/redactar.ts`](src/ia/redactar.ts)), y la IA solo recibe nombres de animales, dosis y clínicas.
 
 ## En el VPS

@@ -7,7 +7,7 @@ import { ESPERA_MAXIMA_MS, INSTRUCCIONES, mimeSinParametros, textosDe } from './
 const URL = 'https://openrouter.ai/api/v1/chat/completions'
 
 /** Tipos de audio de WhatsApp → formato que pide OpenRouter */
-const FORMATO_AUDIO: Record<string, string> = {
+export const FORMATO_AUDIO: Record<string, string> = {
   'audio/ogg': 'ogg',
   'audio/opus': 'ogg',
   'audio/mpeg': 'mp3',

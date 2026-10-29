@@ -1,0 +1,123 @@
+/* /adoptar on top of the Home infographic look (estilosHome from home2/Infografia.module.css).
+   The page root carries both `.home` (tokens: --verde, --tinta, --superficie, --ease-out...) and `.adoptar`.
+   Every selector starts with `.adoptar` so it outranks the theme's `main[data-tema] h2/p/a` rules.
+   Motion: ease-out, transform/opacity only, UI under 300ms, press scale .97, hover only on real pointers. */
+
+.adoptar { --regla-clara: rgb(255 255 255 / 0.22); }
+
+/* ---------- Encabezado ---------- */
+.adoptar .encGrid { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+.adoptar .botones { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+
+/* ---------- Cómo funciona ---------- */
+.adoptar .pasoNumero { font-size: 0.8125rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--verde); }
+.adoptar .preguntasCaja { display: grid; justify-items: start; gap: 1rem; padding: 1.5rem; border-radius: 24px; border: 1.5px dashed var(--regla); background: #ffffff; }
+.adoptar .preguntasEtiqueta { margin: 0; font-size: 0.8125rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--verde); }
+.adoptar .preguntas { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+.adoptar .preguntas li { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem 0.6rem 0.75rem; border-radius: 999px; background: var(--superficie); font-weight: 650; }
+.adoptar .preguntas svg { width: 1.05rem; height: 1.05rem; color: var(--verde); }
+.adoptar .preguntasNota { margin: 0; font-size: 0.9375rem; color: var(--tinta-2); max-width: 52ch; }
+.adoptar .botonReset { background: transparent; font: inherit; font-weight: 600; cursor: pointer; }
+
+/* ---------- Quiénes esperan: filter ---------- */
+.adoptar .filtros { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0 1.5rem; }
+.adoptar .filtros button { min-height: 2.75rem; padding-inline: 1.25rem; border-radius: 999px; border: 1.5px solid var(--regla); background: #ffffff; color: var(--tinta); font: inherit; font-weight: 600; cursor: pointer; transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms var(--ease-out); }
+.adoptar .filtros button:active { transform: scale(0.97); }
+.adoptar .filtros button[aria-pressed='true'] { background: var(--verde); border-color: var(--verde); color: #ffffff; }
+.adoptar .filtros button:focus-visible { outline: 3px solid var(--verde); outline-offset: 3px; }
+
+/* ---------- Quiénes esperan: cards ---------- */
+.adoptar .fichas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.75rem 1.25rem; }
+.adoptar .ficha { display: grid; grid-template-rows: auto 1fr auto; gap: 1rem; min-width: 0; animation: entrar 260ms var(--ease-out) both; }
+@keyframes entrar { from { opacity: 0; transform: translateY(8px); } }
+.adoptar .fichaMedia { position: relative; min-width: 0; }
+.adoptar .fichaEscena, .adoptar .fichaFoto { aspect-ratio: 4 / 4.2; }
+.adoptar .fichaFoto { position: relative; margin: 0; border-radius: 28px; overflow: hidden; background: var(--superficie); }
+.adoptar .fichaFoto img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.adoptar .fichaMedia .chipFicha { left: 5%; top: 5%; font-size: 0.8125rem; }
+.adoptar .chipQuieto { position: absolute; z-index: 3; left: 5%; top: 5%; padding: 0.5rem 0.85rem; border-radius: 999px; background: #ffffff; color: var(--tinta); font-size: 0.8125rem; font-weight: 600; line-height: 1.2; }
+
+.adoptar .fav { position: absolute; z-index: 4; right: 4%; top: 4%; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; padding: 0; border: 0; border-radius: 999px; background: #ffffff; color: var(--tinta); cursor: pointer; transition: transform 160ms var(--ease-out), color 160ms ease; }
+.adoptar .fav svg { fill: none; stroke: currentColor; stroke-width: 1.8; transition: fill 160ms ease; }
+.adoptar .fav:active { transform: scale(0.9); }
+.adoptar .fav:focus-visible { outline: 3px solid var(--verde); outline-offset: 3px; }
+.adoptar .favOn { color: var(--verde); }
+.adoptar .favOn svg { fill: currentColor; }
+
+.adoptar .fichaTexto { display: grid; align-content: start; gap: 0.35rem; min-width: 0; }
+.adoptar .fichaEspecie { margin: 0; font-size: 0.8125rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--verde); }
+.adoptar .fichaTexto h3 { margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; color: var(--tinta); }
+.adoptar .fichaRasgo { margin: 0; color: var(--tinta-2); line-height: 1.4; }
+.adoptar .fichaDatos { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.35rem 0 0; }
+.adoptar .fichaDatos div { display: inline-flex; gap: 0.35rem; padding: 0.3rem 0.7rem; border-radius: 999px; background: var(--superficie); font-size: 0.8125rem; }
+.adoptar .fichaDatos dt { font-weight: 700; }
+.adoptar .fichaDatos dd { margin: 0; color: var(--tinta-2); }
+.adoptar .ficha .botonFicha { width: 100%; min-height: 3.25rem; padding-inline: 1.25rem; border: 0; font: inherit; font-weight: 600; font-size: 1rem; cursor: pointer; }
+.adoptar .ficha .botonFicha:focus-visible { outline: 3px solid var(--verde); outline-offset: 3px; }
+
+/* ---------- Después (dark green band) ---------- */
+.adoptar .despues { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 2.5rem 0 0; padding: 0; list-style: none; }
+.adoptar .despues li { position: relative; display: grid; align-content: start; justify-items: start; gap: 0.4rem; padding: 1.5rem; border-radius: 24px; background: rgb(255 255 255 / 0.07); }
+.adoptar .despues li:not(:last-child)::after { content: '→'; position: absolute; right: -0.85rem; top: 2.25rem; z-index: 1; display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 999px; background: #ffffff; color: var(--verde-profundo); font-size: 0.875rem; }
+.adoptar .despuesIcono { display: grid; place-items: center; width: 3rem; height: 3rem; margin-bottom: 0.5rem; border-radius: 999px; background: #ffffff; color: var(--verde-profundo); }
+.adoptar .despues b { font-size: 0.8125rem; font-weight: 700; color: #b9d3c1; }
+.adoptar .despues strong { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; color: #ffffff; }
+.adoptar .despues span:not(.despuesIcono) { color: #cfe0d4; line-height: 1.4; }
+.adoptar .porConfirmar { margin-top: 0.4rem; padding: 0.25rem 0.7rem; border-radius: 999px; border: 1.5px dashed var(--regla-clara); font-style: normal; font-size: 0.75rem; font-weight: 600; color: #ffffff; }
+
+/* ---------- ¿No es el momento? ---------- */
+.adoptar .platoGrid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+.adoptar .platoTitulo { max-width: 12ch; }
+
+/* ---------- Preguntas ---------- */
+.adoptar .faqGrid { display: grid; grid-template-columns: 1fr 1.4fr; gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+.adoptar .faq { border-top: 1.5px solid var(--regla); }
+.adoptar .faq details { border-bottom: 1.5px solid var(--regla); }
+.adoptar .faq summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3.5rem; padding-block: 1.1rem; list-style: none; cursor: pointer; font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem); font-weight: 700; letter-spacing: -0.01em; }
+.adoptar .faq summary::-webkit-details-marker { display: none; }
+.adoptar .faq summary:focus-visible { outline: 3px solid var(--verde); outline-offset: 3px; border-radius: 8px; }
+.adoptar .mas { position: relative; flex: none; width: 2rem; height: 2rem; border-radius: 999px; background: var(--superficie); transition: transform 200ms var(--ease-out); }
+.adoptar .mas::before, .adoptar .mas::after { content: ''; position: absolute; left: 50%; top: 50%; width: 0.75rem; height: 2px; margin: -1px 0 0 -0.375rem; border-radius: 2px; background: var(--verde); }
+.adoptar .mas::after { transform: rotate(90deg); }
+.adoptar .faq details[open] .mas { transform: rotate(45deg); }
+.adoptar .faq p { margin: 0 0 1.25rem; max-width: 52ch; color: var(--tinta-2); line-height: 1.5; }
+
+@media (hover: hover) and (pointer: fine) {
+  .adoptar .filtros button:not([aria-pressed='true']):hover { border-color: var(--tinta); }
+  .adoptar .fav:hover { transform: scale(1.06); }
+  .adoptar .faq summary:hover .mas { background: var(--superficie-verde); }
+}
+
+/* Tablet */
+@media (max-width: 62em) {
+  .adoptar .encGrid, .adoptar .platoGrid, .adoptar .faqGrid { grid-template-columns: 1fr; }
+  .adoptar .fichas, .adoptar .despues { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .adoptar .despues li::after { display: none; }
+}
+
+/* Mobile: one 4-column grid; blocks span 4, 2 or 1 columns so nothing collides. */
+@media (max-width: 40em) {
+  .adoptar .fichas, .adoptar .despues { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; }
+  .adoptar .fichas { row-gap: 2rem; }
+  .adoptar .ficha { grid-column: span 4; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: auto auto; gap: 0.75rem; align-items: center; }
+  .adoptar .fichaMedia { grid-column: span 2; }
+  .adoptar .fichaTexto { grid-column: span 2; }
+  .adoptar .ficha .botonFicha { grid-column: span 4; }
+  .adoptar .fichaEscena, .adoptar .fichaFoto { aspect-ratio: 1; border-radius: 22px; }
+  .adoptar .fichaMedia .chipFicha, .adoptar .chipQuieto { left: 6%; top: auto; bottom: 6%; font-size: 0.6875rem; padding: 0.35rem 0.6rem; }
+  .adoptar .fav { width: 2.5rem; height: 2.5rem; }
+  .adoptar .fichaTexto h3 { font-size: 1.25rem; }
+  .adoptar .fichaRasgo { font-size: 0.9375rem; }
+  .adoptar .despues li { grid-column: span 2; padding: 1.1rem; }
+  .adoptar .despuesIcono { width: 2.5rem; height: 2.5rem; }
+  .adoptar .despues strong { font-size: 1.0625rem; }
+  .adoptar .despues span:not(.despuesIcono) { font-size: 0.875rem; }
+  .adoptar .filtros button { flex: 1 1 0; }
+  .adoptar .preguntasCaja { padding: 1.25rem; }
+  .adoptar .preguntasCaja .botonReset { width: 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adoptar .ficha { animation: none; }
+  .adoptar .mas { transition: none; }
+}

@@ -1,0 +1,50 @@
+.boton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 3rem;
+  padding: var(--esp-3) var(--esp-5);
+  border-radius: var(--radio-pill);
+  font: var(--peso-semi) var(--texto-base) / 1 var(--fuente-texto);
+  letter-spacing: var(--tracking-boton);
+  text-decoration: none;
+  transition:
+    background-color var(--dur-hover) var(--ease-salida),
+    transform var(--dur-hover) var(--ease-salida);
+}
+
+.boton:hover {
+  transform: translateY(-2px);
+}
+
+.boton:active {
+  transform: scale(var(--escala-presion, 0.97));
+  transition-duration: var(--dur-presion);
+}
+
+.primario {
+  background: var(--color-acento);
+  color: var(--color-acento-tinta);
+}
+
+.primario:hover {
+  background: var(--color-acento-hover);
+}
+
+.secundario {
+  background: var(--color-tinta);
+  color: var(--color-crema);
+}
+
+[data-campo='oscuro'] .secundario {
+  background: var(--color-crema);
+  color: var(--color-tinta);
+}
+
+.flecha {
+  transition: transform var(--dur-hover) var(--ease-salida);
+}
+
+.boton:hover .flecha {
+  transform: translateX(4px);
+}

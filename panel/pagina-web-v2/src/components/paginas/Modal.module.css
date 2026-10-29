@@ -1,0 +1,41 @@
+/* Dialogos: entrada ease-out fuerte 220 ms (scale .96 a 1 + fade), salida 150 ms. Sin sombras: el fondo oscurece. */
+.fondo { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; padding: 1rem; background: rgb(15 61 42 / 0.55); }
+.entra { animation: fondoIn 200ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.sale { animation: fondoOut 150ms ease-in both; }
+.entra .panel { animation: panelIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.sale .panel { animation: panelOut 150ms ease-in both; }
+@keyframes fondoIn { from { opacity: 0; } }
+@keyframes fondoOut { to { opacity: 0; } }
+@keyframes panelIn { from { opacity: 0; transform: scale(0.96) translateY(8px); } }
+@keyframes panelOut { to { opacity: 0; transform: scale(0.98); } }
+
+.panel { width: min(100%, 34rem); max-height: min(90dvh, 44rem); overflow: auto; background: #ffffff; color: #14201a; border-radius: 28px; outline: none; overscroll-behavior: contain; }
+.ancha { width: min(100%, 42rem); }
+.cabecera { position: sticky; top: 0; z-index: 2; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1.5rem 1.5rem 0.5rem; background: #ffffff; }
+.titulo { margin: 0; font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem) !important; max-width: 20ch; }
+.cerrar { flex: none; display: grid; place-items: center; width: 3rem; height: 3rem; margin: -0.35rem -0.5rem 0 0; border-radius: 999px; background: transparent; color: #14201a; transition: background 160ms; }
+.cerrar:hover { background: #ffffff; }
+.cerrar:active { transform: scale(0.94); }
+.cuerpo { padding: 0.5rem 1.5rem 1.75rem; }
+.cuerpo p { max-width: 52ch; line-height: 1.5; color: #3d4a41; margin: 0 0 1rem; }
+
+.paso { outline: none; }
+.desdeDer { animation: pasoDer 220ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.desdeIzq { animation: pasoIzq 220ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.desdeNada { animation: fondoIn 180ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes pasoDer { from { opacity: 0; transform: translateX(28px); } }
+@keyframes pasoIzq { from { opacity: 0; transform: translateX(-28px); } }
+
+@media (max-width: 640px) {
+  .fondo { place-items: end center; padding: 0; }
+  .panel, .ancha { width: 100%; max-height: 92dvh; border-radius: 28px 28px 0 0; }
+  .entra .panel { animation-name: hojaIn; }
+  .sale .panel { animation-name: hojaOut; }
+  @keyframes hojaIn { from { transform: translateY(100%); } }
+  @keyframes hojaOut { to { transform: translateY(100%); } }
+  .cuerpo { padding-bottom: calc(1.75rem + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .entra .panel, .sale .panel, .desdeDer, .desdeIzq { animation-name: fondoIn; animation-duration: 150ms; }
+  .sale .panel { animation-name: fondoOut; }
+}

@@ -1,0 +1,19 @@
+.gallery { margin-top: var(--esp-7); min-width: 0; }
+.stage { position: relative; height: var(--galeria-alto); overflow: clip; isolation: isolate; touch-action: pan-y; cursor: grab; }
+.stage:active { cursor: grabbing; }
+.photo { position: absolute; inset-block: var(--esp-5); inset-inline-start: calc((100% - var(--galeria-ancho)) / 2); width: var(--galeria-ancho); overflow: hidden; border-radius: var(--radio-archivo) var(--radio-archivo) var(--radio-lg) var(--radio-lg); pointer-events: none; }
+.photo[data-position='0'] { z-index: var(--z-recorte); }
+.photo img { width: 100%; height: 100%; object-fit: cover; user-select: none; }
+.photo[data-position='-1'] img, .photo[data-position='1'] img { object-position: center; }
+.controls { display: flex; align-items: center; justify-content: center; gap: var(--esp-5); margin-top: var(--esp-4); }
+.arrow { width: var(--control-editorial); height: var(--control-editorial); display: grid; place-items: center; border-radius: var(--radio-pill); background: var(--color-tinta); color: var(--color-crema); cursor: pointer; transition: transform var(--dur-hover) var(--ease-editorial); }
+.arrow:hover { transform: translateY(var(--dist-hover)); }
+.arrow:active { transform: scale(var(--escala-presion)); }
+.arrow svg { width: var(--icono-editorial); height: var(--icono-editorial); fill: none; stroke: currentColor; stroke-width: 1.5; }
+.dots { display: flex; align-items: center; gap: var(--esp-2); }
+.dots button { width: var(--control-editorial); height: var(--control-editorial); display: grid; place-items: center; cursor: pointer; border-radius: var(--radio-pill); }
+.dots span { width: var(--esp-2); height: var(--esp-2); border-radius: var(--radio-pill); background: var(--color-tinta-suave); transition: transform var(--dur-ui) var(--ease-editorial); }
+.dots button[aria-current='true'] span { transform: scaleX(2.5); background: var(--color-tinta); }
+.status { max-width: none; text-align: center; margin-top: var(--esp-3); font-size: var(--texto-xs); color: var(--color-tinta-suave); }
+@media (min-width: 56.25em) { .gallery { margin-top: var(--esp-8); } }
+@media (prefers-reduced-motion: reduce) { .arrow, .dots span { transition: none; } .arrow:hover { transform: none; } }

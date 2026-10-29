@@ -244,7 +244,8 @@ async function audio(c: Ctx, estado: Estado, mediaId: string): Promise<Estado> {
   const dicho = e.transcripcion.trim()
   if (PARA_VOLVER.has(normal(dicho))) return mostrarMenu(c)
 
-  const ganaLaIa = estado.paso === 'medicina' && e.acciones.length > 0
+  // En la lista de dosis lo de la IA es más preciso; en el "¿Está bien?" es algo nuevo para anotar, no la respuesta
+  const ganaLaIa = (estado.paso === 'medicina' || estado.paso === 'confirmar') && e.acciones.length > 0
   if (dicho && !ganaLaIa) {
     const respuesta = await respuestaDelPaso(conEscuche(c, dicho), estado, dicho, { e, mediaUrl: m.url })
     if (respuesta) return respuesta

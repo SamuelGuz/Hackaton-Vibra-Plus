@@ -172,6 +172,36 @@ describe('¿está bien? se responde escribiendo o en audio', () => {
     expect(paso()).toBe('medicina')
   })
 
+  it('"Listo, también abrí un bulto" es un registro nuevo, no la confirmación del anterior', async () => {
+    t.ia.responder({ transcripcion: 'Listo, también abrí un bulto de perro', acciones: [{ tipo: 'inventario', especie: 'perro', cambio: -1 }] })
+    await decir(texto('Listo, también abrí un bulto de perro'))
+    expect(t.repo.registros).toHaveLength(2)
+    expect(t.repo.porEstado('por_confirmar')).toHaveLength(2)
+  })
+
+  it('"le quité los puntos a Mateo" es una nota nueva, no borra lo anterior', async () => {
+    t.ia.responder({ transcripcion: 'le acabo de quitar los puntos a Mateo', acciones: [{ tipo: 'nota', animalId: '11', texto: 'Le quitaron los puntos' }] })
+    await decir(texto('le acabo de quitar los puntos a Mateo'))
+    expect(t.repo.porEstado('anulado')).toHaveLength(0)
+    expect(t.repo.porEstado('por_confirmar')).toHaveLength(2)
+  })
+
+  it('en audio, si la IA sacó algo para anotar, se registra aparte aunque empiece con "ok"', async () => {
+    t.ia.responder({ transcripcion: 'ok, y cambié el agua de los gatos', acciones: [{ tipo: 'nota', animalId: '12', texto: 'Agua cambiada' }] })
+    await decir(audio())
+    expect(t.repo.porEstado('confirmado')).toHaveLength(0)
+    expect(t.repo.porEstado('corregido')).toHaveLength(0)
+    expect(t.repo.registros).toHaveLength(2)
+  })
+
+  it('"ok, está bien" y "sí, bórralo" siguen siendo respuestas', async () => {
+    await decir(texto('ok, está bien'))
+    expect(t.repo.porEstado('confirmado')).toHaveLength(1)
+    await decir(boton('d:101:08:00'))
+    await decir(texto('sí, bórralo'))
+    expect(t.repo.porEstado('anulado')).toHaveLength(1)
+  })
+
   it('otra cosa escrita se toma como un registro nuevo', async () => {
     t.ia.responder({ transcripcion: 'abrí un bulto de perro', acciones: [{ tipo: 'inventario', especie: 'perro', cambio: -1 }] })
     await decir(texto('abrí un bulto de perro'))

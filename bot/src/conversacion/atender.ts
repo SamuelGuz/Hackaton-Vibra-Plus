@@ -5,6 +5,7 @@
 // se dice en audio o se manda en foto: en cada pregunta se puede tocar, escribir o hablar.
 
 import { textos } from '../textos.js'
+import { atenderAyudaInterna } from '../comunidad/apoyo.js'
 import type { Accion, Deps, Entendido, Entrada, Estado, Registro, Usuario } from '../tipos.js'
 import { elegirAnimal, guardarNota, nombreEscrito } from './animal.js'
 import { cantidadEscrita, elegirCantidad, elegirEspecie, empezarComida, especieDeTexto } from './comida.js'
@@ -50,6 +51,10 @@ const PARA_AYUDA = new Set(['ayuda', '?', 'ayudame', 'como funciona'])
 const normal = (t: string) => sinTildes(t.toLowerCase()).replace(/[^a-z0-9? ]/g, '').replace(/\s+/g, ' ').trim()
 
 export async function atender(deps: Deps, usuario: Usuario, entrada: Entrada): Promise<void> {
+  if (await atenderAyudaInterna(deps, usuario, entrada)) {
+    await deps.repo.guardarEstado(usuario.id, { paso: 'menu' })
+    return
+  }
   const c = crearCtx(deps, usuario)
   const guardado = await deps.repo.leerEstado(usuario.id)
   let estado: Estado = guardado?.estado ?? { paso: 'menu' }

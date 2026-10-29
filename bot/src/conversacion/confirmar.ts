@@ -1,5 +1,5 @@
 // Guardar lo entendido como "por confirmar", preguntar "¿Está bien?" y atender Sí / Corregir / Borrar.
-import { diasHablados } from '../formato.js'
+import { diasHablados, horaBonita } from '../formato.js'
 import { textos, botones } from '../textos.js'
 import type { Accion, Estado, NuevoRegistro, Registro } from '../tipos.js'
 import { diasDeComida, nivelClinica, nivelComida, plataEnCaja } from '../datos/calculos.js'
@@ -46,6 +46,36 @@ export async function guardarYPreguntar(c: Ctx, g: PorGuardar): Promise<Estado> 
     botones: [botones.si(id), botones.corregir(id), botones.borrar(id)],
   })
   // Los botones llevan el id, así que siguen sirviendo después; el paso es para responder escribiendo o en audio
+  return { paso: 'confirmar', registroId: String(id) }
+}
+
+/**
+ * Audio clarito: se guarda confirmado de una, sin "¿Está bien?" (manos mojadas o con barro).
+ * Se deja deshacer: los botones Corregir y Borrar, o escribir "corregir".
+ */
+export async function guardarDirecto(c: Ctx, g: PorGuardar): Promise<Estado> {
+  const d = await c.datos()
+  const id = await c.deps.repo.crearRegistro({
+    usuarioId: c.usuario.id,
+    canal: 'whatsapp',
+    tipoEntrada: g.tipoEntrada,
+    mediaUrl: g.mediaUrl ?? null,
+    transcripcion: g.transcripcion?.trim() || resumenCorto(g.acciones, d),
+    acciones: g.acciones,
+    confianza: g.confianza ?? null,
+    estado: 'confirmado',
+  })
+  const hora = horaBonita(`${String(c.ahora.getHours()).padStart(2, '0')}:${String(c.ahora.getMinutes()).padStart(2, '0')}`)
+  const partes: string[] = []
+  if (g.mostrarEscuche && g.transcripcion) partes.push(textos.escuche(g.transcripcion))
+  partes.push(`${textos.anotado(hora)}\n${g.acciones.map((a) => describir(a, d)).join('\n')}`)
+  partes.push(...(await comoQuedo(c, g.acciones)))
+  partes.push(textos.siHuboError)
+  await c.enviar({
+    tipo: 'botones',
+    texto: partes.join('\n\n'),
+    botones: [botones.corregir(id), botones.borrar(id), botones.menu],
+  })
   return { paso: 'confirmar', registroId: String(id) }
 }
 

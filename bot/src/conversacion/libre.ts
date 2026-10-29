@@ -2,7 +2,7 @@
 import { textos } from '../textos.js'
 import type { Accion, Entendido, Estado, NuevoRegistro } from '../tipos.js'
 import type { Ctx } from './ctx.js'
-import { guardarYPreguntar } from './confirmar.js'
+import { guardarDirecto, guardarYPreguntar } from './confirmar.js'
 import { enviarInforme } from './informe.js'
 import { bajarYGuardar, entenderSeguro } from './medios.js'
 import { conKilos } from './kilos.js'
@@ -56,19 +56,47 @@ export async function registrarEntendido(
   const { acciones, avisos } = await sinDosisRepetidas(c, e.acciones)
   if (acciones.length === 0) {
     if (e.informe && !avisos.length) return enviarInforme(c, e.informe)
-    if (avisos.length) return mostrarMenu(c, avisos.join('\n'))
+    // Solo traía una dosis que ya dio otra persona: se frena y se pregunta, no se repite sola
+    if (avisos.length) return preguntarSiEsOtra(c, avisos)
     if (e.futuras > 0) return mostrarMenu(c, textos.futura)
     return sinNadaQueAnotar(c, origen.escrito ?? e.transcripcion, esAudio)
   }
-  return guardarYPreguntar(c, {
-    acciones,
-    avisos,
+  const porGuardar = {
     tipoEntrada: origen.tipoEntrada,
     mediaUrl: origen.mediaUrl,
     transcripcion: e.transcripcion,
     confianza: e.confianza,
-    mostrarEscuche: origen.tipoEntrada === 'audio',
+    mostrarEscuche: esAudio,
+  }
+  // Audio clarito y sin dosis repetidas: lo del campo se guarda de una; la plata sigue esperando el "Sí"
+  if (esAudio && e.confianza >= CONFIANZA_PARA_GUARDAR_SOLO && avisos.length === 0) {
+    const directas = acciones.filter(seGuardaSola)
+    const conPlata = acciones.filter((a) => !seGuardaSola(a))
+    if (directas.length && !conPlata.length) return guardarDirecto(c, { ...porGuardar, acciones: directas })
+    if (directas.length) {
+      await guardarDirecto(c, { ...porGuardar, acciones: directas })
+      return guardarYPreguntar(c, { ...porGuardar, acciones: conPlata, mostrarEscuche: false })
+    }
+  }
+  return guardarYPreguntar(c, { ...porGuardar, acciones, avisos })
+}
+
+/** Desde esta confianza un audio se guarda sin preguntar "¿Está bien?" */
+export const CONFIANZA_PARA_GUARDAR_SOLO = 0.9
+
+/** Dosis, comida y notas: lo que se hace con las manos ocupadas. Plata, facturas y cambios de estado siempre se confirman. */
+const seGuardaSola = (a: Accion) => a.tipo === 'dosis' || a.tipo === 'inventario' || a.tipo === 'nota'
+
+async function preguntarSiEsOtra(c: Ctx, avisos: string[]): Promise<Estado> {
+  await c.enviar({
+    tipo: 'botones',
+    texto: `${avisos.join('\n')}\n\n${textos.esOtraDosis}`,
+    botones: [
+      { id: 'dup:si', titulo: 'Sí, es otra' },
+      { id: 'dup:no', titulo: 'No, ya está' },
+    ],
   })
+  return { paso: 'medicina_duplicada' }
 }
 
 /**

@@ -15,6 +15,7 @@ Está pensado para gente que no se lleva con la tecnología:
 - **Casi todo es tocar botones.** Cada mensaje trae botones (máximo 3) o una lista (máximo 10 opciones).
 - **El audio sirve siempre.** En cualquier momento se puede mandar un audio contando todo de una vez. "Llegaron 20 kilos de carne" o "se gastaron 12 kilos de menudencia" se anotan en kilos, aunque la IA falle.
 - **Se confirma con un toque.** Lo que se registra queda *por confirmar* hasta tocar **Sí, está bien**, **Corregir** o **Borrar**. Montos y dosis van en negrita.
+- **Audio clarito, se guarda solo.** Si la IA está segura (confianza ≥ 0,9) y no es una dosis que ya dio otra persona, las dosis, la comida y las notas de un audio se guardan de una: "✅ Anotado (2:05 p. m.)…". Para deshacer, **Corregir**, **Borrar** o escribir *corregir*. La plata y las facturas siempre esperan el **Sí**. Si el audio solo trae una dosis ya reportada, pregunta **Sí, es otra** / **No, ya está**.
 - **Para volver al inicio**, escribir *menú*, *hola* o *0*. Si nadie responde en 30 minutos, el bot olvida el paso sin decir nada.
 - **No hay errores técnicos.** Si Gemini falla, el bot dice "No te entendí bien" y muestra el menú.
 

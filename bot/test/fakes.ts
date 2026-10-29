@@ -158,7 +158,7 @@ export class RepoFalso implements Repo {
     const id = String(this.registros.length + 1)
     const hhmm = `${String(this.ahora.getHours()).padStart(2, '0')}:${String(this.ahora.getMinutes()).padStart(2, '0')}`
     this.registros.push({ ...n, id, estadoActual: n.estado, creadoEn: `${HOY}T${hhmm}` })
-    if (n.estado === 'confirmado') this.aplicar(n.acciones, n.usuarioId, `${HOY}T${hhmm}`)
+    if (n.estado === 'confirmado') this.aplicar(n.acciones, n.usuarioId, `${HOY}T${hhmm}`, id)
     return id
   }
   async leerRegistro(id: string) {
@@ -171,7 +171,9 @@ export class RepoFalso implements Repo {
       if (!ids.includes(r.id) && !ids.includes(r.clienteId ?? '')) continue
       if (r.estadoActual === 'anulado') continue
       if (estado === 'confirmado' && r.estadoActual !== 'por_confirmar') continue
-      if (estado === 'confirmado') this.aplicar(r.acciones, r.usuarioId, r.creadoEn)
+      if (estado === 'confirmado') this.aplicar(r.acciones, r.usuarioId, r.creadoEn, r.id)
+      // Como la base: lo confirmado que se corrige o se anula deja de contar
+      else if (r.estadoActual === 'confirmado') this.deshacer(r)
       r.estadoActual = estado
       n++
     }
@@ -229,10 +231,10 @@ export class RepoFalso implements Repo {
   }
 
   /** Lo confirmado pasa a los datos, como lo haría la base */
-  private aplicar(acciones: Accion[], usuarioId: number, fechaHora: string) {
+  private aplicar(acciones: Accion[], usuarioId: number, fechaHora: string, registroId: string) {
     const quien = String(usuarioId)
-    for (const a of acciones) {
-      const id = `x${Math.random()}`
+    for (const [i, a] of acciones.entries()) {
+      const id = `r${registroId}-${i}`
       if (a.tipo === 'dosis') this.datos.dosisDadas.push({ id, tratamientoId: a.tratamientoId, hora: a.hora, fechaHora, quien, origen: 'bot' })
       if (a.tipo === 'inventario') {
         // Como la base: los kilos sueltos llegan también en bultos equivalentes
@@ -244,6 +246,15 @@ export class RepoFalso implements Repo {
       if (a.tipo === 'nota') this.datos.notas.push({ id, animalId: a.animalId, texto: a.texto, fechaHora, quien })
       if (a.tipo === 'deuda') this.datos.clinicas.find((k) => k.id === a.clinicaId)!.deuda += a.monto
     }
+  }
+
+  private deshacer(r: RegistroFalso) {
+    const deOtro = (x: { id: string }) => !x.id.startsWith(`r${r.id}-`)
+    this.datos.dosisDadas = this.datos.dosisDadas.filter(deOtro)
+    this.datos.inventario = this.datos.inventario.filter(deOtro)
+    this.datos.movimientos = this.datos.movimientos.filter(deOtro)
+    this.datos.notas = this.datos.notas.filter(deOtro)
+    for (const a of r.acciones) if (a.tipo === 'deuda') this.datos.clinicas.find((k) => k.id === a.clinicaId)!.deuda -= a.monto
   }
 
   porEstado(estado: EstadoRegistro) {
@@ -290,7 +301,8 @@ export class IaFalsa {
     return this.respuesta
   }
   responder(r: Partial<Entendido>) {
-    this.respuesta = { transcripcion: '', acciones: [], confianza: 0.9, futuras: 0, ...r }
+    // Por defecto un poco dudosa: así un audio queda por confirmar. Desde 0,9 se guarda solo (libre.ts).
+    this.respuesta = { transcripcion: '', acciones: [], confianza: 0.8, futuras: 0, ...r }
   }
 }
 

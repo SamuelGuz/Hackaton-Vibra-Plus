@@ -18,7 +18,7 @@ export const textos = {
     'Así funciono:\n\n' +
     '1. Toca *Ver opciones* y elige lo que hiciste.\n' +
     '2. O mándame un audio contándome todo de una vez.\n' +
-    '3. Te digo lo que entendí y tocas *Sí, está bien*.\n\n' +
+    '3. Te digo lo que entendí y tocas *Sí, está bien*. Si el audio está clarito, lo anoto de una y te aviso.\n\n' +
     'Escribe *menú* cuando quieras volver al inicio.',
 
   desconocido:
@@ -50,6 +50,8 @@ export const textos = {
   escuche: (t: string) => `🎧 Escuché: «${t.length > 220 ? `${t.slice(0, 219)}…` : t}»`,
   estaBien: '¿Está bien?',
   listo: '¡Listo, quedó guardado! ✅',
+  anotado: (hora: string) => `✅ Anotado (${hora}):`,
+  siHuboError: 'Si hubo un error, responde *corregir*.',
   borrado: 'Listo, lo borré. No quedó nada guardado 👍',
   yaGuardado: 'Eso ya estaba guardado ✅',
   yaBorrado: 'Eso ya lo habías borrado 👍',
@@ -69,6 +71,7 @@ export const textos = {
   dosisOmitida: (animal: string, horaDosis: string, quien: string, hora: string) =>
     `⚠️ La dosis de las ${horaBonita(horaDosis)} de *${animal}* ya la reportó ${quien} a las ${hora}. No la repetí.`,
   dosisNoRepito: 'Perfecto, no la repito 👍',
+  esOtraDosis: '¿Le diste otra dosis aparte de esa?',
 
   // Comida
   comidaEspecie: (llegada: boolean) => (llegada ? '¿Llegó comida de perro o de gato?' : '¿Abriste un bulto de perro o de gato?'),

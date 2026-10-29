@@ -154,6 +154,85 @@ describe('audios', () => {
     expect(t.wa.ultimoTexto()).toContain('ya la reportó Andrea')
   })
 
+  it('audio clarito (confianza ≥ 0,9): se guarda de una, sin tocar nada, y se puede corregir escribiendo', async () => {
+    t.ia.responder({
+      transcripcion: 'Le di la pastilla a Tobías',
+      acciones: [{ tipo: 'dosis', animalId: '10', tratamientoId: '100', hora: '14:00' }],
+      confianza: 0.95,
+    })
+    await decir(audio())
+    expect(t.repo.registros[0].estadoActual).toBe('confirmado')
+    expect(t.repo.datos.dosisDadas).toHaveLength(1)
+    const msg = t.wa.ultimoTexto()
+    expect(msg).toContain('✅ Anotado (3:00 p. m.)')
+    expect(msg).toContain('*Tobías*')
+    expect(msg).toContain('Si hubo un error, responde *corregir*')
+    expect(msg).not.toContain('¿Está bien?')
+    expect(t.wa.opciones()).toEqual(['corregir:1', 'borrar:1', 'menu'])
+    // "corregir" deshace lo guardado y la dosis vuelve a la lista
+    await decir(texto('corregir'))
+    expect(t.repo.registros[0].estadoActual).toBe('corregido')
+    expect(t.repo.datos.dosisDadas).toHaveLength(0)
+    expect(paso()).toBe('medicina')
+  })
+
+  it('audio clarito de comida: se guarda solo y dice cuántos días quedan', async () => {
+    t.ia.responder({ transcripcion: 'llegaron 15 kilos de carne', acciones: [], confianza: 0.93 })
+    await decir(audio())
+    expect(t.repo.registros[0]).toMatchObject({ estadoActual: 'confirmado', acciones: [{ tipo: 'inventario', cambio: 15, unidad: 'kg' }] })
+    expect(t.wa.ultimoTexto()).toContain('Quedan *5 días* de comida de perro')
+  })
+
+  it('audio dudoso (confianza < 0,9): sigue preguntando "¿Está bien?"', async () => {
+    t.ia.responder({
+      transcripcion: 'le di la pastilla a... Tobi creo',
+      acciones: [{ tipo: 'dosis', animalId: '10', tratamientoId: '100', hora: '14:00' }],
+      confianza: 0.89,
+    })
+    await decir(audio())
+    expect(t.repo.registros[0].estadoActual).toBe('por_confirmar')
+    expect(t.wa.ultimoTexto()).toContain('¿Está bien?')
+  })
+
+  it('audio clarito con plata: lo del campo se guarda solo y la plata sigue esperando el "Sí"', async () => {
+    t.ia.responder({
+      transcripcion: 'Le di la pastilla a Tobías y entraron 50 mil de donación',
+      acciones: [
+        { tipo: 'dosis', animalId: '10', tratamientoId: '100', hora: '14:00' },
+        { tipo: 'movimiento', movimiento: { tipo: 'ingreso', monto: 50_000, categoria: 'donacion', clinicaId: null, abonoDeuda: false, foto: null, nota: '' } },
+      ],
+      confianza: 0.97,
+    })
+    await decir(audio(), CAROLINA)
+    expect(t.repo.registros.map((r) => [r.acciones[0].tipo, r.estadoActual])).toEqual([
+      ['dosis', 'confirmado'],
+      ['movimiento', 'por_confirmar'],
+    ])
+    expect(t.wa.ultimoTexto()).toContain('¿Está bien?')
+    expect(t.wa.ultimoTexto()).toContain('$50.000')
+  })
+
+  it('audio clarito de una dosis que ya dio otra persona: frena y pregunta si es otra dosis', async () => {
+    await decir(boton('d:100:14:00'), ANDREA)
+    await decir(boton('si:1'), ANDREA)
+    t.ia.responder({
+      transcripcion: 'Le di la pastilla a Tobías',
+      acciones: [{ tipo: 'dosis', animalId: '10', tratamientoId: '100', hora: '14:00' }],
+      confianza: 0.99,
+    })
+    await decir(audio())
+    expect(t.repo.registros).toHaveLength(1)
+    expect(t.wa.ultimoTexto()).toContain('ya la reportó Andrea')
+    expect(t.wa.opciones()).toEqual(['dup:si', 'dup:no'])
+    expect(paso()).toBe('medicina_duplicada')
+  })
+
+  it('un texto clarito no se guarda solo: lo de guardar directo es para audios', async () => {
+    t.ia.responder({ transcripcion: 'abrí un bulto de perro', acciones: [{ tipo: 'inventario', especie: 'perro', cambio: -1 }], confianza: 0.99 })
+    await decir(texto('abrí un bulto de perro'))
+    expect(t.repo.registros[0].estadoActual).toBe('por_confirmar')
+  })
+
   it('si Gemini falla, no se cae: pide repetir el audio y muestra el menú', async () => {
     t.ia.respuesta = new Error('cuota agotada')
     await decir(audio())

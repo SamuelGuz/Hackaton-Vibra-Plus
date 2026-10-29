@@ -43,6 +43,7 @@ export const textos = {
   informeSinPlata: 'El informe de la plata solo lo ve la administración 🔒',
   futura: 'Entendí que todavía no se lo has dado. Cuando se lo des, me cuentas y lo anoto 👍',
   noPuedePlata: 'Lo de la plata lo registra la administradora 🙏 Cuéntale a ella.',
+  panelSinPlata: 'Los voluntarios no registran plata: lo hace alguien del equipo o la administradora',
 
   // Confirmar
   entendi: 'Entendí esto:',

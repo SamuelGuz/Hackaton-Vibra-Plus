@@ -1,3 +1,4 @@
+import { manejaPlata, veraPlata } from '../api/permisos.js'
 import type { DatosAlbergue } from '../panel-tipos.js'
 import type { Deps, Salida, Usuario } from '../tipos.js'
 
@@ -26,5 +27,6 @@ export function crearCtx(deps: Deps, usuario: Usuario): Ctx {
   }
 }
 
-export const puedeManejarPlata = (c: Ctx) => c.usuario.rol !== 'voluntario'
-export const puedeVerPlata = (c: Ctx) => c.usuario.rol === 'admin'
+// La misma regla que aplica el servidor al panel (api/permisos.ts)
+export const puedeManejarPlata = (c: Ctx) => manejaPlata(c.usuario.rol)
+export const puedeVerPlata = (c: Ctx) => veraPlata(c.usuario.rol)

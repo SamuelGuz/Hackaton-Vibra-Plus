@@ -271,6 +271,20 @@ export function crearRepoPg(pool: Pool): RepoPg {
       return token
     },
 
+    async duenoDeRecibo(url) {
+      // La foto va en media_url (WhatsApp) o dentro de la acción (panel); y en movimientos_financieros.soporte_url
+      const r = await pool.query(
+        `SELECT usuario_id FROM registros_ia
+         WHERE (media_url = $1 OR acciones_json @> jsonb_build_array(jsonb_build_object('movimiento', jsonb_build_object('foto', $1::text))))
+           AND EXISTS (SELECT 1 FROM jsonb_array_elements(coalesce(acciones_json, '[]'::jsonb)) a WHERE a->>'tipo' IN ('movimiento', 'deuda'))
+         ORDER BY id LIMIT 1`,
+        [url],
+      )
+      if (r.rows[0]) return { usuarioId: r.rows[0].usuario_id }
+      const m = await pool.query(`SELECT 1 FROM movimientos_financieros WHERE soporte_url = $1 LIMIT 1`, [url])
+      return m.rows[0] ? { usuarioId: null } : null
+    },
+
     // ---------- Solicitudes de adopción (006) ----------
 
     guardarSolicitudAdopcion(s, ahora) {

@@ -188,6 +188,16 @@ describe.skipIf(!URL_PRUEBA)('repositorio sobre Postgres', () => {
     expect(await repo.usuarioPorSesion('inventado')).toBeNull()
   })
 
+  it('reconoce los recibos de plata y quién los subió; un audio de nota no es recibo', async () => {
+    const luis = (await repo.usuarioPorTelefono('573000000001'))!
+    const gastoPanel = { tipo: 'gasto' as const, monto: 1000, categoria: 'comida' as const, clinicaId: null, abonoDeuda: false, foto: '/archivos/recibo-pg.jpg', nota: '' }
+    await repo.crearRegistro({ usuarioId: luis.id, canal: 'panel', tipoEntrada: 'boton', transcripcion: 'x', estado: 'confirmado', acciones: [{ tipo: 'movimiento', movimiento: gastoPanel }] })
+    await repo.crearRegistro({ usuarioId: luis.id, canal: 'whatsapp', tipoEntrada: 'audio', transcripcion: 'nota', estado: 'por_confirmar', mediaUrl: '/archivos/nota-pg.ogg', acciones: [{ tipo: 'nota', animalId: String((await pool.query(`SELECT min(id) AS id FROM animales`)).rows[0].id), texto: 'comió' }] })
+    expect(await repo.duenoDeRecibo('/archivos/recibo-pg.jpg')).toEqual({ usuarioId: luis.id })
+    expect(await repo.duenoDeRecibo('/archivos/nota-pg.ogg')).toBeNull()
+    expect(await repo.duenoDeRecibo('/archivos/no-existe.jpg')).toBeNull()
+  })
+
   it('solicitudes de adopción: una por clave, lo humano no se pisa y la persona queda como adoptante', async () => {
     const animal = String((await pool.query(`SELECT min(id) AS id FROM animales`)).rows[0].id)
     const respuestas = {

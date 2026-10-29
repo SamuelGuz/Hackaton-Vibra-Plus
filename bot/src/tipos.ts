@@ -183,6 +183,8 @@ export interface Repo {
   /** Cambia el registro y sus filas hijas en una sola transacción. Devuelve cuántos cambió. */
   cambiarEstado(ids: string[], estado: EstadoRegistro): Promise<number>
   crearSesion(usuarioId: number): Promise<string>
+  /** Si el archivo ('/archivos/x.jpg') es un recibo o factura de plata, quién lo subió; null si no es de plata */
+  duenoDeRecibo(url: string): Promise<{ usuarioId: number | null } | null>
 
   // ---------- Solicitudes de adopción ----------
   /** Guarda o actualiza por `claveOrigen`. Nunca pisa lo que decidió la coordinación (montón, nota, llamada). */

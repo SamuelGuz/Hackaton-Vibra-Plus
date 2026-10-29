@@ -4,6 +4,7 @@ import { cors } from 'hono/cors'
 import { armarEventos, type FilasEventos, type Rango } from './api/hoy.js'
 import { validarMiembro } from './api/equipo.js'
 import { validarCambioEstado, validarEvento } from './api/eventos.js'
+import { datosParaRol, esDePlata, manejaPlata, veraPlata } from './api/permisos.js'
 import { sugerencia, validarCambioSolicitud, validarSolicitudFormulario } from './adopcion/solicitudes.js'
 import { atenderInteresadoExterno, montarRutasAgente } from './adopciones-agente/index.js'
 import { montarRutasCampanas, type ConfigCorreo, type Correo } from './campanas/index.js'
@@ -164,8 +165,9 @@ export function crearApp(cfg: ConfigApp) {
   // ---------- API del panel ----------
 
   app.get('/api/hoy', async (c) => {
-    const datos = await deps.repo.hoy(deps.ahora())
     const usuario = c.get('usuario')
+    // Quien no es administración recibe todo menos la plata (caja, movimientos, deuda)
+    const datos = datosParaRol(await deps.repo.hoy(deps.ahora()), usuario)
     const solicitudesEquipo = usuario.rol === 'admin' ? await deps.repo.contarSolicitudes() : 0
     return c.json({ ...datos, yo: String(usuario.id), solicitudesEquipo })
   })
@@ -251,6 +253,7 @@ export function crearApp(cfg: ConfigApp) {
     if (!FECHA.test(desde) || !FECHA.test(hasta)) return c.json({ error: 'desde y hasta van como AAAA-MM-DD' }, 400)
     if (tipo && !(tipo in TIPOS_EVENTO)) return c.json({ error: `tipo debe ser uno de: ${Object.keys(TIPOS_EVENTO).join(', ')}` }, 400)
     const eventos = armarEventos(await cfg.eventos({ desde, hasta }))
+    if (!veraPlata(c.get('usuario').rol)) eventos.movimientos = []
     if (!tipo) return c.json(eventos)
     const clave = TIPOS_EVENTO[tipo as keyof typeof TIPOS_EVENTO]
     return c.json({ [clave]: eventos[clave] })
@@ -275,10 +278,16 @@ export function crearApp(cfg: ConfigApp) {
     const usuario = c.get('usuario')
     const guardados: { id: string; registroId: string }[] = []
     const errores: { id: unknown; error: string }[] = []
+    let negados = 0
     for (const crudo of lista) {
       const v = validarEvento(crudo)
       if ('error' in v) {
         errores.push({ id: crudo?.id, error: v.error })
+        continue
+      }
+      if (esDePlata(v.ok) && !manejaPlata(usuario.rol)) {
+        negados++
+        errores.push({ id: v.ok.id, error: textos.panelSinPlata })
         continue
       }
       const { id, ...sinId } = v.ok
@@ -298,12 +307,18 @@ export function crearApp(cfg: ConfigApp) {
         errores.push({ id, error: e instanceof Error ? e.message : 'No se pudo guardar' })
       }
     }
-    return c.json({ guardados, errores }, errores.length && !guardados.length ? 400 : 200)
+    // Si no se guardó nada: 403 cuando todo lo rechazado era plata sin permiso, 400 si había algo mal formado
+    const estado = guardados.length || !errores.length ? 200 : negados === errores.length ? 403 : 400
+    return c.json({ guardados, errores }, estado)
   })
 
   app.post('/api/eventos/estado', async (c) => {
     const v = validarCambioEstado(await c.req.json().catch(() => null))
     if (!v) return c.json({ error: 'Se espera { ids: [...], estado: "confirmado" | "corregido" | "anulado" }' }, 400)
+    if (!manejaPlata(c.get('usuario').rol)) {
+      const registros = await Promise.all(v.ids.map((id) => deps.repo.leerRegistro(id)))
+      if (registros.some((r) => r?.acciones.some(esDePlata))) return c.json({ error: textos.panelSinPlata }, 403)
+    }
     const cambiados = await deps.repo.cambiarEstado(v.ids, v.estado)
     return c.json({ cambiados })
   })
@@ -311,7 +326,14 @@ export function crearApp(cfg: ConfigApp) {
   // ---------- Archivos (audios y fotos) ----------
 
   app.get('/archivos/:nombre', exigirSesion, async (c) => {
-    const a = await cfg.leerArchivo(c.req.param('nombre') ?? '')
+    const nombre = c.req.param('nombre') ?? ''
+    // Un recibo o una factura (de plata) lo abre la administración o quien lo subió; audios y fotos de notas, todo el equipo
+    const usuario = c.get('usuario')
+    if (!veraPlata(usuario.rol)) {
+      const recibo = await deps.repo.duenoDeRecibo(`/archivos/${nombre}`)
+      if (recibo && recibo.usuarioId !== usuario.id) return c.text('Ese archivo es de la caja: lo ve la administración', 403)
+    }
+    const a = await cfg.leerArchivo(nombre)
     if (!a) return c.text('No existe', 404)
     return c.body(new Uint8Array(a.datos), 200, { 'Content-Type': a.mime, 'Cache-Control': 'private, max-age=86400' })
   })

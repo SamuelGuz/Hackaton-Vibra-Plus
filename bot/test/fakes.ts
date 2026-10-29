@@ -183,6 +183,16 @@ export class RepoFalso implements Repo {
     return token
   }
 
+  async duenoDeRecibo(url: string) {
+    const r = this.registros.find(
+      (x) =>
+        x.acciones.some((a) => a.tipo === 'movimiento' || a.tipo === 'deuda') &&
+        (x.mediaUrl === url || x.acciones.some((a) => a.tipo === 'movimiento' && a.movimiento.foto === url)),
+    )
+    if (r) return { usuarioId: r.usuarioId }
+    return this.datos.movimientos.some((m) => m.foto === url) ? { usuarioId: null } : null
+  }
+
   /** Solicitudes de adopción, con la clave de origen para no duplicar (como el índice único de la base) */
   adopcion: (SolicitudGuardada & { claveOrigen: string })[] = []
   async guardarSolicitudAdopcion(s: NuevaSolicitudAdopcion, ahora: Date) {

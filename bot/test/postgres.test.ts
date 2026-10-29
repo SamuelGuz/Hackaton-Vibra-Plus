@@ -6,6 +6,7 @@ import { crearPool, type Pool } from '../src/datos/db.js'
 import { crearRepoPg, type RepoPg } from '../src/datos/repo-pg.js'
 import { diasDeComida, dosisDeHoy, vacunasPorVencer } from '../src/datos/calculos.js'
 import { pendientesDeHoy } from '../src/adopcion/seguimientos.js'
+import { metaDelDia } from '../src/api/publico.js'
 
 const URL_PRUEBA = process.env.TEST_DATABASE_URL
 
@@ -155,6 +156,14 @@ describe.skipIf(!URL_PRUEBA)('repositorio sobre Postgres', () => {
       ['Kira', true],
       ['Rocky', false],
     ])
+  })
+
+  it('la meta del día sale de config (por defecto 25 kg y $150.000) y los kilos de hoy cuentan como recaudado', async () => {
+    const d = await repo.hoy(ahora)
+    expect(d.metaDelDia).toEqual({ kg: 25, pesos: 150_000 })
+    // Los 15 kg de carne confirmados en la prueba de kilos son de hoy
+    expect(metaDelDia(d, ahora).recaudadoKg).toBeGreaterThanOrEqual(15)
+    expect(JSON.stringify(metaDelDia(d, ahora))).not.toMatch(/Don Luis|Andrea|Carolina/)
   })
 
   it('el resumen de la mañana se reclama una sola vez por día', async () => {

@@ -105,6 +105,7 @@ Se prende solo cuando hay `GEMINI_API_KEY` ([`src/externo.ts`](src/externo.ts)).
 
 | Ruta | Qué hace |
 |---|---|
+| `GET /api/publico/meta-del-dia` | La barra de meta y el muro de la página de las tiendas: `{ metaKg, recaudadoKg, metaPesos, recaudadoPesos, ultimasAcciones: [{ hora, texto }] }`. Sale de lo **confirmado hoy** (llegadas de comida, dosis, notas de salud e ingresos), así que cada audio que se guarda se ve en vivo. Sin nombres de personas ni notas: solo animales, kilos, medicinas y montos. Las metas salen de `meta_dia_kg` y `meta_dia_pesos` en `config` (25 kg y $150.000 si no están). 60 consultas por minuto por IP. Está prendida aunque no haya `GEMINI_API_KEY` |
 | `GET /api/publico/rag/perritos?especie=perro\|gato&limite=N` | Tarjetas de los animales |
 | `GET /api/publico/rag/buscar?q=...` | Búsqueda por lo que la persona necesita |
 | `GET /api/publico/rag/preguntar?q=...` | Preguntas sobre el refugio |

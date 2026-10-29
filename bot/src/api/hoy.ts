@@ -238,6 +238,7 @@ export function armarHoy(f: FilasHoy): DatosAlbergue {
       diasUrgente: numero(c.dias_urgente, 4),
     },
     vidasCambiadas: numero(c.vidas_cambiadas, 0) + f.adopciones,
+    metaDelDia: { kg: numero(c.meta_dia_kg, 25), pesos: numero(c.meta_dia_pesos, 150_000) },
     vacunas: (f.vacunas ?? []).map((v) => ({ animalId: id(v.animal_id), vacuna: v.detalle, vence: v.valor })),
   }
 }

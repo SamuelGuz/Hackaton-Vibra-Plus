@@ -5,6 +5,7 @@ import { armarEventos, type FilasEventos, type Rango } from './api/hoy.js'
 import { validarMiembro } from './api/equipo.js'
 import { validarCambioEstado, validarEvento } from './api/eventos.js'
 import { datosParaRol, esDePlata, manejaPlata, veraPlata } from './api/permisos.js'
+import { montarRutaMetaDelDia } from './api/publico.js'
 import { pendientesDeHoy, veAdoptantes } from './adopcion/seguimientos.js'
 import { sugerencia, validarCambioSolicitud, validarSolicitudFormulario } from './adopcion/solicitudes.js'
 import { atenderInteresadoExterno, montarRutasAgente } from './adopciones-agente/index.js'
@@ -146,6 +147,9 @@ export function crearApp(cfg: ConfigApp) {
   }
 
   // ---------- API pública (sin sesión): va antes de exigirSesion y del CORS del panel ----------
+
+  // La barra de meta y el muro de la página de las tiendas: siempre prendida, no gasta IA
+  montarRutaMetaDelDia(app, deps)
 
   if (cfg.externo) {
     montarRutasRag(app, cfg.externo)

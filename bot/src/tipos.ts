@@ -1,3 +1,5 @@
+import type { NuevaSolicitudAdopcion, SolicitudGuardada } from './adopcion/solicitudes.js'
+import type { CambioSolicitud } from './adopcion/tipos.js'
 import type { TipoInforme } from './informes/armar.js'
 import type { DatosAlbergue, Propuesta, Rol } from './panel-tipos.js'
 import type { MensajeWa } from './wa/webhook.js'
@@ -181,6 +183,14 @@ export interface Repo {
   /** Cambia el registro y sus filas hijas en una sola transacción. Devuelve cuántos cambió. */
   cambiarEstado(ids: string[], estado: EstadoRegistro): Promise<number>
   crearSesion(usuarioId: number): Promise<string>
+
+  // ---------- Solicitudes de adopción ----------
+  /** Guarda o actualiza por `claveOrigen`. Nunca pisa lo que decidió la coordinación (montón, nota, llamada). */
+  guardarSolicitudAdopcion(s: NuevaSolicitudAdopcion, ahora: Date): Promise<{ id: string; nueva: boolean }>
+  /** Todas, de la más vieja a la más nueva */
+  solicitudesAdopcion(): Promise<SolicitudGuardada[]>
+  /** Aplica solo lo que viene. false si no existe. */
+  cambiarSolicitudAdopcion(id: string, cambio: CambioSolicitud): Promise<boolean>
 }
 
 export interface Wa {

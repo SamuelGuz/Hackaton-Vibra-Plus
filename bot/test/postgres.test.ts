@@ -187,4 +187,37 @@ describe.skipIf(!URL_PRUEBA)('repositorio sobre Postgres', () => {
     expect((await repo.usuarioPorSesion(token))?.nombre).toBe('Carolina')
     expect(await repo.usuarioPorSesion('inventado')).toBeNull()
   })
+
+  it('solicitudes de adopción: una por clave, lo humano no se pisa y la persona queda como adoptante', async () => {
+    const animal = String((await pool.query(`SELECT min(id) AS id FROM animales`)).rows[0].id)
+    const respuestas = {
+      nombre: 'Laura Gómez', telefono: '300 555 1234', cedula: '1020304050', direccion: 'Cra 10 # 20-30', animalId: animal,
+      familiaDeAcuerdo: true, paraQuien: 'yo' as const, vivienda: 'apartamento' as const, viviendaConMallas: true,
+      dondeVivira: 'dentro_casa' as const, aceptaEsterilizar: true, aceptaVacunar: true, aceptaSeguimiento: true,
+      quiereEntregaInmediata: false, preguntoPorCaracter: true, planEmergencia: 'Mi hermana', mascotasAnteriores: 'Una perrita', motivo: 'Compañía',
+    }
+    const nueva = { origen: 'formulario' as const, claveOrigen: 'formulario:pg-1', respuestas }
+    const a = await repo.guardarSolicitudAdopcion(nueva, ahora)
+    expect(a.nueva).toBe(true)
+    expect(await repo.cambiarSolicitudAdopcion(a.id, { montonManual: 'amarillo', nota: 'llamar el jueves' })).toBe(true)
+    expect(await repo.guardarSolicitudAdopcion({ ...nueva, respuestas: { ...respuestas, motivo: 'Otro motivo' } }, ahora)).toEqual({ id: a.id, nueva: false })
+
+    const guardadas = (await repo.solicitudesAdopcion()).filter((s) => s.id === a.id)
+    expect(guardadas).toHaveLength(1)
+    expect(guardadas[0]).toMatchObject({
+      nombre: 'Laura Gómez', cedula: '1020304050', animalId: animal, motivo: 'Otro motivo', origen: 'formulario',
+      montonManual: 'amarillo', nota: 'llamar el jueves', llamadaAgendada: null, visitaPropuesta: null,
+    })
+    const p = await pool.query(`SELECT es_adoptante FROM personas WHERE telefono = '573005551234'`)
+    expect(p.rows).toEqual([{ es_adoptante: true }])
+    expect(await repo.cambiarSolicitudAdopcion('999999999', { nota: 'x' })).toBe(false)
+
+    // Del agente, sin teléfono (web) y con un animal que no existe: queda sin animal, con su visita propuesta
+    const web = await repo.guardarSolicitudAdopcion(
+      { origen: 'agente', claveOrigen: 'web:pg-sesion', respuestas: { ...respuestas, telefono: '', animalId: '99999999' }, visitaPropuesta: new Date('2026-10-31T15:00:00Z'), puntajeIdoneidad: 80, puntajeRiesgo: 30 },
+      ahora,
+    )
+    const delAgente = (await repo.solicitudesAdopcion()).find((s) => s.id === web.id)
+    expect(delAgente).toMatchObject({ origen: 'agente', animalId: null, visitaEstado: 'propuesta', visitaPropuesta: '2026-10-31T15:00:00.000Z', puntajeIdoneidad: 80 })
+  })
 })

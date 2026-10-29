@@ -1,4 +1,6 @@
 // WhatsApp, Gemini, archivos y base de datos falsos para probar la conversación sin red.
+import type { NuevaSolicitudAdopcion, SolicitudGuardada } from '../src/adopcion/solicitudes.js'
+import type { CambioSolicitud } from '../src/adopcion/tipos.js'
 import type { DatosAlbergue, PorConfirmar } from '../src/panel-tipos.js'
 import type {
   Accion,
@@ -179,6 +181,41 @@ export class RepoFalso implements Repo {
     const token = `token-${usuarioId}-${this.sesiones.size}`
     this.sesiones.set(token, usuarioId)
     return token
+  }
+
+  /** Solicitudes de adopción, con la clave de origen para no duplicar (como el índice único de la base) */
+  adopcion: (SolicitudGuardada & { claveOrigen: string })[] = []
+  async guardarSolicitudAdopcion(s: NuevaSolicitudAdopcion, ahora: Date) {
+    const ya = this.adopcion.find((x) => x.claveOrigen === s.claveOrigen)
+    const animalId = s.respuestas.animalId && this.datos.animales.some((a) => a.id === s.respuestas.animalId) ? s.respuestas.animalId : null
+    const visita = s.visitaPropuesta ? s.visitaPropuesta.toISOString() : null
+    if (ya) {
+      // Lo de la coordinación (montón, nota, llamada) no se toca
+      Object.assign(ya, s.respuestas, {
+        animalId,
+        visitaPropuesta: visita ?? ya.visitaPropuesta,
+        visitaEstado: visita ? 'propuesta' : ya.visitaEstado,
+        puntajeIdoneidad: s.puntajeIdoneidad ?? ya.puntajeIdoneidad,
+        puntajeRiesgo: s.puntajeRiesgo ?? ya.puntajeRiesgo,
+      })
+      return { id: ya.id, nueva: false }
+    }
+    const id = String(this.adopcion.length + 1)
+    this.adopcion.push({
+      ...s.respuestas, animalId, id, fecha: ahora.toISOString(), montonManual: null, nota: '', llamadaAgendada: null,
+      origen: s.origen, claveOrigen: s.claveOrigen, visitaPropuesta: visita, visitaEstado: visita ? 'propuesta' : null,
+      puntajeIdoneidad: s.puntajeIdoneidad ?? null, puntajeRiesgo: s.puntajeRiesgo ?? null,
+    })
+    return { id, nueva: true }
+  }
+  async solicitudesAdopcion() {
+    return this.adopcion.map(({ claveOrigen: _, ...s }) => ({ ...s }))
+  }
+  async cambiarSolicitudAdopcion(id: string, cambio: CambioSolicitud) {
+    const s = this.adopcion.find((x) => x.id === id)
+    if (!s) return false
+    Object.assign(s, cambio)
+    return true
   }
 
   /** Lo confirmado pasa a los datos, como lo haría la base */

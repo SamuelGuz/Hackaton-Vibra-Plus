@@ -1,5 +1,7 @@
 import { randomBytes } from 'node:crypto'
 import type pg from 'pg'
+import { sugerencia, type SolicitudGuardada } from '../adopcion/solicitudes.js'
+import type { Solicitud } from '../adopcion/tipos.js'
 import { cargarHoy } from '../api/hoy.js'
 import type { Accion, Estado, EstadoRegistro, NuevoRegistro, Registro, Repo, Usuario } from '../tipos.js'
 import { normalizarTelefono } from '../wa/telefono.js'
@@ -268,7 +270,104 @@ export function crearRepoPg(pool: Pool): RepoPg {
       )
       return token
     },
+
+    // ---------- Solicitudes de adopción (006) ----------
+
+    guardarSolicitudAdopcion(s, ahora) {
+      return enTransaccion(pool, async (c) => {
+        const ya = await c.query(`SELECT id, persona_id FROM solicitudes_adopcion WHERE clave_origen = $1 FOR UPDATE`, [s.claveOrigen])
+        const personaId: number = ya.rows[0]?.persona_id ?? (await personaAdoptante(c, s.respuestas.nombre, s.respuestas.telefono))
+        // Un animal que no existe se guarda como "sin animal" en vez de romper la solicitud
+        const animal = s.respuestas.animalId
+          ? (await c.query(`SELECT id FROM animales WHERE id = $1`, [Number(s.respuestas.animalId)])).rows[0]?.id ?? null
+          : null
+        const r = { ...s.respuestas, animalId: animal === null ? null : String(animal) }
+        const sug = sugerencia({
+          ...r, id: '', fecha: ahora.toISOString(), montonManual: null, nota: '', llamadaAgendada: null, origen: s.origen,
+          visitaPropuesta: null, visitaEstado: null, puntajeIdoneidad: s.puntajeIdoneidad ?? null, puntajeRiesgo: s.puntajeRiesgo ?? null,
+        })
+        const visita = s.visitaPropuesta ?? null
+        const valores = [
+          animal, JSON.stringify(r), r.vivienda, r.viviendaConMallas, r.familiaDeAcuerdo, r.aceptaSeguimiento, r.aceptaEsterilizar,
+          sug.monton, sug.razon, visita, visita ? 'propuesta' : null, s.puntajeIdoneidad ?? null, s.puntajeRiesgo ?? null, ahora,
+        ]
+        if (ya.rows[0]) {
+          // Solo lo que dijo la persona y lo que vio el agente; montón manual, nota y llamada son de la coordinación
+          await c.query(
+            `UPDATE solicitudes_adopcion SET animal_id = $2, respuestas_json = $3, tipo_vivienda = $4, cerramientos = $5,
+               acuerdo_familiar = $6, acepta_seguimientos = $7, acepta_esterilizacion = $8, color = $9, motivos = $10,
+               visita_propuesta = COALESCE($11, visita_propuesta), visita_estado = COALESCE($12, visita_estado),
+               puntaje_idoneidad = COALESCE($13, puntaje_idoneidad), puntaje_riesgo = COALESCE($14, puntaje_riesgo), actualizado_en = $15
+             WHERE id = $1`,
+            [ya.rows[0].id, ...valores],
+          )
+          return { id: String(ya.rows[0].id), nueva: false }
+        }
+        const nueva = await c.query(
+          `INSERT INTO solicitudes_adopcion (persona_id, animal_id, respuestas_json, tipo_vivienda, cerramientos, acuerdo_familiar,
+             acepta_seguimientos, acepta_esterilizacion, color, motivos, visita_propuesta, visita_estado, puntaje_idoneidad,
+             puntaje_riesgo, actualizado_en, creado_en, origen, clave_origen)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $15, $16, $17) RETURNING id`,
+          [personaId, ...valores, s.origen, s.claveOrigen],
+        )
+        return { id: String(nueva.rows[0].id), nueva: true }
+      })
+    },
+
+    async solicitudesAdopcion() {
+      const r = await pool.query(
+        `SELECT s.*, p.nombre AS persona_nombre, p.telefono AS persona_telefono
+         FROM solicitudes_adopcion s JOIN personas p ON p.id = s.persona_id
+         WHERE s.respuestas_json IS NOT NULL
+         ORDER BY s.creado_en, s.id`,
+      )
+      return r.rows.map((f): SolicitudGuardada => ({
+        ...(f.respuestas_json as Omit<Solicitud, 'id'>),
+        id: String(f.id),
+        fecha: new Date(f.creado_en).toISOString(),
+        nombre: f.respuestas_json.nombre || f.persona_nombre,
+        telefono: f.respuestas_json.telefono || f.persona_telefono || '',
+        animalId: f.animal_id === null ? null : String(f.animal_id),
+        montonManual: f.monton_manual,
+        nota: f.nota,
+        llamadaAgendada: f.llamada_agendada,
+        origen: f.origen,
+        visitaPropuesta: f.visita_propuesta ? new Date(f.visita_propuesta).toISOString() : null,
+        visitaEstado: f.visita_estado,
+        puntajeIdoneidad: f.puntaje_idoneidad,
+        puntajeRiesgo: f.puntaje_riesgo,
+      }))
+    },
+
+    async cambiarSolicitudAdopcion(id, cambio) {
+      if (!/^\d{1,18}$/.test(id)) return false
+      const columnas: string[] = []
+      const valores: unknown[] = [id]
+      const poner = (columna: string, v: unknown) => {
+        valores.push(v)
+        columnas.push(`${columna} = $${valores.length}`)
+      }
+      if (cambio.montonManual !== undefined) poner('monton_manual', cambio.montonManual)
+      if (cambio.nota !== undefined) poner('nota', cambio.nota)
+      if (cambio.llamadaAgendada !== undefined) poner('llamada_agendada', cambio.llamadaAgendada)
+      const r = await pool.query(
+        `UPDATE solicitudes_adopcion SET ${[...columnas, 'actualizado_en = now()'].join(', ')} WHERE id = $1 RETURNING id`,
+        valores,
+      )
+      return r.rowCount === 1
+    },
   }
+}
+
+/** La persona que quiere adoptar: la que ya tiene ese teléfono, o una nueva. Sin teléfono (la web), siempre una nueva. */
+async function personaAdoptante(c: pg.PoolClient, nombre: string, telefono: string): Promise<number> {
+  const tel = telefono ? normalizarTelefono(telefono) : ''
+  if (tel) {
+    const ya = await c.query(`UPDATE personas SET es_adoptante = true WHERE telefono = $1 RETURNING id`, [tel])
+    if (ya.rows[0]) return ya.rows[0].id
+  }
+  const r = await c.query(`INSERT INTO personas (nombre, telefono, es_adoptante) VALUES ($1, $2, true) RETURNING id`, [nombre, tel || null])
+  return r.rows[0].id
 }
 
 interface Contexto {

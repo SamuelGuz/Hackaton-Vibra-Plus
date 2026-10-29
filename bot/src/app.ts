@@ -4,6 +4,7 @@ import { cors } from 'hono/cors'
 import { armarEventos, type FilasEventos, type Rango } from './api/hoy.js'
 import { validarMiembro } from './api/equipo.js'
 import { validarCambioEstado, validarEvento } from './api/eventos.js'
+import { sugerencia, validarCambioSolicitud, validarSolicitudFormulario } from './adopcion/solicitudes.js'
 import { atenderInteresadoExterno, montarRutasAgente } from './adopciones-agente/index.js'
 import { montarRutasCampanas, type ConfigCorreo, type Correo } from './campanas/index.js'
 import { atender } from './conversacion/atender.js'
@@ -194,6 +195,36 @@ export function crearApp(cfg: ConfigApp) {
         return false
       })
     return c.json({ persona, avisado })
+  })
+
+  // ---------- Solicitudes de adopción (solo adopciones y administración: llevan cédula, dirección y teléfono) ----------
+
+  async function soloAdopciones(c: Context, next: () => Promise<void>) {
+    const rol = c.get('usuario').rol
+    if (rol !== 'admin' && rol !== 'adopciones') return c.json({ error: 'Las solicitudes de adopción las ve el equipo de adopciones' }, 403)
+    await next()
+  }
+  app.use('/api/adopciones', soloAdopciones)
+  app.use('/api/adopciones/*', soloAdopciones)
+
+  app.get('/api/adopciones/solicitudes', async (c) => {
+    const solicitudes = await deps.repo.solicitudesAdopcion()
+    return c.json({ solicitudes: solicitudes.map((s) => ({ ...s, sugerencia: sugerencia(s) })) })
+  })
+
+  // Importa una respuesta del formulario. Idempotente por su id: importarla otra vez actualiza, no duplica.
+  app.post('/api/adopciones/solicitudes', async (c) => {
+    const v = validarSolicitudFormulario(await c.req.json().catch(() => null))
+    if ('error' in v) return c.json({ error: v.error }, 400)
+    return c.json(await deps.repo.guardarSolicitudAdopcion(v.ok, deps.ahora()))
+  })
+
+  // Lo que decide la coordinación: montón, nota y llamada. Solo viaja lo que cambió.
+  app.post('/api/adopciones/solicitudes/:id', async (c) => {
+    const v = validarCambioSolicitud(await c.req.json().catch(() => null))
+    if ('error' in v) return c.json({ error: v.error }, 400)
+    if (!(await deps.repo.cambiarSolicitudAdopcion(c.req.param('id'), v.ok))) return c.json({ error: 'Esa solicitud no existe' }, 404)
+    return c.json({ ok: true })
   })
 
   app.post('/api/equipo/:id/activo', async (c) => {

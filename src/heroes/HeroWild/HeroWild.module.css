@@ -1,0 +1,39 @@
+.hero { --fs: min(19.6svh, 13.2vw); position: relative; min-height: max(100svh, 45rem); overflow: clip; background: var(--wild-white); color: var(--wild-ink); font-family: var(--fuente-texto); }
+.paper { position: absolute; inset: 0; background: var(--wild-paper); pointer-events: none; }
+.paper svg { width: 100%; height: 100%; fill: none; stroke: var(--wild-white); }
+.word { position: absolute; top: 40%; left: 50%; translate: -50% -50%; display: flex; align-items: center; justify-content: center; gap: 0.085em; font-size: var(--fs); }
+.half { font-family: var(--fuente-display); font-size: 1em; font-weight: 800; letter-spacing: -0.045em; line-height: 0.8; white-space: nowrap; }
+.pill { position: relative; flex: none; width: 3.62em; height: 1.81em; border-radius: var(--radio-pill); overflow: hidden; background: var(--fondo-hero); }
+.media { position: absolute; top: 0; left: 50%; translate: -50% 0; width: var(--media-width, 3.62em); height: var(--media-height, 1.81em); min-width: 100%; }
+.media video, .media img { width: 75%; height: 100%; margin-inline: auto; max-width: none; object-fit: cover; object-position: center top; opacity: 1; }
+.hairline { position: absolute; inset: 0; background: var(--wild-hairline); opacity: 0; pointer-events: none; }
+.footer { position: absolute; bottom: var(--esp-8); inset-inline: max(var(--esp-5), calc(var(--fs) * 0.27)); display: flex; justify-content: space-between; align-items: end; gap: var(--esp-7); }
+.copy { flex: 0 1 43rem; min-width: 0; }
+.hero .copy .statement { margin: 0 0 var(--esp-3); max-width: 25ch; font-size: clamp(1.75rem, 1.2rem + 1.8vw, 3rem); font-weight: 750; line-height: 1.08; letter-spacing: -0.035em; color: var(--wild-ink); text-wrap: balance; }
+.hero .copy .lead { max-width: 45ch; margin: 0; font-size: clamp(1rem, 0.9rem + 0.4vw, 1.25rem); line-height: 1.5; font-weight: 500; color: var(--wild-secondary); }
+.copy > span { display: block; margin-top: var(--esp-3); font-size: var(--texto-xs); color: var(--wild-secondary); }
+.hero .scrollCue { display: inline-flex; flex: none; align-items: center; gap: var(--esp-4); min-height: 3rem; color: var(--wild-ink); font-size: var(--texto-base); font-weight: 650; text-decoration: none; }
+.scrollArrow { display: grid; place-items: center; width: 3rem; height: 3rem; border: 1px solid var(--wild-rule); border-radius: var(--radio-pill); transition: background-color 180ms ease-out; }
+.scrollArrow svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.scrollCue:focus-visible { outline: 3px solid var(--marca-verde); outline-offset: var(--esp-2); border-radius: var(--radio-md); }
+@media (hover: hover) and (pointer: fine) { .scrollCue:hover .scrollArrow { background: var(--wild-white); } }
+@media (max-width: 56.25em) and (min-width: 45.01em) {
+  .footer { gap: var(--esp-5); }
+  .hero .scrollCue { max-width: 12rem; font-size: var(--texto-sm); }
+}
+@media (max-width: 45em) {
+  .hero { --fs: min(30vw, 14svh); min-height: max(100svh, 48rem); }
+  .word { top: 38%; width: min(calc(100% - 40px), 25rem); flex-direction: column; gap: 0.1em; }
+  .pill { width: 100%; height: auto; aspect-ratio: 1.85; }
+  .media { width: var(--media-width, 100%); height: var(--media-height, 100%); }
+  .footer { inset-inline: var(--esp-5); bottom: var(--esp-5); display: grid; gap: var(--esp-4); }
+  .hero .copy .statement { font-size: var(--movil-titulo); max-width: 21ch; }
+  .hero .copy .lead { font-size: var(--texto-base); line-height: 1.45; }
+  .copy > span { margin-top: var(--esp-2); font-size: var(--texto-xs); }
+  .hero .scrollCue { justify-content: space-between; width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pill { clip-path: none; }
+  .hairline { display: none; }
+  .scrollArrow { transition: none; }
+}

@@ -1,0 +1,269 @@
+/*
+ * Design tokens — Refugio de Silvia
+ * Single source of truth for colour, type, space, shape, motion and layering.
+ * Components reference these variables only; never write a raw hex in a component.
+ * Contrast ratios (WCAG 2.x) are noted next to each pairing that carries text.
+ * See docs/DESIGN.md for usage rules.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Wild v5 reference palette; scoped theme below keeps Reel v4 intact. */
+  --wild-white: #ffffff;
+  --wild-paper: #f2f2f1;
+  --wild-ink: #1d1d1d;
+  --wild-secondary: #3a3a3a;
+  --wild-rule: #a9a9a6;
+  --wild-button: #1b1b1b;
+  --wild-hairline: #b9b9b9;
+  --wild-control: rgb(29 29 29 / 0.42);
+  --color-oscuro-elevado: rgb(255 255 255 / 0.07);
+  --color-regla: rgb(29 29 29 / 0.2);
+  --radio-archivo: 12rem;
+  --texto-editorial: clamp(2.375rem, 1.25rem + 4.5vw, 5.25rem);
+  --texto-manifiesto: clamp(2.5rem, 1rem + 6.6vw, 7rem);
+  --texto-aporte: clamp(3.4rem, 1.8rem + 5vw, 6.75rem);
+  --texto-cierre: clamp(3rem, 1.5rem + 5.6vw, 6.5rem);
+  --esp-editorial: clamp(5rem, 3rem + 5vw, 7rem);
+  /* Local editorial component adaptations, reviewed against Epic Easing Out Quint. */
+  --ease-editorial: cubic-bezier(0.23, 1, 0.32, 1);
+  --control-editorial: 3rem;
+  --icono-editorial: 1.5rem;
+  --galeria-alto: clamp(24rem, 18rem + 20vw, 36rem);
+  --galeria-ancho: min(76%, 28rem);
+
+  /* ------------------------------------------------------------------
+   * Colour — roles
+   * ------------------------------------------------------------------ */
+
+  /* Ground: bone, low chroma (not yellow cream). 75–85% of every screen. */
+  --color-fondo: #f5f8ef;
+  /* One tone step from the ground: panels, cards, form fields. No borders needed. */
+  --color-superficie: #dae7c7;
+  /* Lightest paper: text on dark fields, card insides on --color-superficie. */
+  --color-crema: #ffffff;
+
+  /* Ink: deep "monte" green-black. Body text and headings.
+     on fondo 14.2:1 · on superficie 12.7:1 · on acento 5.3:1 · on fondo-hero 9.6:1 */
+  --color-tinta: #101410;
+  /* Muted: secondary text only (captions, meta).
+     on fondo 7.8:1 · on superficie 6.9:1 · on fondo-hero 5.3:1 */
+  --color-tinta-suave: #5e5e61;
+
+  /* Accent: "naranja rescate" — the safety orange of a rescuer's vest and leash.
+     FILLS ONLY (primary button, one marker per screen). Never text on light grounds (2.7:1).
+     Text on it is always --color-acento-tinta (5.3:1). */
+  --color-verde: #08482d;
+  --color-acento: #08482d;
+  --color-acento-tinta: #ffffff;
+  /* Accent as text/icon/focus on light grounds.
+     on fondo 5.9:1 · on superficie 5.3:1 · on fondo-hero 4.0:1 (large text only there) */
+  --color-acento-fuerte: #08482d;
+  /* Hover fill of the accent button. Text stays --color-acento-tinta (6.1:1). */
+  --color-acento-hover: #12623f;
+
+  /* Secondary field: deep "verde monte" section ground (donations, footer).
+     --color-fondo on it 10.7:1 · --color-acento on it 4.0:1 (large text / UI only) */
+  --color-secundario: #08482d;
+  --color-secundario-tinta: #f5f8ef;
+
+  /* Warm field: "caramelo", the fur of most rescued dogs. One section max.
+     --color-tinta on it 6.2:1 */
+  --color-caramelo: #dae7c7;
+  --color-caramelo-tinta: #101410;
+
+  /* Success (confirmations, "adoptado"): on fondo 5.6:1 · crema on it 6.1:1 */
+  --color-exito: #246b41;
+  --color-exito-tinta: #fbf8f3;
+
+  /* Error (forms only): on fondo 6.9:1 */
+  --color-error: #9e1c1c;
+
+  /* Scrim for text over photographs (the only allowed gradient, see DESIGN.md). */
+  --color-velo: rgb(23 34 27 / 0.55);
+
+  /* Hero variant 3 (two dog videos + centred text).
+     The videos ship with a real, feathered alpha matte (WebM VP9) and an MP4 fallback for Safari
+     composited on this same colour, so the hero ground is the page bone.
+     --color-tinta on it 14.2:1 */
+  --fondo-hero: #f3eee7;
+  --fondo-hero-tinta: #17221b;
+
+  /* ------------------------------------------------------------------
+   * Typography
+   * ------------------------------------------------------------------ */
+
+  --fuente-display: "Inter Tight", system-ui, sans-serif;
+  --fuente-texto: "Inter", system-ui, sans-serif;
+  --fuente-nota: "Caveat", cursive;
+
+  /* Fluid scale, linear from 360px to 1440px viewport. Few sizes, far apart. */
+  --texto-xs: clamp(0.8125rem, 0.7917rem + 0.0926vw, 0.875rem);   /* 13 → 14  legal, credits */
+  --texto-sm: clamp(0.875rem, 0.8333rem + 0.1852vw, 1rem);        /* 14 → 16  captions, meta, small buttons */
+  --texto-base: clamp(1rem, 0.9583rem + 0.1852vw, 1.125rem);      /* 16 → 18  body */
+  --texto-lg: clamp(1.1875rem, 1.1042rem + 0.3704vw, 1.4375rem);  /* 19 → 23  lead / sentence under headline */
+  --texto-xl: clamp(1.375rem, 1.2083rem + 0.7407vw, 1.875rem);    /* 22 → 30  card titles, quotes */
+  --texto-2xl: clamp(1.875rem, 1.5rem + 1.6667vw, 3rem);          /* 30 → 48  stat figures, sub-headings */
+  --texto-3xl: clamp(2.375rem, 1.6667rem + 3.1481vw, 4.5rem);     /* 38 → 72  section headings */
+  --texto-display: clamp(2.875rem, 1.1667rem + 7.5926vw, 8rem);   /* 46 → 128 hero headline */
+  --texto-mega: clamp(3.75rem, 1.1667rem + 11.4815vw, 11.5rem);   /* 60 → 184 one statement word ("Adopta.") */
+
+  --peso-texto: 400;
+  --peso-medio: 500;
+  --peso-semi: 600;
+  --peso-display: 700;
+  --peso-max: 800; /* ceiling; no 900 */
+
+  --interlineado-display: 1.045;
+  --interlineado-titulo: 1.05;
+  --interlineado-texto: 1.55;
+  --interlineado-ajustado: 1.3;
+
+  --tracking-display: -0.035em;
+  --tracking-titulo: -0.02em;
+  --tracking-texto: 0;
+  --tracking-boton: 0.005em;
+
+  --medida-texto: 62ch;  /* paragraphs */
+  --medida-titulo: 16ch; /* headings: force meaningful two-line breaks */
+
+  /* ------------------------------------------------------------------
+   * Space (4px base). Use these, nothing in between.
+   * ------------------------------------------------------------------ */
+
+  --esp-1: 0.25rem;  /*   4 */
+  --esp-2: 0.5rem;   /*   8 */
+  --esp-3: 0.75rem;  /*  12 */
+  --esp-4: 1rem;     /*  16 */
+  --esp-5: 1.5rem;   /*  24 */
+  --esp-6: 2rem;     /*  32 */
+  --esp-7: 3rem;     /*  48 */
+  --esp-8: 4rem;     /*  64 */
+  --esp-9: 6rem;     /*  96 */
+  --esp-10: 8rem;    /* 128 */
+
+  /* Vertical rhythm between sections: 80 → 192px. */
+  --esp-seccion: clamp(5rem, 2.6667rem + 10.3704vw, 12rem);
+  /* Page side gutter: 16 → 40px. Equal on both sides, every width. */
+  --margen: clamp(1rem, 0.5rem + 2.2222vw, 2.5rem);
+  /* Grid gap */
+  --hueco: clamp(1rem, 0.6667rem + 1.4815vw, 2rem);
+
+  --ancho-contenedor: 80rem;   /* 1280 */
+  --ancho-estrecho: 48rem;     /*  768, long-form story text */
+  --alto-nav: 4.5rem;          /*   72 */
+
+  /* ------------------------------------------------------------------
+   * Shape
+   * ------------------------------------------------------------------ */
+
+  --radio-sm: 0.5rem;    /*  8  chips, inputs inside cards */
+  --radio-md: 1rem;      /* 16  inputs, small cards */
+  --radio-lg: 1.75rem;   /* 28  cards, photos */
+  --radio-xl: 2.5rem;    /* 40  section panels, hero media */
+  --radio-pill: 999px;   /* every button */
+
+  /* ------------------------------------------------------------------
+   * Elevation. Nothing at rest has a shadow; only floating things.
+   * ------------------------------------------------------------------ */
+
+  /* Contact shadow under cut-out animals (use with filter: drop-shadow()). */
+  --sombra-recorte: 0 1.25rem 1.5rem rgb(23 34 27 / 0.18);
+  /* Card being hovered/dragged. */
+  --sombra-levantada: 0 1rem 2.5rem -0.75rem rgb(23 34 27 / 0.22);
+  /* Menus, dialogs, sticky donate bar. */
+  --sombra-flotante: 0 1.5rem 4rem -1rem rgb(23 34 27 / 0.3);
+
+  /* ------------------------------------------------------------------
+   * Motion (consumed by CSS and by `motion` via getComputedStyle or mirrored constants)
+   * ------------------------------------------------------------------ */
+
+  --ease-salida: cubic-bezier(0.22, 1, 0.36, 1);      /* entrances, hovers, UI < 600ms */
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);         /* reveals >= 800ms, line rises, openings */
+  --ease-viaje: cubic-bezier(0.76, 0, 0.24, 1);       /* wipes, panels, things that travel visibly */
+  --ease-suave: cubic-bezier(0.33, 1, 0.68, 1);       /* slow drift/scale on photographs */
+  --ease-adios: cubic-bezier(0.55, 0.055, 0.675, 0.19); /* leaving for good, short */
+
+  --dur-presion: 140ms;
+  --dur-hover: 200ms;
+  --dur-ui: 280ms;
+  --dur-revelar: 800ms;
+  --dur-abrir: 1200ms;
+
+  --escalonado-linea: 90ms;
+  --escalonado-item: 70ms;
+
+  --dist-revelar: 1.75rem;  /* 28px rise on scroll reveal */
+  --dist-hover: -0.25rem;   /* -4px lift on hover */
+  --escala-presion: 0.97;
+
+  /* ------------------------------------------------------------------
+   * Layering
+   * ------------------------------------------------------------------ */
+
+  --z-fondo: -1;
+  --z-base: 0;
+  --z-recorte: 2;     /* cut-out animal crossing a section edge */
+  --z-contenido: 3;   /* text that must sit above a cut-out */
+  --z-pegajoso: 40;   /* sticky donate bar */
+  --z-nav: 50;
+  --z-menu: 60;
+  --z-velo: 80;
+  --z-modal: 90;
+  --z-aviso: 100;     /* toasts */
+}
+
+html[data-hero='5'] {
+  --color-fondo: var(--wild-paper);
+  --color-superficie: #e5e5e2;
+  --color-crema: var(--wild-white);
+  --color-tinta: var(--wild-ink);
+  --color-tinta-suave: var(--wild-secondary);
+  --color-acento: var(--wild-button);
+  --color-acento-tinta: var(--wild-white);
+  --color-acento-fuerte: var(--wild-ink);
+  --color-acento-hover: var(--wild-secondary);
+  --color-secundario: var(--wild-ink);
+  --color-secundario-tinta: var(--wild-paper);
+  --color-caramelo: #e5e5e2;
+  --color-caramelo-tinta: var(--wild-ink);
+  --color-verde: var(--wild-ink);
+  --fuente-display: 'Inter Wild', 'Inter', system-ui, sans-serif;
+  --fuente-texto: 'Inter Wild', 'Inter', system-ui, sans-serif;
+}
+
+/* Reduced motion: keep opacity and colour, drop travel, scale and long durations. */
+:root {
+  --movil-hueco: 0.625rem;
+  --movil-texto: 0.875rem;
+  --movil-titulo: 1.75rem;
+  --movil-seccion: 2.5rem;
+  /* Shared identity: supplied floating navigation and layered footer. */
+  --marca-tinta: #14201a;
+  --marca-suave: #58655e;
+  --marca-verde: #1f5a3a;
+  --marca-blanco: #ffffff;
+  --marca-fondo: #f0f2f0;
+  --marca-superficie: #edf2ee;
+  --marca-exterior: #e5e9e5;
+  --marca-borde: #d9dfd9;
+  --marca-cristal: rgb(255 255 255 / 0.92);
+  --marca-relieve: #f5f7f5;
+  --marca-sombra-tinta: #14201a;
+  --marca-sombra: 0 8px 32px rgb(20 32 26 / 0.08);
+  --marca-sombra-corta: 0 1px 2px rgb(20 32 26 / 0.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-revelar: 1ms;
+    --dur-abrir: 1ms;
+    --dur-ui: 1ms;
+    --escalonado-linea: 0ms;
+    --escalonado-item: 0ms;
+    --dist-revelar: 0rem;
+    --dist-hover: 0rem;
+    --escala-presion: 1;
+  }
+}

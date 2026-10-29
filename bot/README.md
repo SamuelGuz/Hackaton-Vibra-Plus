@@ -83,6 +83,25 @@ npm start                     # o con pm2: pm2 start "npm start" --name huellita
 - Los audios y las fotos se guardan en `./archivos` (se cambia con `ARCHIVOS_DIR`). Hay que incluir esa carpeta en las copias de seguridad.
 - El servicio trabaja en hora de Colombia (`America/Bogota`), sin importar la zona del VPS.
 
+## Frente externo (adoptantes y padrinos)
+
+Se prende solo cuando hay `GEMINI_API_KEY` ([`src/externo.ts`](src/externo.ts)). Al arrancar, el bot dice en la terminal si quedó prendido.
+
+- **WhatsApp:** un número que no es del equipo lo atiende el agente de adopciones, no el aviso de "todavía no te tengo en la lista". El equipo sigue con su menú de siempre.
+- **Rutas públicas**, sin sesión, con límite de peticiones por IP y CORS abierto para la página de adopción:
+
+| Ruta | Qué hace |
+|---|---|
+| `GET /api/publico/rag/perritos?especie=perro\|gato&limite=N` | Tarjetas de los animales |
+| `GET /api/publico/rag/buscar?q=...` | Búsqueda por lo que la persona necesita |
+| `GET /api/publico/rag/preguntar?q=...` | Preguntas sobre el refugio |
+| `POST /api/publico/agente-voz` | Turno con el agente: `{ texto }` o `{ audioBase64, mime }`, más `sesionId` y `perroId` opcionales. `/api/publico/voz-adopcion` es la misma ruta con otro nombre |
+| `POST /api/publico/campanas/generar` | Arma una campaña de correo y su vista previa |
+| `POST /api/publico/campanas/enviar` | La envía. Pide la cabecera `X-Campana-Clave` igual a `CAMPANAS_CLAVE` y Resend o SMTP configurado. Sin eso no sale ningún correo |
+
+- `WA_NUMERO_BOT` es el número de los botones "Escríbenos por WhatsApp".
+- Las sesiones del agente viven en memoria: si el bot se reinicia, la conversación con un interesado empieza de nuevo.
+
 ## API para el panel
 
 Todas las rutas piden `Authorization: Bearer <token>`. El token sale del enlace que manda el bot (`?t=<token>`). Sin token, la respuesta es `401`. El CORS solo deja pasar a `PANEL_URL`.

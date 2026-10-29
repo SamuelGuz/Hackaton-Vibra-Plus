@@ -1,5 +1,6 @@
 // POST /api/publico/agente-voz: la llamada con el agente desde la página web. Sin sesión del panel; se protege con límite por IP.
-import type { Hono } from 'hono'
+// /api/publico/voz-adopcion es el mismo handler con otro nombre, mientras el frontend se pasa a uno solo.
+import type { Context, Hono } from 'hono'
 import { ipDe } from '../rag/limitador.js'
 import type { ContextoExterno } from '../rag/tipos.js'
 import type { Deps } from '../tipos.js'
@@ -53,7 +54,7 @@ function leerCuerpo(c: unknown): Entrada {
 export function montarRutasAgente(app: Hono<any>, deps: Deps, ctx: ContextoExterno): void {
   const agente = obtenerAgente(deps)
 
-  app.post('/api/publico/agente-voz', async (c) => {
+  const atender = async (c: Context) => {
     if (!agente.limiteWeb.permitir(ipDe(c.req.raw.headers))) return c.json({ error: textosAgente.limiteWeb }, 429)
 
     if (Number(c.req.header('content-length') ?? 0) > MAX_CUERPO) return c.json({ error: 'La petición es demasiado grande' }, 400)
@@ -91,5 +92,7 @@ export function montarRutasAgente(app: Hono<any>, deps: Deps, ctx: ContextoExter
       console.error('El agente de voz falló:', e)
       return c.json({ error: textosAgente.fallaWeb }, 502)
     }
-  })
+  }
+  app.post('/api/publico/agente-voz', atender)
+  app.post('/api/publico/voz-adopcion', atender)
 }

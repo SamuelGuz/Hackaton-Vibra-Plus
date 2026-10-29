@@ -11,8 +11,9 @@ import { crearRepoPg } from './datos/repo-pg.js'
 import { crearIa } from './ia/gemini.js'
 import { crearIaOpenRouter } from './ia/openrouter.js'
 import { crearIaConRespaldo, type IaConNombre } from './ia/respaldo.js'
+import { armarExterno } from './externo.js'
 import { crearDibujante } from './informes/dibujar.js'
-import type { Ia } from './tipos.js'
+import type { Deps, Ia } from './tipos.js'
 import { crearWa } from './wa/cliente.js'
 
 const SEGUNDOS_REVISAR_BUZON = 15
@@ -48,16 +49,27 @@ const pool = crearPool(exigir('DATABASE_URL'))
 const repo = crearRepoPg(pool)
 const archivos = crearArchivosDisco(process.env.ARCHIVOS_DIR || join(process.cwd(), 'archivos'))
 
+const deps: Deps = {
+  repo,
+  wa: crearWa({ token: exigir('WA_TOKEN'), phoneId: exigir('WA_PHONE_ID'), version: process.env.WA_API_VERSION || 'v21.0' }),
+  ia: crearIas(),
+  archivos,
+  dibujar: crearDibujante(),
+  panelUrl: exigir('PANEL_URL'),
+  ahora: () => new Date(),
+}
+
+// Catálogo público, agente de adopciones y campañas, en el mismo servidor
+const externo = armarExterno(process.env, deps)
+console.log(
+  externo
+    ? `Frente externo: rutas /api/publico/* y agente para números desconocidos${externo.correo.enviador ? '' : ' (campañas sin envío: falta RESEND_API_KEY o SMTP_HOST)'}`
+    : 'Frente externo apagado: falta GEMINI_API_KEY',
+)
+
 const app = crearApp({
-  deps: {
-    repo,
-    wa: crearWa({ token: exigir('WA_TOKEN'), phoneId: exigir('WA_PHONE_ID'), version: process.env.WA_API_VERSION || 'v21.0' }),
-    ia: crearIas(),
-    archivos,
-    dibujar: crearDibujante(),
-    panelUrl: exigir('PANEL_URL'),
-    ahora: () => new Date(),
-  },
+  deps,
+  externo,
   usuarioPorSesion: repo.usuarioPorSesion,
   eventos: (r) => cargarEventos(pool, r),
   leerArchivo: archivos.leer,

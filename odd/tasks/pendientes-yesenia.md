@@ -42,7 +42,7 @@ Supuestos:
 | T3 | S2 | Seguimientos: repo, WhatsApp, botones, `/api/seguimientos/hoy` | inline | hecha: RED 9 → GREEN; Postgres 15/15; suite 715 |
 | T4 | S4 | Vacunas y citas, informe de la mañana, `enviarResumenMatutino`, despertador | inline | hecha: RED (módulo faltante) → GREEN 11; Postgres 17/17; suite 728 |
 | T5 | S5 | `GET /api/publico/meta-del-dia` | inline | hecha: RED 6 → GREEN; Postgres 18/18; suite 735 |
-| T6 | S6 | Suite "como Yesenia" | inline | pendiente |
+| T6 | S6 | Suite "como Yesenia" | inline | hecha: 16 escenarios; 4 fallas encontradas y arregladas; en vivo con Gemini 1 falla más, arreglada |
 
 Rutas: todo inline (ninguna unidad tiene razón de escritor delegado). Espejo en Engram: pendiente (no hay herramientas de memoria en esta sesión).
 
@@ -50,3 +50,6 @@ Rutas: todo inline (ninguna unidad tiene razón de escritor delegado). Espejo en
 
 - L1 (2026-10-28, Samuel): "Hola muchachon, te cuento, vas a arreglar en el bot lo que dice este HTML, claramente reemplazando/borrando lo inservible con esto nuevo, al terminalo, necesito que corras una suite de testing, pero pensando como si fueras yesenia, en absolutamente todo, de si escribe solo una vez el dia dando update de todo, de que si manda muchos audios cortos, todo lo necesito bien testeado. Adelante "C:\Users\deumc\Downloads\pendientes-samuel-bot.html""
 - L2: línea base antes de tocar nada: 670 pruebas pasan, `tsc` limpio.
+- L3: la suite de Yesenia (`bot/test/yesenia.test.ts`) encontró: (1) con Gemini caído solo se rescataban los kilos sin avisar que el resto no se entendió; (2) dos personas con la misma dosis al mismo tiempo (audio o botón) quedaban dos dosis; (3) una voluntaria registraba plata por audio (falla anterior a este trabajo); (4) "un kilo y medio" se leía como 1 kg. Las cuatro arregladas con su prueba.
+- L4: prueba en vivo (Gemini real, Postgres `huellitas_test`, navegador real, WhatsApp falso): "se gastaron 5 kilos de menudencia, y abrí un bulto de gato" anotaba la menudencia dos veces (la especie de la frase siguiente se pegaba). Arreglado con prueba; repetida en vivo sin duplicado. Foto de la mañana revisada.
+- L5: límites conocidos: el candado de dosis repetidas sirve con una sola copia del bot; el resumen de las 7:00 no llega a quien no le haya escrito al bot en 24 h (Meta pide plantilla); no hay forma en el bot de registrar una entrega de adopción ni una vacuna (se leen de `adopciones` y `eventos_salud`).

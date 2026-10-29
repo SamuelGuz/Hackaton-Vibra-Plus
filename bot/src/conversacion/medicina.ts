@@ -8,6 +8,7 @@ import { buscarAnimal } from './animal.js'
 import type { Ctx } from './ctx.js'
 import { guardarYPreguntar, preguntarAlgoMas } from './confirmar.js'
 import { esNo, esSi, normal } from './elegir.js'
+import { unoALaVez } from './candado.js'
 
 const MAX_FILAS = 9
 
@@ -83,25 +84,28 @@ export async function elegirDosis(c: Ctx, id: string): Promise<Estado> {
   }
   // id = 'd:<tratamiento>:<HH:MM>'
   const [, tratamientoId = '', hora = ''] = /^d:([^:]+):(\d{2}:\d{2})$/.exec(id) ?? []
-  const d = await c.datos()
-  const t = d.tratamientos.find((x) => x.id === tratamientoId)
-  if (!t || !t.horas.includes(hora)) return preguntarAlgoMas(c, textos.seMePerdio)
+  // Revisar y guardar de a uno: si dos personas tocan la misma dosis al tiempo, la segunda ve la primera
+  return unoALaVez(async () => {
+    const d = await c.datos(true)
+    const t = d.tratamientos.find((x) => x.id === tratamientoId)
+    if (!t || !t.horas.includes(hora)) return preguntarAlgoMas(c, textos.seMePerdio)
 
-  const previa = yaReportada(d, t.id, hora, c.ahora)
-  if (previa) {
-    await c.enviar({
-      tipo: 'botones',
-      texto: textos.dosisDuplicada(previa.quien, previa.hora),
-      botones: [
-        { id: 'dup:si', titulo: 'Sí, es otra' },
-        { id: 'dup:no', titulo: 'No, ya está' },
-      ],
-    })
-    return { paso: 'medicina_duplicada' }
-  }
+    const previa = yaReportada(d, t.id, hora, c.ahora)
+    if (previa) {
+      await c.enviar({
+        tipo: 'botones',
+        texto: textos.dosisDuplicada(previa.quien, previa.hora),
+        botones: [
+          { id: 'dup:si', titulo: 'Sí, es otra' },
+          { id: 'dup:no', titulo: 'No, ya está' },
+        ],
+      })
+      return { paso: 'medicina_duplicada' }
+    }
 
-  const accion: Accion = { tipo: 'dosis', animalId: t.animalId, tratamientoId: t.id, hora }
-  return guardarYPreguntar(c, { acciones: [accion], tipoEntrada: 'boton' })
+    const accion: Accion = { tipo: 'dosis', animalId: t.animalId, tratamientoId: t.id, hora }
+    return guardarYPreguntar(c, { acciones: [accion], tipoEntrada: 'boton' })
+  })
 }
 
 /** "Sí, es otra" / "No, ya está" escrito o dicho. Null si no es ni sí ni no. */

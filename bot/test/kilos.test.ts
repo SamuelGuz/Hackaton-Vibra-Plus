@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { validarEvento } from '../src/api/eventos.js'
 import { conKilos, kilosDeTexto } from '../src/conversacion/kilos.js'
+import type { Accion } from '../src/tipos.js'
 import { diasDeComida, kgEnBodega } from '../src/datos/calculos.js'
 import { convertir } from '../src/ia/esquema.js'
 import { AHORA, datosDePrueba } from './fakes.js'
 
-const sinMarca = (texto: string) => kilosDeTexto(texto).map(({ especieDicha: _, ...k }) => k)
+const sinMarca = (texto: string) => kilosDeTexto(texto).map(({ especieDicha: _, productoDicho: __, ...k }) => k)
 
 describe('kilos sueltos en lo que se dice', () => {
   it('lee llegadas y gastos con su producto', () => {
@@ -13,6 +14,9 @@ describe('kilos sueltos en lo que se dice', () => {
     expect(sinMarca('Se gastaron 12 kilos de menudencia')).toEqual([{ tipo: 'inventario', especie: 'perro', cambio: -12, unidad: 'kg', producto: 'menudencia' }])
     expect(sinMarca('Don Carlos trajo quince kilos de huesos para los gatos')).toEqual([{ tipo: 'inventario', especie: 'gato', cambio: 15, unidad: 'kg', producto: 'huesos' }])
     expect(sinMarca('llegaron 2,5 kg de pollo')[0].cambio).toBe(2.5)
+    expect(sinMarca('trajeron un kilo y medio de carne')[0].cambio).toBe(1.5)
+    expect(sinMarca('llegaron 3 kilos y medio de huesos')[0]).toMatchObject({ cambio: 3.5, producto: 'huesos' })
+    expect(sinMarca('se gastó medio kilo de pollo')[0].cambio).toBe(-0.5)
   })
 
   it('varias menciones en un mismo mensaje, cada una con su signo', () => {
@@ -34,6 +38,29 @@ describe('kilos sueltos en lo que se dice', () => {
     const enKilos = [{ tipo: 'inventario' as const, especie: 'perro' as const, cambio: 20, unidad: 'kg' as const, producto: 'carne' }]
     expect(conKilos(enKilos, 'llegaron 20 kilos de carne')).toEqual(enKilos)
     expect(conKilos([{ tipo: 'inventario', especie: 'perro', cambio: 20 }], 'llegaron 20 kilos de carne')).toEqual(enKilos)
+  })
+
+  it('la especie de la frase siguiente no se pega a los kilos (encontrado en vivo con Gemini)', () => {
+    const texto = 'don Carlos trajo 20 kilos de carne y se gastaron 5 kilos de menudencia, y abrí un bulto de gato'
+    expect(kilosDeTexto(texto).map((k) => [k.cambio, k.especie, k.especieDicha])).toEqual([
+      [20, 'perro', false],
+      [-5, 'perro', false],
+    ])
+    // Lo que devolvió Gemini: los kilos bien, para el perro, y el bulto del gato. No se agrega nada.
+    const deGemini: Accion[] = [
+      { tipo: 'inventario', especie: 'perro', cambio: 20, unidad: 'kg', producto: 'carne' },
+      { tipo: 'inventario', especie: 'perro', cambio: -5, unidad: 'kg', producto: 'menudencia' },
+      { tipo: 'inventario', especie: 'gato', cambio: -1 },
+    ]
+    expect(conKilos(deGemini, texto)).toEqual(deGemini)
+    // Si Gemini no anota el producto (queda "carne"), gana el que dijo la persona
+    const sinProducto = deGemini.map((x, i) => (i === 1 ? { ...x, producto: 'carne' } : x))
+    expect(conKilos(sinProducto, texto)).toEqual(deGemini)
+  })
+
+  it('si la IA ya anotó esos mismos kilos para otra especie, no se duplican', () => {
+    const deLaIa: Accion[] = [{ tipo: 'inventario', especie: 'gato', cambio: 4, unidad: 'kg', producto: 'pollo' }]
+    expect(conKilos(deLaIa, 'llegaron 4 kilos de pollo para los perros')).toEqual(deLaIa)
   })
 
   it('un bulto y unos kilos en el mismo mensaje quedan los dos', () => {

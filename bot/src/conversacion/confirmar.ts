@@ -67,6 +67,7 @@ export async function guardarDirecto(c: Ctx, g: PorGuardar): Promise<Estado> {
   })
   const hora = horaBonita(`${String(c.ahora.getHours()).padStart(2, '0')}:${String(c.ahora.getMinutes()).padStart(2, '0')}`)
   const partes: string[] = []
+  if (g.avisos?.length) partes.push(g.avisos.join('\n'))
   if (g.mostrarEscuche && g.transcripcion) partes.push(textos.escuche(g.transcripcion))
   partes.push(`${textos.anotado(hora)}\n${g.acciones.map((a) => describir(a, d)).join('\n')}`)
   partes.push(...(await comoQuedo(c, g.acciones)))
